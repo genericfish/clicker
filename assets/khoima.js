@@ -40,7 +40,8 @@ let game = {
     },
     gamergoo: 0.0,
     gamergoo_history: 0.0,
-    rate: 0.0
+    rate: 0.0,
+    last_save: Date.now()
 }
 
 let bounce = (() => {
@@ -166,9 +167,14 @@ function main() {
 
     game = JSON.parse(window.atob(window.localStorage["gamestate"]))
 
+    if (game.last_save === undefined)
+        game.last_save = Date.now()
+
     display.total.innerHTML = game.gamergoo.toFixed(2)
 
     update_rates()
+
+    add_goo(game.rate * ((Date.now() - game.last_save) / 1000))
 
     for (tower in towers) {
         let listing = document.createElement("li")
@@ -206,8 +212,7 @@ function loop() {
     if (now - last >= 50) {
         last = now
 
-        for (tower in game.towers)
-            add_goo((game.towers[tower][0] * towers[tower].base_rate) / 20)
+        add_goo(game.rate)
     }
 
     window.requestAnimationFrame(loop)
