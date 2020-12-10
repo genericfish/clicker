@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@keyframes fish {
+    to { filter: hue-rotate(1turn); }
+}
+
+@keyframes bounce {
+    0% {
+        width: 380px;
+        height: 380px;
+        margin: -190px 0 0 -190px;
+    }
+    20% {
+        width: 410px;
+        height: 410px;
+        margin: -205px 0 0 -205px;
+    }
+    40% {
+        width: 390px;
+        height: 390px;
+        margin: -195px 0 0 -195px;
+    }
+    60% {
+        width: 406px;
+        height: 406px;
+        margin: -203px 0 0 -203px;
+    }
+    80% {
+        width: 396px;
+        height: 396px;
+        margin: -198px 0 0 -198px;
+    }
+    100% {
+        width: 400px;
+        height: 400px;
+        margin: -200px 0 0 -200px;
+    }
+}
+
+@keyframes float {
+    from { bottom: 0px; opacity: 1; }
+    to { bottom: 200px; opacity: 0; }
+}
+
+button,
+label,
+input,
+textarea,
+select,
+option,
+ul.tree-view,
+.window,
+.title-bar {
+  font-family: "VT323", Arial;
+  font-size: 20px;
+  letter-spacing: 2px;
+  line-height: 1.1em;
+}
+
+body {
+    background: #030303;
+    background-image:
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 15px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 4px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 12px),
+        radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 10px);
+    background-size: 450px 450px, 350px 350px, 250px 250px, 150px 150px;
+    background-position: 0px 0px, 50px 80px, 130px, 270px, 70px 100px;
+}
+
+#title {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+    color: #0ff;
+    font-size: 3rem;
+    line-height: 1em;
+    text-align: center;
+}
+
+#clicker { margin: 0 auto; }
+
+#clicker,
+#clicker input[type="button"] {
+    position: relative;
+
+    width: 400px;
+    height: 400px;
+}
+
+#clicker input[type="button"] {
+    position: absolute;
+
+    background: url("khoima.png");
+    background-size: contain;
+
+    border-radius: 50%;
+
+    width: 400px;
+    height: 400px;
+
+    top: 50%;
+    left: 50%;
+    margin: -200px 0 0 -200px;
+
+    border: none;
+    pointer-events: auto;
+}
+
+#clicker input[type="button"].clicked {
+    animation: bounce .3s ease;
+}
+
+#clicker input[type="button"]:focus {
+    outline: 0;
+}
+
+.click-float {
+    position: relative;
+    animation: float 1.5s ease;
+
+    pointer-events: none;
+}
+
+.click-float::after {
+    position: absolute;
+    content: " ";
+    background: url("mini.png");
+    background-size: contain;
+
+    width: 1.5rem;
+    height: 1.5rem;
+
+    pointer-events: none;
+}
+
+.click-float div {
+    display: inline-block;
+    font-size: 1.5rem;
+    padding-right: 1rem;
+    line-height: 1.5rem;
+    background: transparent;
+    text-shadow: 2px 2px #ff0;
+
+    pointer-events: none;
+    user-select: none;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%
+}
+
+.content .left {
+    flex: 1;
+    padding: 5px;
+}
+
+.content .right {
+    flex: 2;
+    padding: 5px;
+}
+
+#gamergoo {
+    text-align: center;
+    font-size: 3rem;
+    line-height: 1em;
+    
+    padding-bottom: 10px;
+}
+
+.rate {
+    font-size: 1.5rem;
+}
+
+.window h1 {
+    font-size: 22px;
+    line-height: 1.2em;
+}
+
+.window h2 {
+    font-size: 16px;
+    color: purple;
+}
+
+ul.tree-view ul > li::before {
+    top: .6em;
+    width: 12px;
+}
+
+ul.tree-view ul > li:last-child::after {
+    top: .7em;
+}
