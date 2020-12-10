@@ -1,27 +1,27 @@
-(() => {
+let game = (() => {
     let modifiers = {
         click: 1,
         autoclicker: 1
     }
     let towers = {
         autoclicker: {
-            name: "autoclicker",
+            name: "triggerbot",
             base_cost: 15,
-            cost_multiplier: 1.005,
-            base_rate: .2,
+            cost_multiplier: 1.003,
+            base_rate: .25,
             base_click: 0,
         },
         coomfactory: {
             name: "coom factory",
-            base_cost: 1000,
-            cost_multiplier: 1.01,
-            base_rate: 10,
+            base_cost: 850,
+            cost_multiplier: 1.0085,
+            base_rate: 20,
             base_click: 0,
         },
         dogfarm: {
             name: "dog farm",
-            base_cost: 10000,
-            cost_multiplier: 1.015,
+            base_cost: 8500,
+            cost_multiplier: 1.0125,
             base_rate: 100,
             base_click: 0,
         }
@@ -38,6 +38,13 @@
             autoclicker: [0, 0],
             coomfactory: [0, 0],
             dogfarm: [0, 0]
+        },
+        modifiers: {
+            click: [0,0],
+            offline: [0,0],
+            autoclicker: [0,0],
+            coomfactory: [0,0],
+            dogfarm: [0,0],
         },
         gamergoo: 0.0,
         gamergoo_history: 0.0,
@@ -119,20 +126,17 @@
             producing: document.getElementById("stats-producing")
         }
     }
-    
-    function shop_count(e) {
-        shop.active_amount = parseInt(e.value)
-        update_costs()
-    }
-    
+
     function update_costs() {
         let tower = towers[shop.active]
-        shop.active_cost = 0
-    
-        for (let i = 0; i < (shop.active_amount + game.towers[shop.active][0]); i++)
-            shop.active_cost += Math.ceil(
-                tower.base_cost * (tower.cost_multiplier ** (i + game.towers[shop.active][0]))
-            )
+        let total = (shop.active_amount + game.towers[shop.active][0])
+
+        // Geometric Partial Sum
+        shop.active_cost = tower.base_cost * (
+            (1 - tower.cost_multiplier ** total)
+            / (1 - tower.cost_multiplier)
+        )
+
         shop.stats.cost.innerHTML = shop.active_cost
     }
     
@@ -171,12 +175,23 @@
     
         if (game.last_save === undefined)
             game.last_save = Date.now()
+
+        if (game.save_version === undefined) {
+            game.modifiers = {
+                click: [0,0],
+                offline: [0,0],
+                autoclicker: [0,0],
+                coomfactory: [0,0],
+                dogfarm: [0,0],
+            },
+            game.save_version = 2
+        }
     
         display.total.innerHTML = game.gamergoo.toFixed(2)
     
         update_rates()
     
-        add_goo(game.rate * ((Date.now() - game.last_save) / 1000))
+        add_goo(game.rate * ((Date.now() - game.last_save) / 1000) / 50)
     
         for (tower in towers) {
             let listing = document.createElement("li")
@@ -206,20 +221,22 @@
             shop.listings.appendChild(listing)
         }
     }
-    
-    let last = Date.now()
-    
     function loop() {
         let now = Date.now()
-        if (now - last >= 50) {
-            last = now
-    
+        if (now - game.last_save >= 50)
             add_goo(game.rate)
-        }
     
         window.requestAnimationFrame(loop)
     }
     
     main()
     loop()
+
+    // exports
+    return {
+        shop_count: (e) => {
+            shop.active_amount = parseInt(e.value)
+            update_costs()
+        }
+    }
 })()
