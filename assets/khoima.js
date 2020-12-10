@@ -1,8 +1,4 @@
 let game = (() => {
-    let modifiers = {
-        click: 1,
-        autoclicker: 1
-    }
     let towers = {
         autoclicker: {
             name: "triggerbot",
@@ -26,13 +22,13 @@ let game = (() => {
             base_click: 0,
         }
     }
-    
+
     let display = {
         rate: document.getElementById("cps"),
         total: document.getElementById("counter"),
         button: document.getElementById("kfc")
     }
-    
+
     let game = {
         towers: {
             autoclicker: [0, 0],
@@ -51,61 +47,62 @@ let game = (() => {
         rate: 0.0,
         last_save: Date.now()
     }
-    
-    let bounce = (() => {
-        return () => {
-            display.button.classList.add("clicked")
-            setTimeout(() => {
-                display.button.classList.remove("clicked")
-            }, 300)
-        }
-    })()
-    
-    let summon = (() => {
-        let container = document.createElement("div")
-        let floater = document.createElement("div")
-        let display = document.createElement("div")
-    
-        return (amount, x, y) => {
+
+    let graphics = {
+        bounce: (() => {
+            return () => {
+                display.button.classList.add("clicked")
+                setTimeout(() => {
+                    display.button.classList.remove("clicked")
+                }, 300)
+            }
+        })(),
+        floater: (amount, x, y) => {
+            let container = document.createElement("div")
+            let floater = document.createElement("div")
+            let display = document.createElement("div")
+
             floater.appendChild(display)
             container.appendChild(floater)
-    
+
             floater.classList.add("click-float")
-    
+
             container.setAttribute(
                 "style",
                 `position:absolute;top:${y - 25}px;left:${x - 20}px;pointer-events:none;`
             )
-    
+
             display.innerHTML = `+${amount}`
-    
+
             document.body.appendChild(container)
-    
+
             setTimeout(() => {
                 document.body.removeChild(container)
             }, 1000)
         }
-    })
-    
+    }
+
     function save() {
         game.last_save = Date.now()
         window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
     }
-    
+
     function add_goo(amt) {
         game.gamergoo += amt
         game.gamergoo_history += amt
         display.total.innerHTML = game.gamergoo.toFixed(2)
-    
+
         save()
     }
-    
+
     display.button.addEventListener("mousedown", e => {
-        add_goo(modifiers.click)
-        summon()(modifiers.click, e.clientX, e.clientY)
-        bounce()
+        let amount = game.modifiers.click[0] + 1
+
+        add_goo(amount)
+        graphics.floater(amount, e.clientX, e.clientY)
+        graphics.bounce()
     })
-    
+
     let shop = {
         listings: document.getElementById("listings"),
         active: undefined,
@@ -142,22 +139,52 @@ let game = (() => {
 
     function update_rates() {
         game.rate = 0
-    
+
         for (tower in game.towers) {
             let rate = game.towers[tower][0] * towers[tower].base_rate
             game.towers[tower][1] = rate
             game.rate += rate
         }
-    
+
         display.rate.innerHTML = game.rate.toFixed(2) + " gamergoo per second"
+    }
+
+    function create_shop() {
+        for (tower in towers) {
+            let listing = document.createElement("li")
+            let link = document.createElement("a")
+
+            let eventHandler = (tower) => {
+                return () => {
+                    shop.stats.header.innerHTML = towers[tower].name
+                    shop.stats.rate.innerHTML = towers[tower].base_rate
+                    shop.stats.click.innerHTML = towers[tower].base_click
+                    shop.active = tower
+
+                    shop.stats.owned.innerHTML = game.towers[shop.active][0]
+                    shop.stats.producing.innerHTML = game.towers[shop.active][1]
+
+                    update_costs()
+                }
+            }
+
+            link.addEventListener("click", eventHandler(tower))
+
+            if (tower == "autoclicker") link.click()
+
+            link.href = "#"
+            link.innerHTML = towers[tower].name
+            listing.appendChild(link)
+            shop.listings.appendChild(listing)
+        }
     }
 
     function main() {
         if (window.localStorage["gamestate"] === undefined)
             save()
-    
+
         game = JSON.parse(window.atob(window.localStorage["gamestate"]))
-    
+
         if (game.last_save === undefined)
             game.last_save = Date.now()
 
@@ -168,54 +195,30 @@ let game = (() => {
                 autoclicker: [0,0],
                 coomfactory: [0,0],
                 dogfarm: [0,0],
-            },
+            }
             game.save_version = 2
         }
-    
-        display.total.innerHTML = game.gamergoo.toFixed(2)
-    
+
+        // Update rates then give user gamergoo based on last save
         update_rates()
-    
         add_goo(game.rate * ((Date.now() - game.last_save) / 1000) / 50)
-    
-        for (tower in towers) {
-            let listing = document.createElement("li")
-            let link = document.createElement("a")
-    
-            let eventHandler = (tower) => {
-                return () => {
-                    shop.stats.header.innerHTML = towers[tower].name
-                    shop.stats.rate.innerHTML = towers[tower].base_rate
-                    shop.stats.click.innerHTML = towers[tower].base_click
-                    shop.active = tower
-    
-                    shop.stats.owned.innerHTML = game.towers[shop.active][0]
-                    shop.stats.producing.innerHTML = game.towers[shop.active][1]
-    
-                    update_costs()
-                }
-            }
-    
-            link.addEventListener("click", eventHandler(tower))
-    
-            if (tower == "autoclicker") link.click()
-    
-            link.href = "#"
-            link.innerHTML = towers[tower].name
-            listing.appendChild(link)
-            shop.listings.appendChild(listing)
-        }
+
+        // Create shop window with listings
+        create_shop()
+
+        // Begin main game loop
+        loop()
     }
+
     function loop() {
         let now = Date.now()
         if (now - game.last_save >= 50)
-            add_goo(game.rate)
-    
+            add_goo(game.rate / 20)
+
         window.requestAnimationFrame(loop)
     }
-    
+
     main()
-    loop()
 
     // exports
     return {
