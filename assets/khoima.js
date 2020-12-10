@@ -3,14 +3,14 @@ let game = (() => {
         autoclicker: {
             name: "triggerbot",
             base_cost: 15,
-            cost_multiplier: 1.003,
+            cost_multiplier: 1.015,
             base_rate: .25,
             base_click: 0,
         },
         coomfactory: {
             name: "coom factory",
             base_cost: 850,
-            cost_multiplier: 1.0085,
+            cost_multiplier: 1.0175,
             base_rate: 20,
             base_click: 0,
         },
@@ -126,11 +126,11 @@ let game = (() => {
 
     function update_costs() {
         let tower = towers[shop.active]
-        let total = (shop.active_amount + game.towers[shop.active][0])
 
         // Geometric Partial Sum
-        shop.active_cost = Math.ceil(tower.base_cost * (
-            (1 - tower.cost_multiplier ** total)
+        shop.active_cost = Math.ceil(
+            (tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0])* (
+            (1 - tower.cost_multiplier ** shop.active_amount)
             / (1 - tower.cost_multiplier)
         ))
 
@@ -177,6 +177,8 @@ let game = (() => {
             listing.appendChild(link)
             shop.listings.appendChild(listing)
         }
+
+        shop.stats.radio[0].click()
     }
 
     function main() {
