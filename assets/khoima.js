@@ -1,4 +1,63 @@
+const english_numbers = [
+    "million",
+    "billion",
+    "trillion",
+    "quadrillion",
+    "quintillion",
+    "sextillion",
+    "septillion",
+    "octillion",
+    "nonillion",
+    "undecillion",
+    "duodecillion",
+    "tredecillion",
+    "quattuordecillion",
+    "quindecillion",
+    "sexdecillion"
+    // septendecillion = 10^54, however JS safe upperlimit is 10^53 - 1
+]
+
+function nice_format(num) {
+    let digits = Math.floor(Math.log10(num))
+
+    return (digits < 6) ? num : (num / (10 ** digits)).toFixed(3) + " " + english_numbers[Math.floor((digits - 6) / 3)]
+}
+
 let game = (() => {
+    let graphics = {
+        bounce: (() => {
+            return () => {
+                display.button.classList.add("clicked")
+                setTimeout(() => {
+                    display.button.classList.remove("clicked")
+                }, 300)
+            }
+        })(),
+        floater: (amount, x, y) => {
+            let container = document.createElement("div")
+            let floater = document.createElement("div")
+            let display = document.createElement("div")
+
+            floater.appendChild(display)
+            container.appendChild(floater)
+
+            floater.classList.add("click-float")
+
+            container.setAttribute(
+                "style",
+                `position:absolute;top:${y - 25}px;left:${x - 20}px;pointer-events:none;`
+            )
+
+            display.innerHTML = `+${amount}`
+
+            document.body.appendChild(container)
+
+            setTimeout(() => {
+                document.body.removeChild(container)
+            }, 1000)
+        }
+    }
+
     let towers = {
         autoclicker: {
             name: "triggerbot",
@@ -48,68 +107,9 @@ let game = (() => {
         last_save: Date.now()
     }
 
-    let graphics = {
-        bounce: (() => {
-            return () => {
-                display.button.classList.add("clicked")
-                setTimeout(() => {
-                    display.button.classList.remove("clicked")
-                }, 300)
-            }
-        })(),
-        floater: (amount, x, y) => {
-            let container = document.createElement("div")
-            let floater = document.createElement("div")
-            let display = document.createElement("div")
-
-            floater.appendChild(display)
-            container.appendChild(floater)
-
-            floater.classList.add("click-float")
-
-            container.setAttribute(
-                "style",
-                `position:absolute;top:${y - 25}px;left:${x - 20}px;pointer-events:none;`
-            )
-
-            display.innerHTML = `+${amount}`
-
-            document.body.appendChild(container)
-
-            setTimeout(() => {
-                document.body.removeChild(container)
-            }, 1000)
-        }
-    }
-
     function save() {
         game.last_save = Date.now()
         window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
-    }
-
-    const english_numbers = [
-        "million",
-        "billion",
-        "trillion",
-        "quadrillion",
-        "quintillion",
-        "sextillion",
-        "septillion",
-        "octillion",
-        "nonillion",
-        "undecillion",
-        "duodecillion",
-        "tredecillion",
-        "quattuordecillion",
-        "quindecillion",
-        "sexdecillion"
-        // septendecillion = 10^54, however JS safe upperlimit is 10^53 - 1
-    ]
-
-    function nice_format(num) {
-        let digits = Math.floor(Math.log10(num))
-
-        return (digits < 6) ? num : (num / (10 ** digits)).toFixed(3) + " " + english_numbers[Math.floor((digits - 6) / 3)]
     }
 
     function add_goo(amt) {
@@ -149,31 +149,6 @@ let game = (() => {
         }
     }
 
-    function update_costs() {
-        let tower = towers[shop.active]
-
-        // Geometric Partial Sum
-        shop.active_cost = Math.ceil(
-            (tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0])* (
-            (1 - tower.cost_multiplier ** shop.active_amount)
-            / (1 - tower.cost_multiplier)
-        ))
-
-        shop.stats.cost.innerHTML = shop.active_cost
-    }
-
-    function update_rates() {
-        game.rate = 0
-
-        for (tower in game.towers) {
-            let rate = game.towers[tower][0] * towers[tower].base_rate
-            game.towers[tower][1] = rate
-            game.rate += rate
-        }
-
-        display.rate.innerHTML = game.rate.toFixed(2) + " gamergoo per second"
-    }
-
     function create_shop() {
         for (tower in towers) {
             let listing = document.createElement("li")
@@ -206,7 +181,7 @@ let game = (() => {
         shop.stats.radio[0].click()
     }
 
-    function main() {
+    function setup() {
         if (window.localStorage["gamestate"] === undefined)
             save()
 
@@ -226,15 +201,32 @@ let game = (() => {
             game.save_version = 2
         }
 
-        // Update rates then give user gamergoo based on last save
-        update_rates()
-        add_goo(game.rate * ((Date.now() - game.last_save) / 1000) / 50)
-
-        // Create shop window with listings
         create_shop()
+    }
 
-        // Begin main game loop
-        loop()
+    function update_costs() {
+        let tower = towers[shop.active]
+
+        // Geometric Partial Sum
+        shop.active_cost = Math.ceil(
+            (tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0])* (
+            (1 - tower.cost_multiplier ** shop.active_amount)
+            / (1 - tower.cost_multiplier)
+        ))
+
+        shop.stats.cost.innerHTML = shop.active_cost
+    }
+
+    function update_rates() {
+        game.rate = 0
+
+        for (tower in game.towers) {
+            let rate = game.towers[tower][0] * towers[tower].base_rate
+            game.towers[tower][1] = rate
+            game.rate += rate
+        }
+
+        display.rate.innerHTML = game.rate.toFixed(2) + " gamergoo per second"
     }
 
     function loop() {
@@ -245,10 +237,19 @@ let game = (() => {
         window.requestAnimationFrame(loop)
     }
 
-    main()
-
     // exports
     return {
+        start: () => {
+            // Setup save file and shop listings
+            setup()
+
+            // Update rates then give user gamergoo based on last save
+            update_rates()
+            add_goo(game.rate * ((Date.now() - game.last_save) / 1000) / 50)
+
+            // Begin main game loop
+            loop()
+        },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
             update_costs()
@@ -269,3 +270,5 @@ let game = (() => {
         }
     }
 })()
+
+game.start()
