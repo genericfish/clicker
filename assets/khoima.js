@@ -7,21 +7,21 @@ let towers = {
     autoclicker: {
         name: "autoclicker",
         base_cost: 15,
-        cost_multiplier: 1.0025,
+        cost_multiplier: 1.005,
         base_rate: .2,
         base_click: 0,
     },
     coomfactory: {
         name: "coom factory",
         base_cost: 1000,
-        cost_multiplier: 1.0035,
+        cost_multiplier: 1.01,
         base_rate: 10,
         base_click: 0,
     },
     dogfarm: {
         name: "dog farm",
         base_cost: 10000,
-        cost_multiplier: 1.0045,
+        cost_multiplier: 1.015,
         base_rate: 100,
         base_click: 0,
     }
@@ -114,7 +114,12 @@ function shop_count(e) {
 
 function update_costs() {
     let tower = towers[shop.active]
-    shop.active_cost = Math.ceil(tower.base_cost * (tower.cost_multiplier ** shop.active_amount + game.towers[shop.active]))
+    shop.active_cost = 0
+
+    for (let i = 0; i < shop.active_amount; i++)
+        shop.active_cost += Math.ceil(
+            tower.base_cost * (tower.cost_multiplier ** (i + game.towers[shop.active]))
+        )
     shop.stats.cost.innerHTML = shop.active_cost
 }
 
@@ -124,6 +129,13 @@ function buy() {
         game.towers[shop.active] += shop.active_amount
         update_costs()
         window.localStorage["towers"] = JSON.stringify(game.towers)
+
+        let rate = 0
+
+        for (tower in game.towers)
+            rate += game.towers[tower] * towers[tower].base_rate
+
+        game.display.rate.innerHTML = rate + " gamergoo per second"
     }
 }
 
@@ -133,6 +145,23 @@ function main() {
 
     if (window.localStorage["towers" === undefined])
         window.localStorage["towers"] = JSON.stringify(game.towers)
+
+    if (window.localStorage["version"] === undefined) {
+        window.localStorage["gamergoo"] = 0
+        window.localStorage["towers"] = JSON.stringify(game.towers)
+        window.localStorage["version"] = 1
+    }
+
+    gamergoo = parseFloat(window.localStorage["gamergoo"])
+    game.towers = JSON.parse(window.localStorage["towers"])
+    game.display.total.innerHTML = gamergoo.toFixed(2)
+
+    let rate = 0
+
+    for (tower in game.towers)
+        rate += game.towers[tower] * towers[tower].base_rate
+
+    game.display.rate.innerHTML = rate + " gamergoo per second"
 
     for (tower in towers) {
         let listing = document.createElement("li")
@@ -151,22 +180,13 @@ function main() {
 
         link.addEventListener("click", eventHandler(tower))
 
+        if (tower == "autoclicker") link.click()
+
         link.href = "#"
         link.innerHTML = tower
         listing.appendChild(link)
         shop.listings.appendChild(listing)
     }
-
-    gamergoo = parseFloat(window.localStorage["gamergoo"])
-    game.towers = JSON.parse(window.localStorage["towers"])
-    game.display.total.innerHTML = gamergoo.toFixed(2)
-
-    let rate = 0
-
-    for (tower in game.towers)
-        rate += game.towers[tower] * towers[tower].base_rate
-
-    game.display.rate.innerHTML = rate + " gamergoo per second"
 }
 
 let last = Date.now()
