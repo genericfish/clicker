@@ -134,6 +134,8 @@ function update_costs() {
 }
 
 function update_rates() {
+    game.rate = 0
+
     for (tower in game.towers) {
         let rate = game.towers[tower][0] * towers[tower].base_rate
         game.towers[tower][1] = rate
@@ -150,6 +152,9 @@ function buy() {
 
         update_costs()
         update_rates()
+
+        shop.stats.owned.innerHTML = game.towers[shop.active][0]
+        shop.stats.producing.innerHTML = game.towers[shop.active][1]
 
         save()
     }
