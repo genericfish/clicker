@@ -20,7 +20,11 @@ const english_numbers = [
 function nice_format(num) {
     let digits = Math.floor(Math.log10(num))
 
-    return (digits < 6) ? num : (num / (10 ** digits)).toFixed(3) + " " + english_numbers[Math.floor((digits - 6) / 3)]
+    if (digits < 6) return num
+
+    let place = Math.floor((digits - 6) / 3)
+    return (num / (10 ** (3 * Math.floor(digits / 3)))).toFixed(3) +
+        " " + english_numbers[place]
 }
 
 let game = (() => {
@@ -62,22 +66,22 @@ let game = (() => {
         autoclicker: {
             name: "triggerbot",
             base_cost: 15,
-            cost_multiplier: 1.015,
-            base_rate: .25,
+            cost_multiplier: 1.0145,
+            base_rate: .35,
             base_click: 0,
         },
         coomfactory: {
             name: "coom factory",
             base_cost: 850,
-            cost_multiplier: 1.0175,
-            base_rate: 20,
+            cost_multiplier: 1.017,
+            base_rate: 35,
             base_click: 0,
         },
         dogfarm: {
             name: "dog farm",
             base_cost: 8500,
-            cost_multiplier: 1.0125,
-            base_rate: 100,
+            cost_multiplier: 1.013,
+            base_rate: 125,
             base_click: 0,
         }
     }
@@ -114,7 +118,8 @@ let game = (() => {
 
     function add_goo(amt) {
         game.gamergoo += amt
-        game.gamergoo_history += amt
+        if (amt > 0)
+            game.gamergoo_history += amt
         display.total.innerHTML = nice_format(Math.round(game.gamergoo))
 
         save()
@@ -162,7 +167,7 @@ let game = (() => {
                     shop.active = tower
 
                     shop.stats.owned.innerHTML = game.towers[shop.active][0]
-                    shop.stats.producing.innerHTML = game.towers[shop.active][1]
+                    shop.stats.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
                     update_costs()
                 }
@@ -214,7 +219,7 @@ let game = (() => {
             / (1 - tower.cost_multiplier)
         ))
 
-        shop.stats.cost.innerHTML = shop.active_cost
+        shop.stats.cost.innerHTML = nice_format(shop.active_cost)
     }
 
     function update_rates() {
@@ -226,7 +231,7 @@ let game = (() => {
             game.rate += rate
         }
 
-        display.rate.innerHTML = game.rate.toFixed(2) + " gamergoo per second"
+        display.rate.innerHTML = nice_format(game.rate.toFixed(2)) + " gamergoo per second"
     }
 
     function loop() {
@@ -245,7 +250,14 @@ let game = (() => {
 
             // Update rates then give user gamergoo based on last save
             update_rates()
-            add_goo(game.rate * ((Date.now() - game.last_save) / 1000) / 50)
+            let elapsed_time = (Date.now() - game.last_save) / 1000
+
+            // Maximum offline time is 8 hours
+            elapsed_time = (elapsed_time < (8 * 60 * 60)) ? elapsed_time : 8 * 60 * 60
+
+            // Earn goo at a rate of 0.85% of normal rate
+            let offline_goo = game.rate * 0.0085 * elapsed_time
+            add_goo(offline_goo)
 
             // Begin main game loop
             loop()
@@ -267,6 +279,10 @@ let game = (() => {
 
                 save()
             }
+        },
+        stats: () => {
+            console.log(game.gamergoo)
+            console.log(game.gamergoo_history)
         }
     }
 })()
