@@ -132,14 +132,14 @@ let game = (() => {
         let total = (shop.active_amount + game.towers[shop.active][0])
 
         // Geometric Partial Sum
-        shop.active_cost = tower.base_cost * (
+        shop.active_cost = Math.ceil(tower.base_cost * (
             (1 - tower.cost_multiplier ** total)
             / (1 - tower.cost_multiplier)
-        )
+        ))
 
         shop.stats.cost.innerHTML = shop.active_cost
     }
-    
+
     function update_rates() {
         game.rate = 0
     
@@ -151,22 +151,7 @@ let game = (() => {
     
         display.rate.innerHTML = game.rate.toFixed(2) + " gamergoo per second"
     }
-    
-    function buy() {
-        if (game.gamergoo >= shop.active_cost) {
-            add_goo(-shop.active_cost)
-            game.towers[shop.active][0] += shop.active_amount
-    
-            update_costs()
-            update_rates()
-    
-            shop.stats.owned.innerHTML = game.towers[shop.active][0]
-            shop.stats.producing.innerHTML = game.towers[shop.active][1]
-    
-            save()
-        }
-    }
-    
+
     function main() {
         if (window.localStorage["gamestate"] === undefined)
             save()
@@ -234,9 +219,23 @@ let game = (() => {
 
     // exports
     return {
-        shop_count: (e) => {
+        shop_count: e => {
             shop.active_amount = parseInt(e.value)
             update_costs()
+        },
+        buy: () => {
+            if (game.gamergoo >= shop.active_cost) {
+                add_goo(-shop.active_cost)
+                game.towers[shop.active][0] += shop.active_amount
+
+                update_costs()
+                update_rates()
+
+                shop.stats.owned.innerHTML = game.towers[shop.active][0]
+                shop.stats.producing.innerHTML = game.towers[shop.active][1]
+
+                save()
+            }
         }
     }
 })()
