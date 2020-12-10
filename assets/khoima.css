@@ -75,7 +75,7 @@ body {
     text-align: center;
 }
 
-#clicker { margin: 0 auto; }
+#clicker { margin: 0 auto }
 
 #clicker,
 #clicker input[type="button"] {
@@ -104,13 +104,9 @@ body {
     pointer-events: auto;
 }
 
-#clicker input[type="button"].clicked {
-    animation: bounce .3s ease;
-}
+#clicker input[type="button"].clicked { animation: bounce .3s ease }
 
-#clicker input[type="button"]:focus {
-    outline: 0;
-}
+#clicker input[type="button"]:focus { outline: 0 }
 
 .click-float {
     position: relative;
@@ -134,10 +130,10 @@ body {
 .click-float div {
     display: inline-block;
     font-size: 1.5rem;
-    padding-right: 1rem;
+    padding-right: 0.25rem;
     line-height: 1.5rem;
     background: transparent;
-    text-shadow: 2px 2px #ff0;
+    text-shadow: 2px 2px silver;
 
     pointer-events: none;
     user-select: none;
@@ -167,9 +163,7 @@ body {
     padding-bottom: 10px;
 }
 
-.rate {
-    font-size: 1.5rem;
-}
+.rate { font-size: 1.5rem }
 
 .window h1 {
     font-size: 22px;
@@ -181,11 +175,16 @@ body {
     color: purple;
 }
 
+ul.tree-view ul {
+    margin-left: 22px;
+}
+
+ul.tree-view a { color: darkgreen }
+ul.tree-view details > summary::before { margin-top: 5px }
+
 ul.tree-view ul > li::before {
     top: .6em;
     width: 12px;
 }
 
-ul.tree-view ul > li:last-child::after {
-    top: .7em;
-}
+ul.tree-view ul > li:last-child::after { top: .7em }
