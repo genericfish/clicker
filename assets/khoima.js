@@ -87,10 +87,35 @@ let game = (() => {
         window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
     }
 
+    const english_numbers = [
+        "million",
+        "billion",
+        "trillion",
+        "quadrillion",
+        "quintillion",
+        "sextillion",
+        "septillion",
+        "octillion",
+        "nonillion",
+        "undecillion",
+        "duodecillion",
+        "tredecillion",
+        "quattuordecillion",
+        "quindecillion",
+        "sexdecillion"
+        // septendecillion = 10^54, however JS safe upperlimit is 10^53 - 1
+    ]
+
+    function nice_format(num) {
+        let digits = Math.floor(Math.log10(num))
+
+        return (digits < 6) ? num : (num / (10 ** digits)).toFixed(3) + " " + english_numbers[Math.floor((digits - 6) / 3)]
+    }
+
     function add_goo(amt) {
         game.gamergoo += amt
         game.gamergoo_history += amt
-        display.total.innerHTML = game.gamergoo.toFixed(2)
+        display.total.innerHTML = nice_format(Math.round(game.gamergoo))
 
         save()
     }
