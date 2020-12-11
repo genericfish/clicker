@@ -83,29 +83,29 @@ let game = (() => {
         autoclicker: {
             name: "triggerbot",
             base_cost: 10,
-            cost_multiplier: 1.0135,
-            base_rate: .35,
+            cost_multiplier: 1.013,
+            base_rate: .25,
             base_click: 0,
         },
         stream: {
             name: "bigfollows",
-            base_cost: 250,
+            base_cost: 175,
             cost_multiplier: 1.0135,
-            base_rate: 5,
+            base_rate: 2,
             base_click: 0
         },
         coomfactory: {
             name: "coom factory",
             base_cost: 2000,
-            cost_multiplier: 1.0175,
-            base_rate: 50,
+            cost_multiplier: 1.01375,
+            base_rate: 10,
             base_click: 0,
         },
         dogfarm: {
             name: "dog farm",
-            base_cost: 6500,
-            cost_multiplier: 1.0181,
-            base_rate: 125,
+            base_cost: 10000,
+            cost_multiplier: 1.014,
+            base_rate: 50,
             base_click: 0,
         },
     }
@@ -242,17 +242,21 @@ let game = (() => {
 
             let fieldset = document.createElement("fieldset")
             let legend = document.createElement("legend")
+            let container = document.createElement("div")
 
-            legend.innerHTML = towers[tower].name
+            legend.innerHTML = towers[tower].name + " x " + count
+
+            container.classList.add("row-container")
 
             for (let x = 0; x < Math.floor(count / 10); x++)
-                fieldset.appendChild(create_row(tower, 10))
+                container.appendChild(create_row(tower, 10))
 
             if (count % 10 > 0)
-                fieldset.appendChild(create_row(tower, count % 10))
+                container.appendChild(create_row(tower, count % 10))
 
             fieldset.setAttribute("style", "border: 1px solid black;")
             fieldset.appendChild(legend)
+            fieldset.appendChild(container)
 
             windows[2].appendChild(fieldset)
         }
@@ -267,17 +271,13 @@ let game = (() => {
         if (game.last_save === undefined)
             game.last_save = Date.now()
 
-        if (game.save_version === undefined || game.save_version < 3) {
-            // Copy first level nested objects
-            for (let key in game)
-                if (game_load.hasOwnProperty(key))
-                    if (game[key] instanceof Object)
-                        game[key] = Object.assign(game[key], game_load[key])
-                    else
-                        game[key] = game_load[key]
-
-            game.save_version = 3
-        }
+        // Copy first level nested objects
+        for (let key in game)
+            if (game_load.hasOwnProperty(key))
+                if (game[key] instanceof Object)
+                    game[key] = Object.assign(game[key], game_load[key])
+                else
+                    game[key] = game_load[key]
 
         create_shop()
         update_buildings()
@@ -299,12 +299,20 @@ let game = (() => {
             shop.active_amount
         )
 
-        shop.active_refund = geometric_sum(
-            tower.base_cost * tower.cost_multiplier **
-                (game.towers[shop.active][0] - shop.active_amount),
-            tower.cost_multiplier,
-            shop.active_amount
+        // Refund 92.5% of the buy price.
+        shop.active_refund = Math.ceil(
+            geometric_sum(
+                tower.base_cost * tower.cost_multiplier **
+                    (game.towers[shop.active][0] - shop.active_amount),
+                tower.cost_multiplier,
+                shop.active_amount
+            ) * .925
         )
+
+        if (shop.active_cost > game.gamergoo)
+            shop.stats.buy.setAttribute("disabled", "disabled")
+        else
+            shop.stats.buy.removeAttribute("disabled")
 
         if (shop.active_amount > game.towers[shop.active][0]) {
             shop.stats.sell.setAttribute("disabled", "disabled")
@@ -330,17 +338,36 @@ let game = (() => {
         display.rate.innerHTML = nice_format(game.rate.toFixed(2)) + " gamergoo per second"
     }
 
-    function loop() {
-        let now = Date.now()
+    let loop = (() => {
+        let last_frame = Date.now()
+        let frames = 0
 
-        if (now - game.last_save >= 100) {
-            add_goo(game.rate / 10)
-            save()
+        return () => {
+            let now = Date.now()
+
+            // Approximately 100 FPS
+            if (now - last_frame >= 10) frames++
+    
+            // Every other frame (20ms) add 1/50th of goo
+            if (frames % 2 == 0)
+                add_goo(game.rate / 50)
+    
+            // Every 25th frame (250ms) update shop buy button
+            if (frames % 25 == 0) {
+                if (shop.active_cost > game.gamergoo)
+                    shop.stats.buy.setAttribute("disabled", "disabled")
+                else
+                    shop.stats.buy.removeAttribute("disabled")
+            }
+    
+            // Save game every second (100 frames)
+            if (frames % 100 == 0)
+                save()
+    
+            if (running)
+                window.requestAnimationFrame(loop)
         }
-
-        if (running)
-            window.requestAnimationFrame(loop)
-    }
+    })()
 
     // exports
     return {
@@ -367,26 +394,20 @@ let game = (() => {
             shop.active_amount = parseInt(e.value)
             update_costs()
         },
-        buy: () => {
-            if (game.gamergoo >= shop.active_cost) {
+        shop: (action) => {
+            let update = false
+
+            if (action == "buy" && game.gamergoo >= shop.active_cost) {
                 add_goo(-shop.active_cost)
                 game.towers[shop.active][0] += shop.active_amount
-
-                update_costs()
-                update_rates()
-                update_buildings()
-
-                shop.stats.owned.innerHTML = game.towers[shop.active][0]
-                shop.stats.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
-
-                save()
-            }
-        },
-        sell: () => {
-            if (game.towers[shop.active][0] >= shop.active_amount) {
+                update = true
+            } else if (action == "sell" && game.towers[shop.active][0] >= shop.active_amount) {
                 add_goo(shop.active_refund, false)
                 game.towers[shop.active][0] -= shop.active_amount
+                update = true
+            }
 
+            if (update) {
                 update_costs()
                 update_rates()
                 update_buildings()
@@ -407,6 +428,9 @@ let game = (() => {
                 window.localStorage.removeItem("gamestate")
                 window.location.reload()
             }, 100)
+        },
+        hack: (amt) => {
+            add_goo(amt, false)
         }
     }
 })()

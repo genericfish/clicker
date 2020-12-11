@@ -6,7 +6,7 @@
     <title>Khoima Clicker</title>
 
     <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.16/dist/98.css">
-    <link rel="stylesheet" href="assets/khoima.min.css">
+    <link rel="stylesheet" href="assets/khoima.css">
 </head>
 <body>
     <div class="content">
@@ -102,8 +102,8 @@
                             <div style="margin-top:12px;">Cost: <span id="shop-cost">1</span> gamergoo</div>
                             <div id="shop-refund-container">Sell: <span id="shop-refund">1</span> gamergoo</div>
                             <section class="field-row" style="margin-top: 12px;">
-                                <button id="shop-buy" onclick="game.buy()">buy</button>
-                                <button id="shop-sell" onclick="game.sell()">sell</button>
+                                <button id="shop-buy" onclick="game.shop('buy')">buy</button>
+                                <button id="shop-sell" onclick="game.shop('sell')">sell</button>
                             </section>
                         </div>
                     </div>
@@ -112,6 +112,6 @@
         </div>
     </div>
 
-    <script src="assets/khoima.min.js"></script>
+    <script src="assets/khoima.js"></script>
 </body>
 </html>

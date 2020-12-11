@@ -154,7 +154,7 @@ body {
 .content .middle {
     flex: 2;
     padding: 3px;
-    max-width: 500px;
+    max-width: 525px;
 }
 
 .content .right {
@@ -199,7 +199,7 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 .title-bar-text { font-weight: normal }
 
 .window-body {
-    max-height: 100vh;
+    max-height: 10000vh;
     visibility: visible;
     transition: max-height .1s ease;
 }
@@ -210,7 +210,8 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     transition: max-height .1s ease;
 }
 
-.building {
-    height: 40px;
-    width: 400px;
+.row-container {
+    max-height: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
