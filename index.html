@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=996px, initial-scale=1.0">
     <title>Khoima Clicker</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.16/dist/98.css">
+    <link id="theme" rel="stylesheet" href="https://unpkg.com/98.css">
     <link rel="stylesheet" href="assets/khoima.css">
 </head>
 <body>
@@ -113,5 +113,29 @@
     </div>
 
     <script src="assets/khoima.js"></script>
+    <script>
+        (() => {
+            const theme = document.getElementById("theme")
+            let current = "xp"
+
+            function toggle_theme() {
+                if (current === "98") {
+                    current = "xp"
+                    document.body.setAttribute("style", "height: 100vh; background: url(assets/xp.jpg);background-repeat: no-repeat;background-size: cover;background-position: center;")
+                } else {
+                    current = "98"
+                    document.body.setAttribute("style", "background: #008080;")
+                }
+
+                theme.setAttribute("href", `https://unpkg.com/${current}.css`)
+            }
+
+            document.addEventListener("keydown", e => {
+                if (e.key === "f") toggle_theme()
+            })
+
+            toggle_theme()
+        })()
+    </script>
 </body>
 </html>
