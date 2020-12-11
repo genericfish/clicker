@@ -1,38 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 @keyframes fish {
     to { filter: hue-rotate(1turn); }
 }
 
 @keyframes bounce {
     0% {
-        width: 380px;
-        height: 380px;
-        margin: -190px 0 0 -190px;
+        width: 94%;
+        height: 94%;
+        margin: -47% 0 0 -47%;
     }
     20% {
-        width: 410px;
-        height: 410px;
-        margin: -205px 0 0 -205px;
+        width: 103%;
+        height: 103%;
+        margin: -51.5% 0 0 -51.5%;
     }
     40% {
-        width: 390px;
-        height: 390px;
-        margin: -195px 0 0 -195px;
+        width: 97%;
+        height: 97%;
+        margin: -48.5% 0 0 -48.5%;
     }
     60% {
-        width: 406px;
-        height: 406px;
-        margin: -203px 0 0 -203px;
+        width: 101.5%;
+        height: 101.5%;
+        margin: -50.75% 0 0 -50.75%;
     }
     80% {
-        width: 396px;
-        height: 396px;
-        margin: -198px 0 0 -198px;
+        width: 99%;
+        height: 99%;
+        margin: -49.5% 0 0 -49.5%;
     }
     100% {
-        width: 400px;
-        height: 400px;
-        margin: -200px 0 0 -200px;
+        width: 100%;
+        height: 100%;
+        margin: -50% 0 0 -50%;
     }
 }
 
@@ -81,8 +82,8 @@ body {
 #clicker input[type="button"] {
     position: relative;
 
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
 }
 
 #clicker input[type="button"] {
@@ -93,12 +94,12 @@ body {
 
     border-radius: 50%;
 
-    width: 400px;
-    height: 400px;
+    width: 100%;
+    height: 100%;
 
     top: 50%;
     left: 50%;
-    margin: -200px 0 0 -200px;
+    margin: -50% 0 0 -50%;
 
     border: none;
     pointer-events: auto;
@@ -147,12 +148,18 @@ body {
 
 .content .left {
     flex: 1;
-    padding: 5px;
+    padding: 3px;
+}
+
+.content .middle {
+    flex: 2;
+    padding: 3px;
+    max-width: 500px;
 }
 
 .content .right {
     flex: 2;
-    padding: 5px;
+    padding: 3px;
 }
 
 #gamergoo {
@@ -188,3 +195,22 @@ ul.tree-view ul > li::before {
 }
 
 ul.tree-view ul > li:last-child::after { top: .7em }
+
+.title-bar-text { font-weight: normal }
+
+.window-body {
+    max-height: 100vh;
+    visibility: visible;
+    transition: max-height .1s ease;
+}
+
+.minimize {
+    max-height: 0;
+    visibility: hidden;
+    transition: max-height .1s ease;
+}
+
+.building {
+    height: 40px;
+    width: 400px;
+}

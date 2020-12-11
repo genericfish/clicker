@@ -27,7 +27,24 @@ function nice_format(num) {
         " " + english_numbers[place]
 }
 
+let windows = [
+    null,
+    document.getElementById("window-1"),
+    document.getElementById("window-2"),
+    document.getElementById("window-3")
+]
+
+function minimize(win) {
+    windows[win].classList.add("minimize")
+}
+
+function maximize(win) {
+    windows[win].classList.remove("minimize")
+}
+
 let game = (() => {
+    let running = true
+
     let graphics = {
         bounce: (() => {
             return () => {
@@ -65,25 +82,32 @@ let game = (() => {
     let towers = {
         autoclicker: {
             name: "triggerbot",
-            base_cost: 15,
-            cost_multiplier: 1.0145,
+            base_cost: 10,
+            cost_multiplier: 1.0135,
             base_rate: .35,
             base_click: 0,
         },
+        stream: {
+            name: "bigfollows",
+            base_cost: 250,
+            cost_multiplier: 1.0135,
+            base_rate: 5,
+            base_click: 0
+        },
         coomfactory: {
             name: "coom factory",
-            base_cost: 850,
-            cost_multiplier: 1.017,
-            base_rate: 35,
+            base_cost: 2000,
+            cost_multiplier: 1.0175,
+            base_rate: 50,
             base_click: 0,
         },
         dogfarm: {
             name: "dog farm",
-            base_cost: 8500,
-            cost_multiplier: 1.013,
+            base_cost: 6500,
+            cost_multiplier: 1.0181,
             base_rate: 125,
             base_click: 0,
-        }
+        },
     }
 
     let display = {
@@ -94,14 +118,16 @@ let game = (() => {
 
     let game = {
         towers: {
-            autoclicker: [0, 0],
-            coomfactory: [0, 0],
-            dogfarm: [0, 0]
+            autoclicker: [0,0],
+            stream: [0,0],
+            coomfactory: [0,0],
+            dogfarm: [0,0],
         },
         modifiers: {
             click: [0,0],
             offline: [0,0],
             autoclicker: [0,0],
+            stream: [0,0],
             coomfactory: [0,0],
             dogfarm: [0,0],
         },
@@ -116,13 +142,15 @@ let game = (() => {
         window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
     }
 
-    function add_goo(amt) {
-        game.gamergoo += amt
-        if (amt > 0)
-            game.gamergoo_history += amt
-        display.total.innerHTML = nice_format(Math.round(game.gamergoo))
+    function add_goo(amt, add) {
+        add = add === undefined
 
-        save()
+        game.gamergoo += amt
+
+        if (amt > 0 && add)
+            game.gamergoo_history += amt
+
+        display.total.innerHTML = nice_format(Math.round(game.gamergoo))
     }
 
     display.button.addEventListener("mousedown", e => {
@@ -138,6 +166,7 @@ let game = (() => {
         active: undefined,
         active_amount: 1,
         active_cost: 1,
+        active_refund: 1,
         stats: {
             header: document.getElementById("stats-header"),
             rate: document.getElementById("stats-rate"),
@@ -148,6 +177,9 @@ let game = (() => {
                 document.getElementById("shop-hundred"),
             ],
             cost: document.getElementById("shop-cost"),
+            refund: document.getElementById("shop-refund"),
+            refundcontainer: document.getElementById("shop-refund-container"),
+            sell: document.getElementById("shop-sell"),
             buy: document.getElementById("shop-buy"),
             owned: document.getElementById("stats-owned"),
             producing: document.getElementById("stats-producing")
@@ -186,46 +218,110 @@ let game = (() => {
         shop.stats.radio[0].click()
     }
 
+    function create_row(tower, number) {
+        let row = document.createElement("div")
+
+        row.setAttribute(
+            "style",
+            `background: url(assets/${tower}.png);` +
+            "background-size: 45px 45px;" +
+            "height: 45px;" +
+            `width: ${number * 45}px;` +
+            "margin: 0 auto;"
+        )
+
+        return row
+    }
+
+    function update_buildings() {
+        windows[2].innerHTML = ""
+
+        for (tower in towers) {
+            let count = game.towers[tower][0]
+            if (!count) continue
+
+            let fieldset = document.createElement("fieldset")
+            let legend = document.createElement("legend")
+
+            legend.innerHTML = towers[tower].name
+
+            for (let x = 0; x < Math.floor(count / 10); x++)
+                fieldset.appendChild(create_row(tower, 10))
+
+            if (count % 10 > 0)
+                fieldset.appendChild(create_row(tower, count % 10))
+
+            fieldset.setAttribute("style", "border: 1px solid black;")
+            fieldset.appendChild(legend)
+
+            windows[2].appendChild(fieldset)
+        }
+    }
+
     function setup() {
-        if (window.localStorage["gamestate"] === undefined)
+        if (window.localStorage["gamestate"] == undefined)
             save()
 
-        game = JSON.parse(window.atob(window.localStorage["gamestate"]))
+        game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
 
         if (game.last_save === undefined)
             game.last_save = Date.now()
 
-        if (game.save_version === undefined) {
-            game.modifiers = {
-                click: [0,0],
-                offline: [0,0],
-                autoclicker: [0,0],
-                coomfactory: [0,0],
-                dogfarm: [0,0],
-            }
-            game.save_version = 2
+        if (game.save_version === undefined || game.save_version < 3) {
+            // Copy first level nested objects
+            for (let key in game)
+                if (game_load.hasOwnProperty(key))
+                    if (game[key] instanceof Object)
+                        game[key] = Object.assign(game[key], game_load[key])
+                    else
+                        game[key] = game_load[key]
+
+            game.save_version = 3
         }
 
         create_shop()
+        update_buildings()
+    }
+
+    function geometric_sum(base, ratio, exp) {
+        // Geometric Partial Sum
+        return Math.ceil(
+            base * (1 - ratio ** exp) /  (1 - ratio)
+        )
     }
 
     function update_costs() {
         let tower = towers[shop.active]
 
-        // Geometric Partial Sum
-        shop.active_cost = Math.ceil(
-            (tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0])* (
-            (1 - tower.cost_multiplier ** shop.active_amount)
-            / (1 - tower.cost_multiplier)
-        ))
+        shop.active_cost = geometric_sum(
+            tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0],
+            tower.cost_multiplier,
+            shop.active_amount
+        )
+
+        shop.active_refund = geometric_sum(
+            tower.base_cost * tower.cost_multiplier **
+                (game.towers[shop.active][0] - shop.active_amount),
+            tower.cost_multiplier,
+            shop.active_amount
+        )
+
+        if (shop.active_amount > game.towers[shop.active][0]) {
+            shop.stats.sell.setAttribute("disabled", "disabled")
+            shop.stats.refundcontainer.setAttribute("style", "visibility:hidden;")
+        } else {
+            shop.stats.sell.removeAttribute("disabled")
+            shop.stats.refundcontainer.removeAttribute("style")
+        }
 
         shop.stats.cost.innerHTML = nice_format(shop.active_cost)
+        shop.stats.refund.innerHTML = nice_format(shop.active_refund)
     }
 
     function update_rates() {
         game.rate = 0
 
-        for (tower in game.towers) {
+        for (tower in towers) {
             let rate = game.towers[tower][0] * towers[tower].base_rate
             game.towers[tower][1] = rate
             game.rate += rate
@@ -236,15 +332,20 @@ let game = (() => {
 
     function loop() {
         let now = Date.now()
-        if (now - game.last_save >= 50)
-            add_goo(game.rate / 20)
 
-        window.requestAnimationFrame(loop)
+        if (now - game.last_save >= 100) {
+            add_goo(game.rate / 10)
+            save()
+        }
+
+        if (running)
+            window.requestAnimationFrame(loop)
     }
 
     // exports
     return {
         start: () => {
+            running = true
             // Setup save file and shop listings
             setup()
 
@@ -273,9 +374,25 @@ let game = (() => {
 
                 update_costs()
                 update_rates()
+                update_buildings()
 
                 shop.stats.owned.innerHTML = game.towers[shop.active][0]
-                shop.stats.producing.innerHTML = game.towers[shop.active][1]
+                shop.stats.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+
+                save()
+            }
+        },
+        sell: () => {
+            if (game.towers[shop.active][0] >= shop.active_amount) {
+                add_goo(shop.active_refund, false)
+                game.towers[shop.active][0] -= shop.active_amount
+
+                update_costs()
+                update_rates()
+                update_buildings()
+
+                shop.stats.owned.innerHTML = game.towers[shop.active][0]
+                shop.stats.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
                 save()
             }
@@ -283,6 +400,13 @@ let game = (() => {
         stats: () => {
             console.log(game.gamergoo)
             console.log(game.gamergoo_history)
+        },
+        wipe: () => {
+            running = false
+            setTimeout(() => {
+                window.localStorage.removeItem("gamestate")
+                window.location.reload()
+            }, 100)
         }
     }
 })()

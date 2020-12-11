@@ -6,7 +6,7 @@
     <title>Khoima Clicker</title>
 
     <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.16/dist/98.css">
-    <link rel="stylesheet" href="assets/khoima.css">
+    <link rel="stylesheet" href="assets/khoima.min.css">
 </head>
 <body>
     <div class="content">
@@ -15,12 +15,12 @@
                 <div class="title-bar">
                     <div class="title-bar-text">khoima clicker</div>
                     <div class="title-bar-controls">
-                        <button aria-label="Minimize"></button>
-                        <button aria-label="Maximize"></button>
-                        <button aria-label="Close"></button>
+                        <button aria-label="Minimize" onclick="minimize(1)"></button>
+                        <button aria-label="Maximize" onclick="maximize(1)"></button>
+                        <button aria-label="Close" onclick="minimize(1)"></button>
                     </div>
                 </div>
-                <div class="window-body">
+                <div id="window-1"  class="window-body">
                     <div id="gamergoo">
                         <div id="counter">0</div>
                         gamergoo
@@ -32,18 +32,30 @@
                 </div>
             </div>
         </div>
-        <div class="right">
-            <h1 id="title">khoima clicker</h1>
+        <div class="middle">
             <div class="window">
                 <div class="title-bar">
-                    <div class="title-bar-text">khoima shop</div>
+                    <div class="title-bar-text">buildings</div>
                     <div class="title-bar-controls">
-                        <button aria-label="Minimize"></button>
-                        <button aria-label="Maximize"></button>
-                        <button aria-label="Close"></button>
+                        <button aria-label="Minimize" onclick="minimize(2)"></button>
+                        <button aria-label="Maximize" onclick="maximize (2)"></button>
+                        <button aria-label="Close" onclick="minimize(2)"></button>
                     </div>
                 </div>
-                <div class="window-body">
+                <div id="window-2" class="window-body"></div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="window">
+                <div class="title-bar">
+                    <div class="title-bar-text">shop</div>
+                    <div class="title-bar-controls">
+                        <button aria-label="Minimize" onclick="minimize(3)"></button>
+                        <button aria-label="Maximize" onclick="maximize (3)"></button>
+                        <button aria-label="Close" onclick="minimize(3)"></button>
+                    </div>
+                </div>
+                <div id="window-3" class="window-body">
                     <div class="content">
                         <div class="left">
                             <ul class="tree-view">
@@ -87,9 +99,11 @@
                                     <label for="shop-hundred">100</label>
                                 </section>
                             </fieldset>
-                            <p style="margin-top:12px;">Cost: <span id="shop-cost">1</span> gamergoo</p>
+                            <div style="margin-top:12px;">Cost: <span id="shop-cost">1</span> gamergoo</div>
+                            <div id="shop-refund-container">Sell: <span id="shop-refund">1</span> gamergoo</div>
                             <section class="field-row" style="margin-top: 12px;">
                                 <button id="shop-buy" onclick="game.buy()">buy</button>
+                                <button id="shop-sell" onclick="game.sell()">sell</button>
                             </section>
                         </div>
                     </div>
@@ -98,6 +112,6 @@
         </div>
     </div>
 
-    <script src="assets/khoima.js"></script>
+    <script src="assets/khoima.min.js"></script>
 </body>
 </html>
