@@ -153,8 +153,14 @@ let game = (() => {
         display.total.innerHTML = nice_format(Math.round(game.gamergoo))
     }
 
+    let last_click = Date.now()
+
     display.button.addEventListener("mousedown", e => {
+        let now = Date.now()
+        if (now - last_click <= 77) return
+
         let amount = game.modifiers.click[0] + 1
+        last_click = now
 
         add_goo(amount)
         graphics.floater(amount, e.clientX, e.clientY)
