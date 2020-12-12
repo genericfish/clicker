@@ -1,6 +1,29 @@
 PATCHNOTES:
 
-=== 00:42 UTC 12 December 2020 ===
-+ gamergoo total is now displayed in page title
+=== 07:00 UTC on 12 December 2020 (v0.2.2) ===
+# Gameplay
++ made goldenkhoi more frequent
++ made goo per click 5% of goo per second
+
+=== 04:52 UTC on 12 December 2020 (v0.2.1) ===
+# Gameplay
++ gamer girl water (art pending)
+= fixed goldenkhoi spawn
+
+# Misc
+= optimized building window generation
+
+=== 00:42 UTC on 12 December 2020 (v0.2) ===
+# Gameplay
 + game now runs in background
 + after 5 minutes of no clicking, the game reduces the rate of gamer goo per second by 85%
+
+# Misc
++ gamergoo total is now displayed in page title
+
+=== Misc patches before 12 December 2020 (v0.1) ===
++ added goldenkhoi
++ added ability to sell buildings
++ added window to view buildings
++ gamergoo per click now gains 1% of gamer goo per second
++ limited maximum clicks per second to approx 13

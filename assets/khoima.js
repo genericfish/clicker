@@ -79,13 +79,14 @@ let game = (() => {
         },
         create_row: (tower, number) => {
             let row = document.createElement("div")
+            let rows = Math.max(Math.floor(number / 10), 1)
 
             row.setAttribute(
                 "style",
                 `background: url(assets/${tower}.png);` +
                 "background-size: 45px 45px;" +
-                "height: 45px;" +
-                `width: ${number * 45}px;` +
+                `height: ${rows * 45}px;` +
+                `width: ${(rows > 1 ? 10 : number) * 45}px;` +
                 "margin: 0 auto;"
             )
 
@@ -137,8 +138,8 @@ let game = (() => {
 
                 container.classList.add("row-container")
 
-                for (let x = 0; x < Math.floor(count / 10); x++)
-                    container.appendChild(graphics.create_row(tower, 10))
+                if (count > 9)
+                    container.appendChild(graphics.create_row(tower, Math.floor(count / 10) * 10))
 
                 if (count % 10 > 0)
                     container.appendChild(graphics.create_row(tower, count % 10))
@@ -181,6 +182,13 @@ let game = (() => {
             base_rate: 60,
             base_click: 0,
         },
+        water: {
+            name: "gamer girl water",
+            base_cost: 100000,
+            cost_multiplier: 1.015,
+            base_rate: 200,
+            base_click: 0,
+        }
     }
 
     let display = {
@@ -195,6 +203,7 @@ let game = (() => {
             stream: [0,0],
             coomfactory: [0,0],
             dogfarm: [0,0],
+            water: [0,0],
         },
         modifiers: {
             click: [0,0],
@@ -203,6 +212,7 @@ let game = (() => {
             stream: [0,0],
             coomfactory: [0,0],
             dogfarm: [0,0],
+            water: [0,0],
         },
         gamergoo: 0.0,
         gamergoo_history: 0.0,
@@ -283,7 +293,7 @@ let game = (() => {
                 if (goldenkhoi_active)
                     amount += Math.max(game.rate * .15, 5)
 
-                amount += game.rate * .01
+                amount += game.rate * .05
 
                 last_click = now
 
@@ -349,8 +359,7 @@ let game = (() => {
         display.rate.innerHTML = nice_format(game.rate.toFixed(2)) + " gamergoo per second"
     }
 
-    // Golden appears every 1 to 6 minutes
-    let goldenkhoi = Math.ceil((Math.random() * 18000) + 300)
+    let goldenkhoi = Math.ceil((Math.random() * 15000) + 200)
     let goldenkhoi_active = false
 
     function make_khoi() {
@@ -363,16 +372,18 @@ let game = (() => {
             `left:${Math.ceil(Math.random() * 70) + 15}%;`
         )
 
-        khoi.addEventListener("click", e => {
+        khoi.addEventListener("click", () => {
             goldenkhoi_active = true
             document.body.removeChild(khoi)
 
             for (let x = 1; x <= 3; x++) windows[x].parentElement.classList.add("khoi")
+            document.getElementById("background").classList.add("khoi")
 
             setTimeout(() => {
                 goldenkhoi_active = false
                 removed = true
                 for (let x = 1; x <= 3; x++) windows[x].parentElement.classList.remove("khoi")
+                document.getElementById("background").classList.remove("khoi")
             }, 10000)
         })
 
@@ -385,7 +396,7 @@ let game = (() => {
 
     let last_click = Date.now()
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", () => {
         last_click = Date.now()
     })
 
@@ -436,8 +447,8 @@ let game = (() => {
                 last_updates[2] = frames
             }
 
-            if (frames == goldenkhoi) {
-                goldenkhoi = frames + Math.ceil((Math.random() * 30000) + 6000)
+            if (frames >= goldenkhoi) {
+                goldenkhoi = frames + Math.ceil((Math.random() * 15000) + 200)
                 make_khoi()
             }
 
