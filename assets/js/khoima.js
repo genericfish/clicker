@@ -27,7 +27,7 @@ function nice_format(num) {
         " " + english_numbers[place]
 }
 
-let windows = [
+const windows = [
     null,
     document.getElementById("window-1"),
     document.getElementById("window-2"),
@@ -42,7 +42,7 @@ function maximize(win) {
     windows[win].classList.remove("minimize")
 }
 
-let game = (() => {
+const game = (() => {
     let running = true
 
     let graphics = {
@@ -83,7 +83,7 @@ let game = (() => {
 
             row.setAttribute(
                 "style",
-                `background: url(assets/${tower}.png);` +
+                `background: url(assets/images/buildings/${tower}.png);` +
                 "background-size: 45px 45px;" +
                 `height: ${rows * 45}px;` +
                 `width: ${(rows > 1 ? 10 : number) * 45}px;` +

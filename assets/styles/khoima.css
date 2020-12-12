@@ -1,4 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@keyframes bob {
+    from {
+        width: 200px;
+        height: 200px;
+        transform: rotate(-.1turn);
+        margin: -100px 0 0 -100px;
+        filter: hue-rotate(-1turn);
+    }
+    to {
+        width: 120px;
+        height: 120px;
+        transform: rotate(.1turn);
+        margin: -60px 0 0 -60px;
+        filter: hue-rotate(1turn);
+    }
+}
+
 
 @keyframes fish {
     to { filter: hue-rotate(1turn); }
@@ -42,21 +58,6 @@
     to { bottom: 200px; opacity: 0; }
 }
 
-button,
-label,
-input,
-textarea,
-select,
-option,
-ul.tree-view,
-.window,
-.title-bar {
-    font-family: "VT323", Arial;
-    font-size: 20px;
-    letter-spacing: 2px;
-    line-height: 1.1em;
-}
-
 body { padding: 0 }
 
 #title {
@@ -80,7 +81,7 @@ body { padding: 0 }
 #clicker input[type="button"] {
     position: absolute;
 
-    background: url("khoima.png");
+    background: url(../images/gameplay/khoima.png);
     background-size: contain;
 
     border-radius: 50%;
@@ -119,7 +120,7 @@ body { padding: 0 }
 .click-float::after {
     position: absolute;
     content: " ";
-    background: url("mini.png");
+    background: url(../images/gameplay/mini.png);
     background-size: contain;
 
     width: 1.5rem;
@@ -182,28 +183,6 @@ body { padding: 0 }
     color: purple;
 }
 
-ul.tree-view ul {
-    margin-left: 22px;
-}
-
-ul.tree-view a { color: darkgreen }
-ul.tree-view details > summary::before { margin-top: 5px }
-
-ul.tree-view ul > li::before {
-    top: .6em;
-    width: 12px;
-}
-
-ul.tree-view ul > li:last-child::after { top: .7em }
-
-.title-bar-text { font-weight: normal }
-
-.window-body {
-    max-height: 10000vh;
-    visibility: visible;
-    transition: max-height .1s ease;
-}
-
 .minimize {
     max-height: 0;
     visibility: hidden;
@@ -216,35 +195,8 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     overflow-x: hidden;
 }
 
-#background {
-    position: fixed;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-@keyframes bob {
-    from {
-        width: 200px;
-        height: 200px;
-        transform: rotate(-.1turn);
-        margin: -100px 0 0 -100px;
-        filter: hue-rotate(-1turn);
-    }
-    to {
-        width: 120px;
-        height: 120px;
-        transform: rotate(.1turn);
-        margin: -60px 0 0 -60px;
-        filter: hue-rotate(1turn);
-    }
-}
-
 #goldenkhoi {
-    background: url(strechmax.png);
+    background: url(../images/gameplay/strechmax.png);
     background-size: cover;
     animation: bob .5s ease infinite alternate;
     width: 150px;

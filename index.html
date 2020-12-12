@@ -6,7 +6,8 @@
     <title>Khoima Clicker</title>
 
     <link id="theme" rel="stylesheet" href="https://unpkg.com/98.css">
-    <link rel="stylesheet" href="assets/khoima.css">
+    <link rel="stylesheet" href="assets/styles/khoima.css">
+    <link rel="stylesheet" href="assets/styles/windows.css">
 </head>
 <body>
     <div id="background"></div>
@@ -113,34 +114,7 @@
         </div>
     </div>
 
-    <script src="assets/khoima.js"></script>
-    <script>
-        (() => {
-            function set_theme(theme) {
-                if (theme === "xp") {
-                    document.getElementById("background").setAttribute("style", "background:url(assets/xp.jpg);background-repeat:no-repeat;background-size:cover;background-position:center;")
-                } else if (theme === "98") {
-                    document.getElementById("background").setAttribute("style", "background: #008080;")
-                } else return
-
-                window.localStorage["theme"] = theme
-                document.getElementById("theme").setAttribute("href", `https://unpkg.com/${theme}.css`)
-            }
-
-            function toggle_theme() {
-                let current = window.localStorage["theme"] || "xp"
-
-                current = (current === "98") ? "xp" : "98"
-
-                set_theme(current)
-            }
-
-            document.addEventListener("keydown", e => {
-                if (e.key === "f") toggle_theme()
-            })
-
-            set_theme(window.localStorage["theme"] || "xp")
-        })()
-    </script>
+    <script src="assets/js/khoima.js"></script>
+    <script src="assets/js/windows.js"></script>
 </body>
 </html>
