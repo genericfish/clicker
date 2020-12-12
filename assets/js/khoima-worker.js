@@ -28,6 +28,36 @@ let game = (() => {
         }
 
         postMessage(["update_graphics", [["rate"], game.rate]])
+        save()
+    }
+
+    function geometric_sum(base, ratio, exp) {
+        // Geometric Partial Sum
+        return Math.ceil(
+            base * (1 - ratio ** exp) / (1 - ratio)
+        )
+    }
+
+    function update_costs() {
+        let tower = towers[shop.active]
+
+        shop.active_cost = geometric_sum(
+            tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0],
+            tower.cost_multiplier,
+            shop.active_amount
+        )
+
+        // Refund 92.5% of the buy price.
+        shop.active_refund = Math.ceil(
+            geometric_sum(
+                tower.base_cost * tower.cost_multiplier **
+                    (game.towers[shop.active][0] - shop.active_amount),
+                tower.cost_multiplier,
+                shop.active_amount
+            ) * .925
+        )
+
+        postMessage(["update_graphics", [["shop", "listings"], shop]])
     }
 
     function save() {
@@ -134,17 +164,21 @@ let game = (() => {
         },
         shop: (data) => {
             // Handle buying and selling
+            let action = data[0]
             let update = false
-            let [action, tower, amount, cost] = data
 
-            if (action == "buy" && game.gamergoo >= cost) {
-                add_goo(-cost, false)
-                game.towers[tower][0] += amount
+            shop = data[1]
+
+            if (action == "buy" && game.gamergoo >= shop.active_cost) {
+                add_goo(-shop.active_cost, false)
+                game.towers[shop.active][0] += shop.active_amount
 
                 update = true
-            } else if (action == "sell" && game.towers[tower][0] >= amount) {
-                add_goo(cost, false)
-                game.towers[tower][0] -= amount
+            } else if (action == "sell" &&
+                game.towers[shop.active][0] >= shop.active_amount
+            ) {
+                add_goo(shop.active_refund, false)
+                game.towers[shop.active][0] -= shop.active_amount
 
                 update = true
             }
@@ -153,6 +187,7 @@ let game = (() => {
                 // Update if number of towers has changed
                 save()
                 update_rates()
+                update_costs()
                 postMessage(["update_graphics", [["listings"]]])
             }
         },
@@ -171,7 +206,11 @@ let game = (() => {
         },
         hack: (data) => {
             add_goo(data, false)
-        }
+        },
+        update_costs: (data) => {
+            shop = data
+            update_costs()
+        },
     }
 })()
 

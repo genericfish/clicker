@@ -92,7 +92,7 @@ const game = (() => {
                         display.shop.owned.innerHTML = game.towers[shop.active][0]
                         display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
-                        update_costs()
+                        game_worker.postMessage(["update_costs", shop])
                     }
                 }
 
@@ -160,6 +160,7 @@ const game = (() => {
 
             document.body.appendChild(khoi)
         },
+        update_shop: (data) => { shop = data }
     }
 
     const towers = {
@@ -248,7 +249,7 @@ const game = (() => {
     }
 
     let shop = {
-        active: undefined,
+        active: "autoclicker",
         active_amount: 1,
         active_cost: 1,
         active_refund: 1,
@@ -283,8 +284,6 @@ const game = (() => {
                         document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
                         break
                     case "listings":
-                        update_costs()
-
                         graphics.update_buildings()
 
                         display.shop.owned.innerHTML = game.towers[shop.active][0]
@@ -292,6 +291,25 @@ const game = (() => {
                         break
                     case "rate":
                         display.rate.innerHTML = nice_format(data[1]) + " gamergoo per second"
+                        display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+                        break
+                    case "shop":
+                        shop = data[1]
+                        if (shop.active_cost > game.gamergoo)
+                            display.shop.buy.setAttribute("disabled", "disabled")
+                        else
+                            display.shop.buy.removeAttribute("disabled")
+
+                        if (shop.active_amount > game.towers[shop.active][0]) {
+                            display.shop.sell.setAttribute("disabled", "disabled")
+                            display.shop.refundcontainer.setAttribute("style", "visibility:hidden;")
+                        } else {
+                            display.shop.sell.removeAttribute("disabled")
+                            display.shop.refundcontainer.removeAttribute("style")
+                        }
+
+                        display.shop.cost.innerHTML = nice_format(shop.active_cost)
+                        display.shop.refund.innerHTML = nice_format(shop.active_refund)
                         break
                     default:
                         break
@@ -339,69 +357,26 @@ const game = (() => {
                 else
                     game[key] = game_load[key]
 
-        graphics.create_shop()
-        graphics.update_buildings()
+        display.button.addEventListener("mousedown", e => {
+            game_worker.postMessage(["click", [e.clientX, e.clientY]])
+        })
+
+        document.addEventListener("click", () => {
+            game_worker.postMessage(["interact"])
+        })
 
         game_worker.postMessage([
             "setup",
             [ game, towers, shop ]
         ])
 
-        display.button.addEventListener("mousedown", e => {
-            game_worker.postMessage(["click", [e.clientX, e.clientY]])
-        })
+        graphics.create_shop()
+        graphics.update_buildings()
 
         game_worker.onmessage = e => {
             if (functions.hasOwnProperty(e.data[0]))
                 functions[e.data[0]](e.data[1])
         }
-
-        document.addEventListener("click", () => {
-            game_worker.postMessage(["interact"])
-        })
-    }
-
-    function geometric_sum(base, ratio, exp) {
-        // Geometric Partial Sum
-        return Math.ceil(
-            base * (1 - ratio ** exp) /  (1 - ratio)
-        )
-    }
-
-    function update_costs() {
-        let tower = towers[shop.active]
-
-        shop.active_cost = geometric_sum(
-            tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0],
-            tower.cost_multiplier,
-            shop.active_amount
-        )
-
-        // Refund 92.5% of the buy price.
-        shop.active_refund = Math.ceil(
-            geometric_sum(
-                tower.base_cost * tower.cost_multiplier **
-                    (game.towers[shop.active][0] - shop.active_amount),
-                tower.cost_multiplier,
-                shop.active_amount
-            ) * .925
-        )
-
-        if (shop.active_cost > game.gamergoo)
-            display.shop.buy.setAttribute("disabled", "disabled")
-        else
-            display.shop.buy.removeAttribute("disabled")
-
-        if (shop.active_amount > game.towers[shop.active][0]) {
-            display.shop.sell.setAttribute("disabled", "disabled")
-            display.shop.refundcontainer.setAttribute("style", "visibility:hidden;")
-        } else {
-            display.shop.sell.removeAttribute("disabled")
-            display.shop.refundcontainer.removeAttribute("style")
-        }
-
-        display.shop.cost.innerHTML = nice_format(shop.active_cost)
-        display.shop.refund.innerHTML = nice_format(shop.active_refund)
     }
 
     // Exports
@@ -413,18 +388,10 @@ const game = (() => {
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
-            update_costs()
+            //game_worker.postMessage(["update_costs", shop])
         },
         shop: (action) => {
-            game_worker.postMessage([
-                "shop",
-                [
-                    action,
-                    shop.active,
-                    shop.active_amount,
-                    (action == "buy") ? shop.active_cost : shop.active_refund
-                ]
-            ])
+            game_worker.postMessage(["shop", [action, shop]])
         },
         stats: () => {
             console.log(
