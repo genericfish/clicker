@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="assets/khoima.css">
 </head>
 <body>
+    <div id="background"></div>
     <div class="content">
         <div class="left">
             <div class="window">
@@ -115,26 +116,30 @@
     <script src="assets/khoima.js"></script>
     <script>
         (() => {
-            const theme = document.getElementById("theme")
-            let current = "xp"
+            function set_theme(theme) {
+                if (theme === "xp") {
+                    document.getElementById("background").setAttribute("style", "background:url(assets/xp.jpg);background-repeat:no-repeat;background-size:cover;background-position:center;")
+                } else if (theme === "98") {
+                    document.getElementById("background").setAttribute("style", "background: #008080;")
+                } else return
+
+                window.localStorage["theme"] = theme
+                document.getElementById("theme").setAttribute("href", `https://unpkg.com/${theme}.css`)
+            }
 
             function toggle_theme() {
-                if (current === "98") {
-                    current = "xp"
-                    document.body.setAttribute("style", "height: 100vh; background: url(assets/xp.jpg);background-repeat: no-repeat;background-size: cover;background-position: center;")
-                } else {
-                    current = "98"
-                    document.body.setAttribute("style", "background: #008080;")
-                }
+                let current = window.localStorage["theme"] || "xp"
 
-                theme.setAttribute("href", `https://unpkg.com/${current}.css`)
+                current = (current === "98") ? "xp" : "98"
+
+                set_theme(current)
             }
 
             document.addEventListener("keydown", e => {
                 if (e.key === "f") toggle_theme()
             })
 
-            toggle_theme()
+            set_theme(window.localStorage["theme"] || "xp")
         })()
     </script>
 </body>

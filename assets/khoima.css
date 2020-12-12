@@ -94,11 +94,20 @@ body { padding: 0 }
 
     border: none;
     pointer-events: auto;
+
+    cursor: pointer;
 }
 
 #clicker input[type="button"].clicked { animation: bounce .3s ease }
 
 #clicker input[type="button"]:focus { outline: 0 }
+
+.khoi {
+    color: #0ff;
+    animation: fish 2s linear infinite alternate;
+    text-shadow: -1px -1px 0 #000 1px 1px 0 #000
+        1px -1px 0 #000 -1px 1px 0 #000;
+}
 
 .click-float {
     position: relative;
@@ -205,4 +214,43 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     max-height: 360px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+#background {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+@keyframes bob {
+    from {
+        width: 200px;
+        height: 200px;
+        transform: rotate(-.1turn);
+        margin: -100px 0 0 -100px;
+        filter: hue-rotate(-1turn);
+    }
+    to {
+        width: 120px;
+        height: 120px;
+        transform: rotate(.1turn);
+        margin: -60px 0 0 -60px;
+        filter: hue-rotate(1turn);
+    }
+}
+
+#goldenkhoi {
+    background: url(strechmax.png);
+    background-size: cover;
+    animation: bob .5s ease infinite alternate;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
 }
