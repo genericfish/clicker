@@ -1,5 +1,9 @@
 PATCHNOTES:
 
+=== 20:51 UTC on 12 December 2020 (v0.3.0) ===
+# Misc
++ khoima clicker is now multithreadded (better performance)
+
 === 07:00 UTC on 12 December 2020 (v0.2.2) ===
 # Gameplay
 + made goldenkhoi more frequent

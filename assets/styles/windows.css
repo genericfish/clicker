@@ -47,6 +47,10 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     transition: max-height .1s ease;
 }
 
+.title-bar {
+    cursor: pointer;
+}
+
 #background {
     position: fixed;
     top: 0;

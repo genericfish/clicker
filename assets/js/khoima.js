@@ -27,25 +27,10 @@ function nice_format(num) {
         " " + english_numbers[place]
 }
 
-const windows = [
-    null,
-    document.getElementById("window-1"),
-    document.getElementById("window-2"),
-    document.getElementById("window-3")
-]
-
-function minimize(win) {
-    windows[win].classList.add("minimize")
-}
-
-function maximize(win) {
-    windows[win].classList.remove("minimize")
-}
-
 const game = (() => {
-    let running = true
+    const game_worker = new Worker("assets/js/khoima-worker.js")
 
-    let graphics = {
+    const graphics = {
         bounce: (() => {
             return () => {
                 display.button.classList.add("clicked")
@@ -99,13 +84,13 @@ const game = (() => {
 
                 let eventHandler = (tower) => {
                     return () => {
-                        shop.stats.header.innerHTML = towers[tower].name
-                        shop.stats.rate.innerHTML = towers[tower].base_rate
-                        shop.stats.click.innerHTML = towers[tower].base_click
+                        display.shop.header.innerHTML = towers[tower].name
+                        display.shop.rate.innerHTML = towers[tower].base_rate
+                        display.shop.click.innerHTML = towers[tower].base_click
                         shop.active = tower
 
-                        shop.stats.owned.innerHTML = game.towers[shop.active][0]
-                        shop.stats.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+                        display.shop.owned.innerHTML = game.towers[shop.active][0]
+                        display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
                         update_costs()
                     }
@@ -118,10 +103,10 @@ const game = (() => {
                 link.href = "#"
                 link.innerHTML = towers[tower].name
                 listing.appendChild(link)
-                shop.listings.appendChild(listing)
+                display.shop.listings.appendChild(listing)
             }
 
-            shop.stats.radio[0].click()
+            display.shop.radio[0].click()
         },
         update_buildings: () => {
             windows[2].innerHTML = ""
@@ -150,10 +135,34 @@ const game = (() => {
 
                 windows[2].appendChild(fieldset)
             }
-        }
+        },
+        goldenkhoi: () => {
+            let khoi = document.createElement("div")
+            khoi.setAttribute("id", "goldenkhoi")
+            khoi.setAttribute("style",
+                `top:${Math.ceil(Math.random() * 70) + 15}%;` +
+                `left:${Math.ceil(Math.random() * 70) + 15}%;`
+            )
+
+            khoi.addEventListener("click", () => {
+                game_worker.postMessage(["goldenkhoi"])
+                try { document.body.removeChild(khoi) } catch (_) {}
+
+                for (let window of windows)
+                    if (window != null)
+                        window.parentElement.classList.add("khoi")
+                document.getElementById("background").classList.add("khoi")
+            })
+
+            setTimeout(() => {
+                try { document.body.removeChild(khoi) } catch (_) {}
+            }, 25000)
+
+            document.body.appendChild(khoi)
+        },
     }
 
-    let towers = {
+    const towers = {
         autoclicker: {
             name: "triggerbot",
             base_cost: 10,
@@ -191,10 +200,28 @@ const game = (() => {
         }
     }
 
-    let display = {
+    const display = {
         rate: document.getElementById("cps"),
         total: document.getElementById("counter"),
-        button: document.getElementById("kfc")
+        button: document.getElementById("kfc"),
+        shop: {
+            header: document.getElementById("stats-header"),
+            rate: document.getElementById("stats-rate"),
+            click: document.getElementById("stats-click"),
+            radio: [
+                document.getElementById("shop-one"),
+                document.getElementById("shop-ten"),
+                document.getElementById("shop-hundred"),
+            ],
+            cost: document.getElementById("shop-cost"),
+            refund: document.getElementById("shop-refund"),
+            refundcontainer: document.getElementById("shop-refund-container"),
+            sell: document.getElementById("shop-sell"),
+            buy: document.getElementById("shop-buy"),
+            owned: document.getElementById("stats-owned"),
+            producing: document.getElementById("stats-producing"),
+            listings: document.getElementById("listings"),
+        }
     }
 
     let game = {
@@ -220,45 +247,79 @@ const game = (() => {
         last_save: Date.now()
     }
 
-    function save() {
-        game.last_save = Date.now()
-        window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
-    }
-
-    function add_goo(amt, add) {
-        add = add === undefined
-
-        game.gamergoo += amt
-
-        if (amt > 0 && add)
-            game.gamergoo_history += amt
-
-        display.total.innerHTML = nice_format(Math.round(game.gamergoo))
-    }
-
     let shop = {
-        listings: document.getElementById("listings"),
         active: undefined,
         active_amount: 1,
         active_cost: 1,
         active_refund: 1,
-        stats: {
-            header: document.getElementById("stats-header"),
-            rate: document.getElementById("stats-rate"),
-            click: document.getElementById("stats-click"),
-            radio: [
-                document.getElementById("shop-one"),
-                document.getElementById("shop-ten"),
-                document.getElementById("shop-hundred"),
-            ],
-            cost: document.getElementById("shop-cost"),
-            refund: document.getElementById("shop-refund"),
-            refundcontainer: document.getElementById("shop-refund-container"),
-            sell: document.getElementById("shop-sell"),
-            buy: document.getElementById("shop-buy"),
-            owned: document.getElementById("stats-owned"),
-            producing: document.getElementById("stats-producing")
+    }
+
+    const functions = {
+        update_goo: (data) => {
+            // Update goo counter and history
+            game.gamergoo = data[0]
+            game.gamergoo_history = data[1]
+
+            display.total.innerHTML = nice_format(Math.round(game.gamergoo))
+        },
+        click: (data) => {
+            // Click graphics assuming successful click
+            graphics.floater(Math.round(data[2] * 100) / 100, data[0], data[1])
+            graphics.bounce()
+        },
+        update_graphics: (data) => {
+            // Update clicker graphics
+            if (!data.length) return
+
+            for (let message of data[0]) {
+                switch (message) {
+                    case "buttons":
+                        if (shop.active_cost > game.gamergoo)
+                            display.shop.buy.setAttribute("disabled", "disabled")
+                        else
+                            display.shop.buy.removeAttribute("disabled")
+                        break
+                    case "title":
+                        document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
+                        break
+                    case "listings":
+                        update_costs()
+
+                        graphics.update_buildings()
+
+                        display.shop.owned.innerHTML = game.towers[shop.active][0]
+                        display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+                        break
+                    case "rate":
+                        display.rate.innerHTML = nice_format(data[1]) + " gamergoo per second"
+                        break
+                    default:
+                        break
+                }
+            }
+        },
+        save: (data) => {
+            // Sync worker gamestate with main thread, and save state to localstorage
+            game = data[0]
+            game.last_save = Date.now()
+
+            window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
+        },
+        goldenkhoi: () => {
+            // Spawn golden khoi
+            graphics.goldenkhoi()
+        },
+        goldenkhoi_end: () => {
+            for (let window of windows)
+                if (window != null)
+                    window.parentElement.classList.remove("khoi")
+            document.getElementById("background").classList.remove("khoi")
         }
+    }
+
+    function save() {
+        game.last_save = Date.now()
+        window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
     }
 
     function setup() {
@@ -281,27 +342,23 @@ const game = (() => {
         graphics.create_shop()
         graphics.update_buildings()
 
-        let clicker = (() => {
-            let last_click = Date.now()
+        game_worker.postMessage([
+            "setup",
+            [ game, towers, shop ]
+        ])
 
-            display.button.addEventListener("mousedown", e => {
-                let now = Date.now()
-                if (now - last_click <= 77) return
+        display.button.addEventListener("mousedown", e => {
+            game_worker.postMessage(["click", [e.clientX, e.clientY]])
+        })
 
-                let amount = game.modifiers.click[0] + 1
+        game_worker.onmessage = e => {
+            if (functions.hasOwnProperty(e.data[0]))
+                functions[e.data[0]](e.data[1])
+        }
 
-                if (goldenkhoi_active)
-                    amount += Math.max(game.rate * .15, 5)
-
-                amount += game.rate * .05
-
-                last_click = now
-
-                add_goo(amount)
-                graphics.floater(Math.round(amount * 100) / 100, e.clientX, e.clientY)
-                graphics.bounce()
-            })
-        })()
+        document.addEventListener("click", () => {
+            game_worker.postMessage(["interact"])
+        })
     }
 
     function geometric_sum(base, ratio, exp) {
@@ -331,181 +388,43 @@ const game = (() => {
         )
 
         if (shop.active_cost > game.gamergoo)
-            shop.stats.buy.setAttribute("disabled", "disabled")
+            display.shop.buy.setAttribute("disabled", "disabled")
         else
-            shop.stats.buy.removeAttribute("disabled")
+            display.shop.buy.removeAttribute("disabled")
 
         if (shop.active_amount > game.towers[shop.active][0]) {
-            shop.stats.sell.setAttribute("disabled", "disabled")
-            shop.stats.refundcontainer.setAttribute("style", "visibility:hidden;")
+            display.shop.sell.setAttribute("disabled", "disabled")
+            display.shop.refundcontainer.setAttribute("style", "visibility:hidden;")
         } else {
-            shop.stats.sell.removeAttribute("disabled")
-            shop.stats.refundcontainer.removeAttribute("style")
+            display.shop.sell.removeAttribute("disabled")
+            display.shop.refundcontainer.removeAttribute("style")
         }
 
-        shop.stats.cost.innerHTML = nice_format(shop.active_cost)
-        shop.stats.refund.innerHTML = nice_format(shop.active_refund)
+        display.shop.cost.innerHTML = nice_format(shop.active_cost)
+        display.shop.refund.innerHTML = nice_format(shop.active_refund)
     }
 
-    function update_rates() {
-        game.rate = 0
-
-        for (tower in towers) {
-            let rate = game.towers[tower][0] * towers[tower].base_rate
-            game.towers[tower][1] = rate
-            game.rate += rate
-        }
-
-        display.rate.innerHTML = nice_format(game.rate.toFixed(2)) + " gamergoo per second"
-    }
-
-    let goldenkhoi = Math.ceil((Math.random() * 15000) + 200)
-    let goldenkhoi_active = false
-
-    function make_khoi() {
-        let khoi = document.createElement("div")
-        let removed = false
-
-        khoi.setAttribute("id", "goldenkhoi")
-        khoi.setAttribute("style",
-            `top:${Math.ceil(Math.random() * 70) + 15}%;` +
-            `left:${Math.ceil(Math.random() * 70) + 15}%;`
-        )
-
-        khoi.addEventListener("click", () => {
-            goldenkhoi_active = true
-            document.body.removeChild(khoi)
-
-            for (let x = 1; x <= 3; x++) windows[x].parentElement.classList.add("khoi")
-            document.getElementById("background").classList.add("khoi")
-
-            setTimeout(() => {
-                goldenkhoi_active = false
-                removed = true
-                for (let x = 1; x <= 3; x++) windows[x].parentElement.classList.remove("khoi")
-                document.getElementById("background").classList.remove("khoi")
-            }, 10000)
-        })
-
-        setTimeout(() => {
-            if (!removed) document.body.removeChild(khoi)
-        }, 45000)
-
-        document.body.appendChild(khoi)
-    }
-
-    let last_click = Date.now()
-
-    document.addEventListener("click", () => {
-        last_click = Date.now()
-    })
-
-    let loop = (() => {
-        let last_frame = Date.now()
-        let frames = 0
-        let last_updates = [0,0,0]
-
-        return () => {
-            let focused = !document["hidden"]
-            let now = Date.now()
-
-            // Approximately 100 FPS
-            if (now - last_frame >= 10)
-                frames += Math.round((now - last_frame) / 10)
-
-            // Every other frame (~20ms) add 1/50th of goo
-            if (frames - last_updates[0] >= 2) {
-                last_updates[0] = frames
-
-                let goo = undefined
-
-                if (!focused) {
-                    goo = game.rate
-                    document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
-                    save()
-                } else goo = game.rate / 50
-
-                if (now - last_click > 300000) goo *= .15
-
-                add_goo(goo)
-            }
-
-            // Every 25th frame (~250ms) update shop buy button
-            if (frames - last_updates[1] >= 25) {
-                if (shop.active_cost > game.gamergoo)
-                    shop.stats.buy.setAttribute("disabled", "disabled")
-                else
-                    shop.stats.buy.removeAttribute("disabled")
-
-                document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
-                last_updates[1] = frames
-            }
-
-            // Save game every second (~100 frames)
-            if (frames - last_updates[2] >= 25) {
-                save()
-                last_updates[2] = frames
-            }
-
-            if (frames >= goldenkhoi) {
-                goldenkhoi = frames + Math.ceil((Math.random() * 15000) + 200)
-                make_khoi()
-            }
-
-            last_frame = now
-        }
-    })
-
-    setInterval(loop(), 10)
-
-    // exports
+    // Exports
     return {
         start: () => {
             running = true
-            // Setup save file and shop listings
+            // Setup save file, graphics, and sync with worker thread
             setup()
-
-            // Update rates then give user gamergoo based on last save
-            update_rates()
-            let elapsed_time = (Date.now() - game.last_save) / 1000
-
-            // Maximum offline time is 8 hours
-            elapsed_time = (elapsed_time < (8 * 60 * 60)) ? elapsed_time : 8 * 60 * 60
-
-            // Earn goo at a rate of 0.85% of normal rate
-            let offline_goo = game.rate * 0.0085 * elapsed_time
-            add_goo(offline_goo)
-
-            // Begin main game loop
-            loop()
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
             update_costs()
         },
         shop: (action) => {
-            let update = false
-
-            if (action == "buy" && game.gamergoo >= shop.active_cost) {
-                add_goo(-shop.active_cost)
-                game.towers[shop.active][0] += shop.active_amount
-                update = true
-            } else if (action == "sell" && game.towers[shop.active][0] >= shop.active_amount) {
-                add_goo(shop.active_refund, false)
-                game.towers[shop.active][0] -= shop.active_amount
-                update = true
-            }
-
-            if (update) {
-                update_costs()
-                update_rates()
-                graphics.update_buildings()
-
-                shop.stats.owned.innerHTML = game.towers[shop.active][0]
-                shop.stats.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
-
-                save()
-            }
+            game_worker.postMessage([
+                "shop",
+                [
+                    action,
+                    shop.active,
+                    shop.active_amount,
+                    (action == "buy") ? shop.active_cost : shop.active_refund
+                ]
+            ])
         },
         stats: () => {
             console.log(
@@ -520,7 +439,7 @@ const game = (() => {
                 window.location.reload()
             }, 100)
         },
-        hack: (amt) => { add_goo(amt, false) }
+        worker: game_worker
     }
 })()
 

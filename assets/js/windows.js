@@ -1,3 +1,18 @@
+const windows = [
+    null,
+    document.getElementById("window-1"),
+    document.getElementById("window-2"),
+    document.getElementById("window-3")
+]
+
+function minimize(win) {
+    windows[win].classList.add("minimize")
+}
+
+function maximize(win) {
+    windows[win].classList.remove("minimize")
+}
+
 (() => {
     function set_theme(theme) {
         let background = document.getElementById("background")
