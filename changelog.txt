@@ -1,0 +1,6 @@
+PATCHNOTES:
+
+=== 00:42 UTC 12 December 2020 ===
++ gamergoo total is now displayed in page title
++ game now runs in background
++ after 5 minutes of no clicking, the game reduces the rate of gamer goo per second by 85%
