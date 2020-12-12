@@ -389,7 +389,7 @@ const game = (() => {
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
-            //game_worker.postMessage(["update_costs", shop])
+            game_worker.postMessage(["update_costs", shop])
         },
         shop: (action) => {
             game_worker.postMessage(["shop", [action, shop]])
