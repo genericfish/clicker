@@ -4,7 +4,8 @@ let game = (() => {
         last_click: undefined,
         golden_khoi: false,
         golden_khoi_frame: undefined,
-        last_interaction: undefined
+        last_interaction: undefined,
+        paused: false
     }
 
     function add_goo(amt, add) {
@@ -70,6 +71,8 @@ let game = (() => {
         let last_updates = [0,0,0]
 
         return () => {
+            if (game_state.paused) return
+
             let now = Date.now()
 
             // Approximately 100 FPS
@@ -204,13 +207,23 @@ let game = (() => {
                 postMessage(["goldenkhoi_end"])
             }, 12500)
         },
-        hack: (data) => {
-            add_goo(data, false)
-        },
         update_costs: (data) => {
             shop = data
             update_costs()
         },
+        hack: (data) => { add_goo(data, false) },
+        pause: () => { game_state.paused = !game_state.paused },
+        wipe: () => {
+            game_state.paused = true
+            game = undefined
+            save()
+        },
+        load: (data) => {
+            game = JSON.parse(atob(data))
+            update_rates()
+            update_costs()
+            save()
+        }
     }
 })()
 

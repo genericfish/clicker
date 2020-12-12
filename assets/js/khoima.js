@@ -318,10 +318,17 @@ const game = (() => {
         },
         save: (data) => {
             // Sync worker gamestate with main thread, and save state to localstorage
-            game = data[0]
-            game.last_save = Date.now()
 
-            window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
+            if (data)
+                game = data[0]
+
+            if (game != undefined) {
+                game.last_save = Date.now()
+                window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
+            } else {
+                window.localStorage.removeItem("gamestate")
+                window.location.reload()
+            }
         },
         goldenkhoi: () => {
             // Spawn golden khoi
@@ -335,14 +342,8 @@ const game = (() => {
         }
     }
 
-    function save() {
-        game.last_save = Date.now()
-        window.localStorage["gamestate"] = window.btoa(JSON.stringify(game))
-    }
-
     function setup() {
-        if (window.localStorage["gamestate"] == undefined)
-            save()
+        if (window.localStorage["gamestate"] == undefined) functions.save()
 
         game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
 
@@ -398,13 +399,6 @@ const game = (() => {
                 "gamergoo: " + game.gamergoo + '\n' +
                 "total gamergoo: " + game.gamergoo_history + '\n'
             )
-        },
-        wipe: () => {
-            running = false
-            setTimeout(() => {
-                window.localStorage.removeItem("gamestate")
-                window.location.reload()
-            }, 100)
         },
         worker: game_worker
     }
