@@ -60,3 +60,13 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     height: 100%;
     z-index: -1;
 }
+
+.minimize {
+    max-height: 0;
+    visibility: hidden;
+    transition: max-height .1s ease;
+}
+
+.window { position: absolute }
+
+#window-2 { min-width: 500px }

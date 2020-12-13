@@ -11,104 +11,96 @@
 </head>
 <body>
     <div id="background"></div>
-    <div class="content">
-        <div class="left">
-            <div class="window">
-                <div class="title-bar">
-                    <div class="title-bar-text">khoima clicker</div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Minimize" onclick="minimize(1)"></button>
-                        <button aria-label="Maximize" onclick="maximize(1)"></button>
-                        <button aria-label="Close" onclick="minimize(1)"></button>
-                    </div>
-                </div>
-                <div id="window-1"  class="window-body">
-                    <div id="gamergoo">
-                        <div id="counter">0</div>
-                        gamergoo
-                        <div id="cps" class="rate">0 gamergoo per second</div>
-                    </div>
-                    <div id="clicker">
-                        <input id="kfc" type="button"></input>
-                    </div>
-                </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">khoima clicker</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="minimize(1)"></button>
+                <button aria-label="Maximize" onclick="maximize(1)"></button>
+                <button aria-label="Close" onclick="minimize(1)"></button>
             </div>
         </div>
-        <div class="middle">
-            <div class="window">
-                <div class="title-bar">
-                    <div class="title-bar-text">buildings</div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Minimize" onclick="minimize(2)"></button>
-                        <button aria-label="Maximize" onclick="maximize (2)"></button>
-                        <button aria-label="Close" onclick="minimize(2)"></button>
-                    </div>
-                </div>
-                <div id="window-2" class="window-body"></div>
+        <div id="window-1"  class="window-body">
+            <div id="gamergoo">
+                <div id="counter">0</div>
+                gamergoo
+                <div id="cps" class="rate">0 gamergoo per second</div>
+            </div>
+            <div id="clicker">
+                <input id="kfc" type="button"></input>
             </div>
         </div>
-        <div class="right">
-            <div class="window">
-                <div class="title-bar">
-                    <div class="title-bar-text">shop</div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Minimize" onclick="minimize(3)"></button>
-                        <button aria-label="Maximize" onclick="maximize (3)"></button>
-                        <button aria-label="Close" onclick="minimize(3)"></button>
-                    </div>
+    </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">buildings</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="minimize(2)"></button>
+                <button aria-label="Maximize" onclick="maximize (2)"></button>
+                <button aria-label="Close" onclick="minimize(2)"></button>
+            </div>
+        </div>
+        <div id="window-2" class="window-body"></div>
+    </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">shop</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="minimize(3)"></button>
+                <button aria-label="Maximize" onclick="maximize (3)"></button>
+                <button aria-label="Close" onclick="minimize(3)"></button>
+            </div>
+        </div>
+        <div id="window-3" class="window-body">
+            <div class="content">
+                <div class="left">
+                    <ul class="tree-view">
+                        <li>The Shop</li>
+                        <li>
+                            <details open="">
+                                <summary>Buildings</summary>
+                                <ul id="listings"></ul>
+                            </details>
+                        </li>
+                    </ul>
                 </div>
-                <div id="window-3" class="window-body">
-                    <div class="content">
-                        <div class="left">
-                            <ul class="tree-view">
-                                <li>The Shop</li>
+                <div id="stats" class="right">
+                    <ul class="tree-view">
+                        <li>
+                            <span style="color:purple;font-size: 20px;"><span  id="stats-header"></span> <span>stats</span></span>
+                            <ul style="color:#f00;">
+                                <li>gamergoo per second: +<span id="stats-rate">0.0</span></li>
+                                <li>gamergoo per click: +<span id="stats-click">0.0</span></li>
                                 <li>
-                                    <details open="">
-                                        <summary>Buildings</summary>
-                                        <ul id="listings"></ul>
-                                    </details>
-                                </li>
-                            </ul>
-                        </div>
-                        <div id="stats" class="right">
-                            <ul class="tree-view">
-                                <li>
-                                    <span style="color:purple;font-size: 20px;"><span  id="stats-header"></span> <span>stats</span></span>
-                                    <ul style="color:#f00;">
-                                        <li>gamergoo per second: +<span id="stats-rate">0.0</span></li>
-                                        <li>gamergoo per click: +<span id="stats-click">0.0</span></li>
-                                        <li>
-                                            <span id="stats-owned">0</span> currently owned
-                                            <ul>
-                                                <li>producing <span id="stats-producing">0</span> gamergoo per second</li>
-                                            </ul>
-                                        </li>
+                                    <span id="stats-owned">0</span> currently owned
+                                    <ul>
+                                        <li>producing <span id="stats-producing">0</span> gamergoo per second</li>
                                     </ul>
                                 </li>
                             </ul>
-                            <fieldset style="margin-top: 12px;border: 1px solid black;">
-                                <legend>Select Amount</legend>
-                                <section class="field-row" style="margin-top: 6px;">
-                                    <input type="radio" name="amount" id="shop-one" onclick="game.shop_count(this);" value="1" aria-selected="true" checked>
-                                    <label for="shop-one">1</label>
-                                </section>
-                                <section style="margin-top: 6px;">
-                                    <input type="radio" name="amount" id="shop-ten" onclick="game.shop_count(this);" value="10">
-                                    <label for="shop-ten">10</label>
-                                </section>
-                                <section style="margin-top: 6px;">
-                                    <input type="radio" name="amount" id="shop-hundred" onclick="game.shop_count(this);" value="100">
-                                    <label for="shop-hundred">100</label>
-                                </section>
-                            </fieldset>
-                            <div style="margin-top:12px;">Cost: <span id="shop-cost">1</span> gamergoo</div>
-                            <div id="shop-refund-container">Sell: <span id="shop-refund">1</span> gamergoo</div>
-                            <section class="field-row" style="margin-top: 12px;">
-                                <button id="shop-buy" onclick="game.shop('buy')">buy</button>
-                                <button id="shop-sell" onclick="game.shop('sell')">sell</button>
-                            </section>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
+                    <fieldset style="margin-top: 12px;border: 1px solid black;">
+                        <legend>Select Amount</legend>
+                        <section class="field-row" style="margin-top: 6px;">
+                            <input type="radio" name="amount" id="shop-one" onclick="game.shop_count(this);" value="1" aria-selected="true" checked>
+                            <label for="shop-one">1</label>
+                        </section>
+                        <section style="margin-top: 6px;">
+                            <input type="radio" name="amount" id="shop-ten" onclick="game.shop_count(this);" value="10">
+                            <label for="shop-ten">10</label>
+                        </section>
+                        <section style="margin-top: 6px;">
+                            <input type="radio" name="amount" id="shop-hundred" onclick="game.shop_count(this);" value="100">
+                            <label for="shop-hundred">100</label>
+                        </section>
+                    </fieldset>
+                    <div style="margin-top:12px;">Cost: <span id="shop-cost">1</span> gamergoo</div>
+                    <div id="shop-refund-container">Sell: <span id="shop-refund">1</span> gamergoo</div>
+                    <section class="field-row" style="margin-top: 12px;">
+                        <button id="shop-buy" onclick="game.shop('buy')">buy</button>
+                        <button id="shop-sell" onclick="game.shop('sell')">sell</button>
+                    </section>
                 </div>
             </div>
         </div>

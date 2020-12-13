@@ -183,14 +183,8 @@ body { padding: 0 }
     color: purple;
 }
 
-.minimize {
-    max-height: 0;
-    visibility: hidden;
-    transition: max-height .1s ease;
-}
-
 .row-container {
-    max-height: 360px;
+    max-height: 270px;
     overflow-y: auto;
     overflow-x: hidden;
 }

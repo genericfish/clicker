@@ -1,6 +1,16 @@
 PATCHNOTES:
 
+=== 00:56 UTC on 13 December 2020 (v0.3.1) ===
+# Misc
++ windows are now draggable
+
 === 20:51 UTC on 12 December 2020 (v0.3.0) ===
+# Gameplay
++ made goo per click 7.5% of goo per second
++ golden khoi now gives 20% of goo per second in addition to the base 7.5%
++ golden khoi now lasts 12.5 seconds
++ further limited number of clicks per second
+
 # Misc
 + khoima clicker is now multithreadded (better performance)
 
@@ -20,7 +30,7 @@ PATCHNOTES:
 === 00:42 UTC on 12 December 2020 (v0.2) ===
 # Gameplay
 + game now runs in background
-+ after 5 minutes of no clicking, the game reduces the rate of gamer goo per second by 85%
++ after 5 minutes of no interaction, you only gain 15% your goo per second
 
 # Misc
 + gamergoo total is now displayed in page title

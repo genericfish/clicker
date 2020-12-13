@@ -49,31 +49,31 @@ const game = (() => {
 
             floater.classList.add("click-float")
 
-            container.setAttribute(
-                "style",
-                `position:absolute;top:${y - 25}px;left:${x - 20}px;pointer-events:none;`
-            )
+            let box = windows[1].getBoundingClientRect()
+
+            container.style.position = "absolute"
+            container.style.top = (y - box.top) + "px"
+            container.style.left = (x - box.left) + "px"
+            container.style.pointerEvents = "none"
+            container.style.zIndex = 4
 
             display.innerHTML = `+${amount}`
 
-            document.body.appendChild(container)
+            windows[1].appendChild(container)
 
             setTimeout(() => {
-                document.body.removeChild(container)
+                windows[1].removeChild(container)
             }, 1000)
         },
         create_row: (tower, number) => {
             let row = document.createElement("div")
             let rows = Math.max(Math.floor(number / 10), 1)
 
-            row.setAttribute(
-                "style",
-                `background: url(assets/images/buildings/${tower}.png);` +
-                "background-size: 45px 45px;" +
-                `height: ${rows * 45}px;` +
-                `width: ${(rows > 1 ? 10 : number) * 45}px;` +
-                "margin: 0 auto;"
-            )
+            row.style.background = `url(assets/images/buildings/${tower}.png)`
+            row.style.backgroundSize = "45px 45px"
+            row.style.height = rows * 45 + "px"
+            row.style.width = (rows > 1 ? 10 : number) * 45 + "px"
+            row.style.margin = "0 auto"
 
             return row
         },
@@ -129,7 +129,7 @@ const game = (() => {
                 if (count % 10 > 0)
                     container.appendChild(graphics.create_row(tower, count % 10))
 
-                fieldset.setAttribute("style", "border: 1px solid black;")
+                fieldset.style.border = "1px solid black"
                 fieldset.appendChild(legend)
                 fieldset.appendChild(container)
 
@@ -138,11 +138,9 @@ const game = (() => {
         },
         goldenkhoi: () => {
             let khoi = document.createElement("div")
-            khoi.setAttribute("id", "goldenkhoi")
-            khoi.setAttribute("style",
-                `top:${Math.ceil(Math.random() * 70) + 15}%;` +
-                `left:${Math.ceil(Math.random() * 70) + 15}%;`
-            )
+            khoi.id = "goldenkhoi"
+            khoi.style.top = `${Math.ceil(Math.random() * 70) + 15}%;`
+            khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%;`
 
             khoi.addEventListener("click", () => {
                 game_worker.postMessage(["goldenkhoi"])
@@ -302,7 +300,7 @@ const game = (() => {
 
                         if (shop.active_amount > game.towers[shop.active][0]) {
                             display.shop.sell.setAttribute("disabled", "disabled")
-                            display.shop.refundcontainer.setAttribute("style", "visibility:hidden;")
+                            display.shop.refundcontainer.style.visibility = "hidden"
                         } else {
                             display.shop.sell.removeAttribute("disabled")
                             display.shop.refundcontainer.removeAttribute("style")
