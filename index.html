@@ -20,17 +20,21 @@
             <img src="assets/images/gameplay/khoima.png" alt="">
             <span>khoima clicker</span>
         </a>
-        <a class="icon" href="#"ondblclick="win.maximize(3)">
+        <a class="icon" href="#" ondblclick="win.maximize(3)">
             <img src="assets/images/buildings/water.png" alt="">
             <span>shop</span>
         </a>
-        <a class="icon" href="#"ondblclick="win.maximize(4)">
+        <a class="icon" href="#" ondblclick="win.maximize(4)">
             <img src="assets/images/buildings/text.png" alt="">
             <span>changelog</span>
         </a>
-        <a class="icon" href="#"ondblclick="win.maximize(5)">
+        <a class="icon" href="#" ondblclick="win.maximize(5)">
             <img src="assets/images/buildings/genfysh.svg" alt="">
             <span>firekhoi</span>
+        </a>
+        <a class="icon" href="#" ondblclick="win.maximize(6)">
+            <img src="assets/images/buildings/genfysh.svg" alt="">
+            <span>khoi sweeper</span>
         </a>
     </div>
     <div class="window">
@@ -157,8 +161,27 @@
             <iframe id="browser" width="560" height="315" src="https://www.youtube.com/embed/dGQtL1l5i0Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">khoisweeper</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(6)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(6)"></button>
+                <button aria-label="Close" onclick="win.exit(6)"></button>
+            </div>
+        </div>
+        <div id="window-6" class="window-body">
+            <div id="ms-stats">
+                Flags: <span id="ms-flags">40</span>
+                Time: <span id="ms-time">0</span>s
+                <button onclick="ms.generate(-1)">Restart</button>
+            </div>
+            <div id="minesweeper"></div>
+        </div>
+    </div>
 
     <script src="assets/js/windows.js"></script>
     <script src="assets/js/khoima.js"></script>
+    <script src="assets/js/minesweeper.js" onload="ms.generate(-1)"></script>
 </body>
 </html>

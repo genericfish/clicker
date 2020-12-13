@@ -5,6 +5,7 @@ const windows = [
     document.getElementById("window-3"),
     document.getElementById("window-4"),
     document.getElementById("window-5"),
+    document.getElementById("window-6"),
 ]
 
 const win = (() => {
@@ -31,9 +32,9 @@ const win = (() => {
     }
 
     let default_window = {
-        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90]],
-        focus: [null, 5, 4, 3, 2, 1],
-        status: [null, 0, 0, 0, 0, 2]
+        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175]],
+        focus: [null,6,5,4,3,2,1],
+        status: [null,0,0,0,0,2,2]
     }
 
     document.addEventListener("keydown", e => {

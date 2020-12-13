@@ -125,3 +125,38 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     display: inline-block;
     width: 50px;
 }
+
+#minesweeper {
+    border: 1px solid black;
+}
+
+#minesweeper div {
+    display: block;
+}
+
+#minesweeper div button {
+    display: inline-block;
+    min-height: 25px;
+    min-width: 25px;
+
+    /* Use 98 style buttons */
+    background: silver;
+    box-shadow: inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px grey,inset 2px 2px #dfdfdf;
+
+    /* Remove XP theme, if enabled */
+    border-radius: 0;
+    border: none;
+
+    padding: 0;
+}
+
+#minesweeper div button:active,
+#minesweeper div button.revealed {
+    box-shadow: inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #dfdfdf,inset 2px 2px grey;
+}
+#ms-stats {
+    display: block;
+    text-align: center;
+    padding: 5px;
+    margin-top: -5x;
+}
