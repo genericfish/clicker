@@ -139,8 +139,8 @@ const game = (() => {
         goldenkhoi: () => {
             let khoi = document.createElement("div")
             khoi.id = "goldenkhoi"
-            khoi.style.top = `${Math.ceil(Math.random() * 70) + 15}%;`
-            khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%;`
+            khoi.style.top = `${Math.ceil(Math.random() * 70) + 15}%`
+            khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%`
 
             khoi.addEventListener("click", () => {
                 game_worker.postMessage(["goldenkhoi"])
