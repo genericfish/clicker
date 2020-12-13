@@ -15,7 +15,6 @@
     }
 }
 
-
 @keyframes fish {
     to { filter: hue-rotate(1turn); }
 }
@@ -59,6 +58,8 @@
 }
 
 body { padding: 0 }
+
+* { user-select: none }
 
 #title {
     font-family: 'Comic Sans MS', 'Comic Sans', cursive;
@@ -106,8 +107,6 @@ body { padding: 0 }
 .khoi {
     color: #0ff;
     animation: fish 2s linear infinite alternate;
-    text-shadow: -1px -1px 0 #000 1px 1px 0 #000
-        1px -1px 0 #000 -1px 1px 0 #000;
 }
 
 .click-float {
@@ -184,7 +183,7 @@ body { padding: 0 }
 }
 
 .row-container {
-    max-height: 270px;
+    max-height: 252px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -200,4 +199,9 @@ body { padding: 0 }
     position: absolute;
     cursor: pointer;
     z-index: 10;
+}
+
+.outline,
+.khoi {
+    text-shadow: -1px -1px 0 #000 1px 1px 0 #000 1px -1px 0 #000 -1px 1px 0 #000;
 }

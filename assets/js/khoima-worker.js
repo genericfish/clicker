@@ -87,13 +87,13 @@ let game = (() => {
                 let goo = game.rate / 50
 
                 // After 5 minutes of no clicking, only give 15% of rate
-                if (now - game_state.last_click > 300000) goo *= .15
+                if (now - game_state.last_interaction > 300000) goo *= .15
 
                 add_goo(goo)
             }
 
-            // Every 25th frame (~250ms) update shop buy button
-            if (frames - last_updates[1] >= 25) {
+            // Every 33rd frame (~330ms) update shop buy button
+            if (frames - last_updates[1] >= 33) {
                 postMessage(["update_graphics", [["buttons", "title"]]])
                 last_updates[1] = frames
             }

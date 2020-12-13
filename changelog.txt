@@ -1,5 +1,19 @@
 PATCHNOTES:
 
+=== 05:16 UTC on 13 December 2020 (v0.3.4) ===
+# Misc
++ added ability to play any YouTube video in firekhoi
++ added generic ghoti building
+
+=== 03:39 UTC on 13 December 2020 (v0.3.3) ===
+# Misc
++ added changelog window
++ added browser
+
+=== 03:23 UTC on 13 December 2020 (v0.3.2) ===
+# Misc
++ desktop icons
+
 === 00:56 UTC on 13 December 2020 (v0.3.1) ===
 # Misc
 + windows are now draggable

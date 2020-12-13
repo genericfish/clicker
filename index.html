@@ -11,13 +11,35 @@
 </head>
 <body>
     <div id="background"></div>
+    <div id="desktop" style="position: fixed;">
+        <a class="icon" href="#" ondblclick="win.maximize(2)">
+            <img src="assets/images/buildings/autoclicker.png" alt="">
+            <span>buildings</span>
+        </a>
+        <a class="icon" href="#" ondblclick="win.maximize(1)">
+            <img src="assets/images/gameplay/khoima.png" alt="">
+            <span>khoima clicker</span>
+        </a>
+        <a class="icon" href="#"ondblclick="win.maximize(3)">
+            <img src="assets/images/buildings/water.png" alt="">
+            <span>shop</span>
+        </a>
+        <a class="icon" href="#"ondblclick="win.maximize(4)">
+            <img src="assets/images/buildings/text.png" alt="">
+            <span>changelog</span>
+        </a>
+        <a class="icon" href="#"ondblclick="win.maximize(5)">
+            <img src="assets/images/buildings/genfysh.svg" alt="">
+            <span>firekhoi</span>
+        </a>
+    </div>
     <div class="window">
         <div class="title-bar">
             <div class="title-bar-text">khoima clicker</div>
             <div class="title-bar-controls">
-                <button aria-label="Minimize" onclick="minimize(1)"></button>
-                <button aria-label="Maximize" onclick="maximize(1)"></button>
-                <button aria-label="Close" onclick="minimize(1)"></button>
+                <button aria-label="Minimize" onclick="win.minimize(1)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(1)"></button>
+                <button aria-label="Close" onclick="win.exit(1)"></button>
             </div>
         </div>
         <div id="window-1"  class="window-body">
@@ -35,9 +57,9 @@
         <div class="title-bar">
             <div class="title-bar-text">buildings</div>
             <div class="title-bar-controls">
-                <button aria-label="Minimize" onclick="minimize(2)"></button>
-                <button aria-label="Maximize" onclick="maximize (2)"></button>
-                <button aria-label="Close" onclick="minimize(2)"></button>
+                <button aria-label="Minimize" onclick="win.minimize(2)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(2)"></button>
+                <button aria-label="Close" onclick="win.exit(2)"></button>
             </div>
         </div>
         <div id="window-2" class="window-body"></div>
@@ -46,9 +68,9 @@
         <div class="title-bar">
             <div class="title-bar-text">shop</div>
             <div class="title-bar-controls">
-                <button aria-label="Minimize" onclick="minimize(3)"></button>
-                <button aria-label="Maximize" onclick="maximize (3)"></button>
-                <button aria-label="Close" onclick="minimize(3)"></button>
+                <button aria-label="Minimize" onclick="win.minimize(3)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(3)"></button>
+                <button aria-label="Close" onclick="win.exit(3)"></button>
             </div>
         </div>
         <div id="window-3" class="window-body">
@@ -103,6 +125,36 @@
                     </section>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">changelog</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(4)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(4)"></button>
+                <button aria-label="Close" onclick="win.exit(4)"></button>
+            </div>
+        </div>
+        <div id="window-4" class="window-body">
+            <iframe src="https://generic.fish/clicker/changelog.txt" frameborder="0" width="455px" height="500px"></iframe>
+        </div>
+    </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">firekhoi</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(5)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(5)"></button>
+                <button aria-label="Close" onclick="win.exit(5)"></button>
+            </div>
+        </div>
+        <div id="window-5" class="window-body">
+            <div>
+                <input type="text" id="link" placeholder="https://www.youtube.com/watch?v=dGQtL1l5i0Q">
+                <button onclick="set_video()">-></button>
+            </div>
+            <iframe id="browser" width="560" height="315" src="https://www.youtube.com/embed/dGQtL1l5i0Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
 

@@ -9,7 +9,7 @@ option,
 ul.tree-view,
 .window,
 .title-bar {
-    font-family: "VT323", Arial;
+    font-family: "VT323", Arial, sans-serif;
     font-size: 20px;
     letter-spacing: 2px;
     line-height: 1.1em;
@@ -69,4 +69,59 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 
 .window { position: absolute }
 
-#window-2 { min-width: 500px }
+#window-2 { min-width: 465px }
+
+#desktop .icon {
+    display: block;
+    cursor: default;
+    text-decoration: none;
+    padding: 3px;
+
+    border: 1px solid transparent;
+
+    margin: 5px;
+}
+
+#desktop .icon img {
+    position: relative;
+
+    width: 60px;
+    height: 60px;
+
+    left: 50%;
+    margin-left: -30px;
+}
+
+#desktop .icon span {
+    display: block;
+
+    width: 80px;
+    text-align: center;
+
+    color:white;
+    font-family: "VT323", Arial, sans-serif;
+    font-size: 1.25rem;
+
+    word-wrap: normal;
+}
+
+#desktop .icon:hover {
+    background: #ADD8E6AA;
+    border: 1px solid #ADD8E6CC;
+}
+
+#desktop .icon:active {
+    background: #ADD8E6CC;
+    border: 1px solid #ADD8E6AA;
+}
+
+#window-5 input {
+    display: inline-block;
+    margin-bottom: 5px;
+    width: 475px;
+}
+
+#window-5 button {
+    display: inline-block;
+    width: 50px;
+}

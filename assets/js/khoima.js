@@ -70,9 +70,9 @@ const game = (() => {
             let rows = Math.max(Math.floor(number / 10), 1)
 
             row.style.background = `url(assets/images/buildings/${tower}.png)`
-            row.style.backgroundSize = "45px 45px"
-            row.style.height = rows * 45 + "px"
-            row.style.width = (rows > 1 ? 10 : number) * 45 + "px"
+            row.style.backgroundSize = "42px 42px"
+            row.style.height = rows * 42 + "px"
+            row.style.width = (rows > 1 ? 10 : number) * 42 + "px"
             row.style.margin = "0 auto"
 
             return row
@@ -196,6 +196,13 @@ const game = (() => {
             cost_multiplier: 1.015,
             base_rate: 200,
             base_click: 0,
+        },
+        ghoti: {
+            name: "generic ghoti",
+            base_cost: 500000,
+            cost_multiplier: 1.015,
+            base_rate: 500,
+            base_click: 0
         }
     }
 
@@ -230,6 +237,7 @@ const game = (() => {
             coomfactory: [0,0],
             dogfarm: [0,0],
             water: [0,0],
+            ghoti: [0,0],
         },
         modifiers: {
             click: [0,0],
@@ -239,6 +247,7 @@ const game = (() => {
             coomfactory: [0,0],
             dogfarm: [0,0],
             water: [0,0],
+            ghoti: [0,0],
         },
         gamergoo: 0.0,
         gamergoo_history: 0.0,
