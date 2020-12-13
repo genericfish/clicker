@@ -150,10 +150,15 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     padding: 0;
 }
 
-#minesweeper div button:active,
-#minesweeper div button.revealed {
+#minesweeper div button:active {
     box-shadow: inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #dfdfdf,inset 2px 2px grey;
 }
+#minesweeper div button.revealed {
+    box-shadow: inset -1px -1px #bababa,inset 1px 1px #9a9a9a,inset -2px -2px #dfdfdf,inset 2px 2px grey;
+}
+
+#minesweeper { width: 450px }
+
 #ms-stats {
     display: block;
     text-align: center;

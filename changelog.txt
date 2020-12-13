@@ -1,13 +1,24 @@
 PATCHNOTES:
 
+=== 22:03 UTC on 13 December 2020 (v0.3.6) ===
+# Misc
+## khoisweeper
++ added more coloring
++ changed flag icon
++ fixed bug with clicking flags
++ fixed clicking after game over
++ fixed board discovery with regards to flags
+
 === 21:16 UTC on 13 December 2020 (v0.3.5) ===
 # Misc
 + added new khoisweeper game
 
 === 05:16 UTC on 13 December 2020 (v0.3.4) ===
+# Gameplay
++ added generic ghoti building
+
 # Misc
 + added ability to play any YouTube video in firekhoi
-+ added generic ghoti building
 
 === 03:39 UTC on 13 December 2020 (v0.3.3) ===
 # Misc
