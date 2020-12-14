@@ -128,15 +128,22 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 
 #minesweeper {
     border: 1px solid black;
-    width: 450px
- }
+    width: 630px
+}
+
+#minesweeper button,
+#ms-stats,
+#ms-stats button,
+#ms-stats span {
+    font-size: 24px;
+}
 
 #minesweeper div { display: block }
 
 #minesweeper div button {
     display: inline-block;
-    min-height: 25px;
-    min-width: 25px;
+    min-height: 35px;
+    min-width: 35px;
 
     /* Use 98 style buttons */
     background: silver;

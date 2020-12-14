@@ -1,5 +1,15 @@
 PATCHNOTES:
 
+=== 03:28 UTC on 14 December 2020 (v0.3.7) ===
+# Misc
++ added discord
++ added icons for firekhoi and khoisweeper
+
+## khoisweeper
++ improved khoisweeper readability
++ changed khoisweeper font colors
++ fixed bug where mines never spawned in bottom right
+
 === 00:38 UTC on 14 December 2020 (v0.3.6) ===
 # Misc
 ## khoisweeper

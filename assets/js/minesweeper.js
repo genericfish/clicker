@@ -10,9 +10,9 @@ let ms = (() => {
         "red",
         "purple",
         "maroon",
-        "turquoise",
+        "#00A0A0",
         "black",
-        "gray"
+        "#686868"
     ]
 
     let board = document.getElementById("minesweeper")
@@ -73,7 +73,7 @@ let ms = (() => {
                         adj.includes(spot) || // Ignore the 8 adjacent
                         spot == n || // Ignore the clicked spot
                         ms.mines.includes(spot) // Ignore spots that are already mines
-                ) spot = Math.floor(Math.random() * (COLS * ROWS - 1))
+                ) spot = Math.floor(Math.random() * (COLS * ROWS + 1))
     
                 ms.board[spot] = -1
                 ms.mines.push(spot)
@@ -104,7 +104,7 @@ let ms = (() => {
         let gamergoo = game.get("rate") * (20 * 60)
 
         // Capped at 20% of currently owned gamergoo
-        if (gamergoo > game.get("gamergoo")) gamergoo = game.get("gamergoo")
+        if (gamergoo > (game.get("gamergoo") * .2)) gamergoo = game.get("gamergoo") * .2
 
         // Regardless, give 50k gamergoo
         gamergoo = Math.max(50000, gamergoo)
@@ -123,21 +123,23 @@ let ms = (() => {
         return e => {
             e.preventDefault()
 
-            if (over || ms.board[i] == -2 || ms.flags <= 0) return
+            if (over || ms.board[i] == -2) return
 
-            let html = e.target.innerHTML
+            let html = display[i].innerHTML
 
             if (html != "⚑") {
+                if (ms.flags <= 0) return
+
                 html = "⚑"
-                e.target.style.color = "#f00"
+                display[i].style.color = "#f00"
                 ms.flags--
             } else {
                 html = "&nbsp;"
                 ms.flags++
-                e.target.style.color = "#000"
+                display[i].style.color = "#000"
             }
 
-            e.target.innerHTML = html
+            display[i].innerHTML = html
             flags.innerHTML = ms.flags
         }
     }
