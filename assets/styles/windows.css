@@ -128,11 +128,10 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 
 #minesweeper {
     border: 1px solid black;
-}
+    width: 450px
+ }
 
-#minesweeper div {
-    display: block;
-}
+#minesweeper div { display: block }
 
 #minesweeper div button {
     display: inline-block;
@@ -150,18 +149,44 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     padding: 0;
 }
 
-#minesweeper div button:active {
-    box-shadow: inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #dfdfdf,inset 2px 2px grey;
+#minesweeper div button:active,
+#minesweeper #winner div {
+    box-shadow: inset -1px -1px #fff,
+                inset 1px 1px #0a0a0a,
+                inset -2px -2px #dfdfdf,
+                inset 2px 2px grey;
 }
 #minesweeper div button.revealed {
-    box-shadow: inset -1px -1px #bababa,inset 1px 1px #9a9a9a,inset -2px -2px #dfdfdf,inset 2px 2px grey;
+    box-shadow: inset -1px -1px #bababa,
+                inset 1px 1px #9a9a9a,
+                inset -2px -2px #dfdfdf,
+                inset 2px 2px grey;
 }
-
-#minesweeper { width: 450px }
 
 #ms-stats {
     display: block;
+
     text-align: center;
+
     padding: 5px;
     margin-top: -5x;
+}
+
+#minesweeper #winner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    text-align: center;
+}
+
+#minesweeper #winner div {
+    position: relative;
+
+    left: -50%;
+    top: -50%;
+
+    padding: 1rem;
+
+    background: silver;
 }

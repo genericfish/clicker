@@ -53,7 +53,7 @@ const game = (() => {
 
             container.style.position = "absolute"
             container.style.top = (y - box.top) + "px"
-            container.style.left = (x - box.left) + "px"
+            container.style.left = (x - Math.floor(box.left * 1.5)) + "px"
             container.style.pointerEvents = "none"
             container.style.zIndex = 4
 
@@ -143,7 +143,9 @@ const game = (() => {
             khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%`
 
             khoi.addEventListener("click", () => {
+                goldenkhoi = true
                 game_worker.postMessage(["goldenkhoi"])
+
                 try { document.body.removeChild(khoi) } catch (_) {}
 
                 for (let window of windows)
@@ -342,6 +344,7 @@ const game = (() => {
             graphics.goldenkhoi()
         },
         goldenkhoi_end: () => {
+            goldenkhoi = false
             for (let window of windows)
                 if (window != null)
                     window.parentElement.classList.remove("khoi")
@@ -407,7 +410,11 @@ const game = (() => {
                 "total gamergoo: " + game.gamergoo_history + '\n'
             )
         },
-        worker: game_worker
+        get: (item) => {
+            if (game.hasOwnProperty(item))
+                return game[item]
+        },
+        worker: game_worker,
     }
 })()
 

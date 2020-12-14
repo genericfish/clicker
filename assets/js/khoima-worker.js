@@ -212,6 +212,7 @@ let game = (() => {
             update_costs()
         },
         hack: (data) => { add_goo(data, false) },
+        add: add_goo,
         pause: () => { game_state.paused = !game_state.paused },
         wipe: () => {
             game_state.paused = true

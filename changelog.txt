@@ -1,5 +1,12 @@
 PATCHNOTES:
 
+=== 00:38 UTC on 14 December 2020 (v0.3.6) ===
+# Misc
+## khoisweeper
++ added reward for winning
+    20 minutes worth of gamergoo, capped at 20% of currently owned gamergoo
+    minimum of 50000 per win
+
 === 22:03 UTC on 13 December 2020 (v0.3.6) ===
 # Misc
 ## khoisweeper
