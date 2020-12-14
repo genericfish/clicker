@@ -1,22 +1,23 @@
 let ms = (() => {
     const colors = [
-        "black",
-        "blue",
-        "green",
-        "red",
-        "purple",
-        "maroon",
-        "#00A0A0",
-        "black",
-        "#686868"
+        "black",   // empty
+        "blue",    // 1
+        "green",   // 2
+        "red",     // 3
+        "purple",  // 4
+        "maroon",  // 5
+        "#00A0A0", // 6
+        "black",   // 7
+        "#686868"  //8
     ]
 
     const difficulties = [
-        [8,10,10,false],
-        [14,18,40,false],
-        [20,24,99,true]
+        [8,10,10,false],  // Easy
+        [14,18,40,false], // Medium
+        [20,24,99,true]   // Hard
     ]
 
+    // Default is medium
     let difficulty = 1
 
     let ROWS, COLS, MAX_MINE, SMALL
@@ -24,21 +25,24 @@ let ms = (() => {
 
     let board = document.getElementById("minesweeper")
 
-    let ms = {
-        mines: undefined,
-        board: undefined,
+    const ms_default = {
+        mines: [],
+        board: [],
         flags: MAX_MINE,
-        visible: undefined,
+        visible: 0,
         time: 0,
+        over: false
     }
 
-    let over = false
+    let ms = Object.assign({}, ms_default)
+
     let display = []
     let flags = document.getElementById("ms-flags")
     let time = document.getElementById("ms-time")
     let timer = undefined
 
     function get_neighbours(i) {
+        // Get the 8 neighbouring squares
         let adj = [
             i - COLS - 1,
             i - COLS,
@@ -48,8 +52,10 @@ let ms = (() => {
             i + COLS - 1,
             i + COLS,
             i + COLS + 1
+        // Remove if out of bounds
         ].map(x => x < 0 ? null : x >= (ROWS * COLS) ? null : x)
 
+        // More conditionals to check if out of wrapping to new line
         if (i % COLS <= 0) {
             adj[0] = null
             adj[3] = null
@@ -66,6 +72,9 @@ let ms = (() => {
     }
 
     function generate(n) {
+        // Generate board
+        // generate(-1) generates the blank board
+        // generate(n) generates a board, where n represents square of the first click
         n = n || 0
 
         ms.mines = []
@@ -77,8 +86,8 @@ let ms = (() => {
                 let spot = undefined
     
                 while (spot == undefined ||
-                        adj.includes(spot) || // Ignore the 8 adjacent
-                        spot == n || // Ignore the clicked spot
+                        adj.includes(spot) ||   // Ignore the 8 adjacent
+                        spot == n ||            // Ignore the clicked spot
                         ms.mines.includes(spot) // Ignore spots that are already mines
                 ) spot = Math.floor(Math.random() * (COLS * ROWS))
     
@@ -92,7 +101,8 @@ let ms = (() => {
 
     function game_over() {
         clearInterval(timer)
-        over = true
+        ms.over = true
+
         for (let mine of ms.mines) {
             try {
                 display[mine].style.color = "#f00"
@@ -105,7 +115,7 @@ let ms = (() => {
 
     function game_win() {
         clearInterval(timer)
-        over = true
+        ms.over = true
 
         let win = document.createElement("div")
         let xin = document.createElement("div")
@@ -120,9 +130,9 @@ let ms = (() => {
         gamergoo = Math.max(50000, gamergoo)
 
         // Multiplier depending on difficulty
-        //     Easy: half
+        //     Easy: 0.1x
         //     Medium: normal
-        //     Hard: 25% more
+        //     Hard: 1.25x
         if (difficulty == 0) gamergoo *= .1
         else if (difficulty == 2) gamergoo *= 1.25
 
@@ -140,7 +150,7 @@ let ms = (() => {
         return e => {
             e.preventDefault()
 
-            if (over || ms.board[i] == -2) return
+            if (ms.over || ms.board[i] == -2) return
 
             let html = display[i].innerHTML
 
@@ -191,9 +201,9 @@ let ms = (() => {
 
     function press(i) {
         return () => {
-            if (!over) {
-                if (display[i].innerHTML != "&#x2691;")
-                    reveal(i)
+            if (!ms.over) {
+                if (display[i].innerHTML != "&#x2691;") reveal(i)
+
                 if (timer == undefined)
                     timer = setInterval(() => {
                         ms.time++
@@ -218,17 +228,14 @@ let ms = (() => {
         }
 
         clearInterval(timer)
-        over = false
 
-        ms.time = 0
-        ms.flags = MAX_MINE
-        ms.visible = COLS * ROWS
+        ms = ms_default
 
         flags.innerHTML = ms.flags
         time.innerHTML = 0
-        timer = undefined
 
         if (!make)
+            // Clear all classes from existing buttons
             for (let e of display)
                 e.className = ""
         else {

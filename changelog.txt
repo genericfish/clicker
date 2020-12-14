@@ -1,11 +1,15 @@
 PATCHNOTES:
 
-=== 07:56 UTC on 14 December 2020 (v0.3.8a) ===
+=== 21:09 UTC on 14 December 2020 (v0.3.7b) ===
+# Misc
+= minor bug fixes with window focus
+
+=== 07:56 UTC on 14 December 2020 (v0.3.7a) ===
 # Misc
 ## khoisweeper
 + fix bugs related to flags
 
-=== 07:37 UTC on 14 December 2020 (v0.3.8) ===
+=== 07:37 UTC on 14 December 2020 (v0.3.7) ===
 # Misc
 ## khoisweeper
 + add more difficulties
@@ -13,12 +17,12 @@ PATCHNOTES:
     normal reward for medium
     1.25x reward for hard
 
-=== 03:51 UTC on 14 December 2020 (v0.3.7a) ===
+=== 03:51 UTC on 14 December 2020 (v0.3.6b) ===
 # Misc
 ## khoisweeper
 + hotfix fixing khoisweeper generation
 
-=== 03:28 UTC on 14 December 2020 (v0.3.7) ===
+=== 03:28 UTC on 14 December 2020 (v0.3.6a) ===
 # Misc
 + added discord
 + added icons for firekhoi and khoisweeper

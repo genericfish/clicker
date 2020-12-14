@@ -106,7 +106,7 @@ let game = (() => {
 
             // Spawn goldenkhoi
             if (frames >= game_state.golden_khoi_frame) {
-                game_state.golden_khoi_frame = frames + Math.ceil((Math.random() * 15000) + 2000)
+                game_state.golden_khoi_frame = frames + Math.ceil((Math.random() * 60000) + 3000)
                 postMessage(["goldenkhoi"])
             }
 
@@ -125,7 +125,7 @@ let game = (() => {
             game_state.last_click = Date.now()
             game_state.last_interaction = Date.now()
             game_state.golden_khoi = false
-            game_state.golden_khoi_frame = Math.ceil((Math.random() * 15000) + 200)
+            game_state.golden_khoi_frame = Math.ceil((Math.random() * 30000) + 3000)
 
             // Update rates then give user gamergoo based on last save
             update_rates()

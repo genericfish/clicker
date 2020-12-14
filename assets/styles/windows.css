@@ -215,3 +215,15 @@ select {
     background-size: 19px;
     min-height: 28px;
 }
+
+#window-4 iframe {
+    width: 455px;
+    height: 650px;
+
+    pointer-events: auto;
+}
+
+.ifoverlay {
+    /* Cross origin iframe click event doesnt work */
+    position: absolute;
+}

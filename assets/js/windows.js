@@ -109,6 +109,8 @@ const win = (() => {
     set_windows()
 
     function set_focus(w) {
+        if (w == NaN) return
+
         if (data.focus[w] != (windows.length - 1)) {
             data.focus[w] = windows.length
 
@@ -121,6 +123,12 @@ const win = (() => {
             save()
         }
     }
+
+    // iframe workaround
+    document.addEventListener("click", e => {
+        if (e.target && e.target.classList.contains("ifoverlay"))
+            set_focus(parseInt(e.target.value))
+    })
 
     for (let w in windows) {
         let display = windows[w]
