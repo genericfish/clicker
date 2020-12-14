@@ -123,7 +123,7 @@ let ms = (() => {
         //     Easy: half
         //     Medium: normal
         //     Hard: 25% more
-        if (difficulty == 0) gamergoo *= .5
+        if (difficulty == 0) gamergoo *= .1
         else if (difficulty == 2) gamergoo *= 1.25
 
         game.worker.postMessage(["add", [gamergoo, true]])
@@ -144,7 +144,7 @@ let ms = (() => {
 
             let html = display[i].innerHTML
 
-            if (html != "&#x2691;") {
+            if (html.charCodeAt(0) != 9873) {
                 if (ms.flags <= 0) return
 
                 html = "&#x2691;"
@@ -162,14 +162,14 @@ let ms = (() => {
     }
 
     function reveal(i) {
+        if (i == null) return
         if (!ms.mines.length) generate(i)
-        if (i == null || ms.board[i] == -2) return
-        if (ms.board[i] == -1) return game_over()
 
         let val = ms.board[i]
         let element = board.children[Math.floor(i / COLS)].children[i % COLS]
 
-        if (element.innerHTML == "&#x2691;") return
+        if (val == -2 || element.innerHTML.charCodeAt(0) == 9873) return
+        if (ms.board[i] == -1) return game_over()
 
         if (val >= 0) { 
             element.innerHTML = val == 0 ? "&nbsp;" : val

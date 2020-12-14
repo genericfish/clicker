@@ -1,10 +1,15 @@
 PATCHNOTES:
 
+=== 07:56 UTC on 14 December 2020 (v0.3.8a) ===
+# Misc
+## khoisweeper
++ fix bugs related to flags
+
 === 07:37 UTC on 14 December 2020 (v0.3.8) ===
 # Misc
 ## khoisweeper
 + add more difficulties
-    half reward for easy
+    0.1x reward for easy
     normal reward for medium
     1.25x reward for hard
 
