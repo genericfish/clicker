@@ -126,22 +126,17 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     width: 50px;
 }
 
-#minesweeper {
-    border: 1px solid black;
-    width: 630px
-}
+#minesweeper { border: 1px solid black }
 
 #minesweeper button,
 #ms-stats,
 #ms-stats button,
-#ms-stats span {
-    font-size: 24px;
-}
+#ms-stats span { font-size: 24px }
 
 #minesweeper div { display: block }
 
 #minesweeper div button {
-    display: inline-block;
+    display: inline;
     min-height: 35px;
     min-width: 35px;
 
@@ -154,6 +149,13 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     border: none;
 
     padding: 0;
+}
+
+#minesweeper div button.small {
+    min-height: 30px;
+    min-width: 30px;
+
+    font-size: 22px;
 }
 
 #minesweeper div button:active,
@@ -196,4 +198,20 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     padding: 1rem;
 
     background: silver;
+}
+
+#ms-stats select {
+    font-size: 22px;
+    line-height: 1em;
+}
+
+#ms-stats option {
+    /* Firefox bug: will not render VT323 as webfont. */
+    font-size: 20px;
+    padding: 0;
+}
+
+select {
+    background-size: 19px;
+    min-height: 28px;
 }

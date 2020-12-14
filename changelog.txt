@@ -1,5 +1,13 @@
 PATCHNOTES:
 
+=== 07:37 UTC on 14 December 2020 (v0.3.8) ===
+# Misc
+## khoisweeper
++ add more difficulties
+    half reward for easy
+    normal reward for medium
+    1.25x reward for hard
+
 === 03:51 UTC on 14 December 2020 (v0.3.7a) ===
 # Misc
 ## khoisweeper

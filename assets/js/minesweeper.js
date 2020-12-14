@@ -1,8 +1,4 @@
 let ms = (() => {
-    const ROWS = 14
-    const COLS = 18
-    const MAX_MINE = 40
-
     const colors = [
         "black",
         "blue",
@@ -14,6 +10,17 @@ let ms = (() => {
         "black",
         "#686868"
     ]
+
+    const difficulties = [
+        [8,10,10,false],
+        [14,18,40,false],
+        [20,24,99,true]
+    ]
+
+    let difficulty = 1
+
+    let ROWS, COLS, MAX_MINE, SMALL
+    [ROWS, COLS, MAX_MINE, SMALL] = difficulties[1]
 
     let board = document.getElementById("minesweeper")
 
@@ -112,6 +119,13 @@ let ms = (() => {
         // Regardless, give 50k gamergoo
         gamergoo = Math.max(50000, gamergoo)
 
+        // Multiplier depending on difficulty
+        //     Easy: half
+        //     Medium: normal
+        //     Hard: 25% more
+        if (difficulty == 0) gamergoo *= .5
+        else if (difficulty == 2) gamergoo *= 1.25
+
         game.worker.postMessage(["add", [gamergoo, true]])
 
         win.id = "winner"
@@ -130,10 +144,10 @@ let ms = (() => {
 
             let html = display[i].innerHTML
 
-            if (html != "⚑") {
+            if (html != "&#x2691;") {
                 if (ms.flags <= 0) return
 
-                html = "⚑"
+                html = "&#x2691;"
                 display[i].style.color = "#f00"
                 ms.flags--
             } else {
@@ -155,7 +169,7 @@ let ms = (() => {
         let val = ms.board[i]
         let element = board.children[Math.floor(i / COLS)].children[i % COLS]
 
-        if (element.innerHTML == "⚑") return
+        if (element.innerHTML == "&#x2691;") return
 
         if (val >= 0) { 
             element.innerHTML = val == 0 ? "&nbsp;" : val
@@ -178,7 +192,7 @@ let ms = (() => {
     function press(i) {
         return () => {
             if (!over) {
-                if (display[i].innerHTML != "⚑")
+                if (display[i].innerHTML != "&#x2691;")
                     reveal(i)
                 if (timer == undefined)
                     timer = setInterval(() => {
@@ -198,6 +212,11 @@ let ms = (() => {
 
         if (win) win.remove()
 
+        if (!make &&display.length != COLS * ROWS) {
+            display = []
+            make = true
+        }
+
         clearInterval(timer)
         over = false
 
@@ -212,7 +231,18 @@ let ms = (() => {
         if (!make)
             for (let e of display)
                 e.className = ""
-        else board.innerHTML = ""
+        else {
+            // The children does not update when innerHTML is emptied
+            // therefore, remake the element to get proper resizing
+            // from the client bounding rectangle
+            let parent = board.parentElement
+
+            board.remove()
+            board = document.createElement("div")
+            board.id = "minesweeper"
+
+            parent.appendChild(board)
+        }
 
         for (let i = 0; i < COLS * ROWS; i++) {
             if (i % COLS == 0 && make) {
@@ -224,6 +254,8 @@ let ms = (() => {
 
             cell.innerHTML = "&nbsp;"
             cell.style.color = "#000"
+
+            if (SMALL) cell.classList.add("small")
 
             if (ms.board[i] != -1) {
                 let adjacent = 0
@@ -242,7 +274,30 @@ let ms = (() => {
                 display.push(cell)
             }
         }
+
+        board.style.minWidth = board.children[0].getBoundingClientRect().width + "px"
     }
 
-    return { generate: generate }
+    return {
+        generate: generate,
+        difficulty: (e) => {
+            try {
+                let i = parseInt(e.value) - 1
+
+                /**
+                 * For some reason this doesnt work?
+                 * [ROWS, COLS, MAX_MINE] = difficulties[i]
+                 */
+
+                ROWS = difficulties[i][0]
+                COLS = difficulties[i][1]
+                MAX_MINE = difficulties[i][2]
+                SMALL = difficulties[i][3]
+
+                difficulty = i
+
+                generate(-1)
+            } catch (except) { }
+        }
+    }
 })()
