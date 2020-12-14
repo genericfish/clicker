@@ -143,14 +143,10 @@ const game = (() => {
             khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%`
 
             khoi.addEventListener("click", () => {
-                goldenkhoi = true
                 game_worker.postMessage(["goldenkhoi"])
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
-                for (let window of windows)
-                    if (window != null)
-                        window.parentElement.classList.add("khoi")
                 document.getElementById("background").classList.add("khoi")
             })
 
@@ -344,10 +340,6 @@ const game = (() => {
             graphics.goldenkhoi()
         },
         goldenkhoi_end: () => {
-            goldenkhoi = false
-            for (let window of windows)
-                if (window != null)
-                    window.parentElement.classList.remove("khoi")
             document.getElementById("background").classList.remove("khoi")
         }
     }

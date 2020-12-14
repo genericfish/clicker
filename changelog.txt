@@ -1,5 +1,10 @@
 PATCHNOTES:
 
+=== 03:51 UTC on 14 December 2020 (v0.3.7a) ===
+# Misc
+## khoisweeper
++ hotfix fixing khoisweeper generation
+
 === 03:28 UTC on 14 December 2020 (v0.3.7) ===
 # Misc
 + added discord

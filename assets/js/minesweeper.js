@@ -73,7 +73,7 @@ let ms = (() => {
                         adj.includes(spot) || // Ignore the 8 adjacent
                         spot == n || // Ignore the clicked spot
                         ms.mines.includes(spot) // Ignore spots that are already mines
-                ) spot = Math.floor(Math.random() * (COLS * ROWS + 1))
+                ) spot = Math.floor(Math.random() * (COLS * ROWS))
     
                 ms.board[spot] = -1
                 ms.mines.push(spot)
@@ -86,10 +86,13 @@ let ms = (() => {
     function game_over() {
         clearInterval(timer)
         over = true
-
         for (let mine of ms.mines) {
-            display[mine].style.color = "#f00"
-            display[mine].innerHTML = "X"
+            try {
+                display[mine].style.color = "#f00"
+                display[mine].innerHTML = "X"
+            } catch (e) {
+                console.log("error when attempting to access display: ", mine, display)
+            }
         }
     }
 
