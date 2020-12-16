@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="assets/styles/windows.css">
 </head>
 <body>
-    <div id="background">
-        <div class="dummy"></div>
-    </div>
+    <div id="background"></div>
     <div id="desktop" style="position: fixed;">
         <a class="icon" href="#" ondblclick="win.maximize(2)">
             <img src="assets/images/buildings/autoclicker.png" alt="">
@@ -38,10 +36,10 @@
             <img src="assets/images/buildings/minesweeper.png" alt="">
             <span>khoi sweeper</span>
         </a>
-        <!-- <a class="icon" href="#" ondblclick="win.maximize(7)">
+        <a class="icon" href="#" ondblclick="win.maximize(7)">
             <img src="assets/images/buildings/minesweeper.png" alt="">
-            <span>khoimagotchi</span>
-        </a> -->
+            <span>tutorial</span>
+        </a>
         <a class="icon" href="#" ondblclick="discord()">
             <img src="https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg" alt="">
             <span>discord</span>
@@ -119,15 +117,15 @@
                     </ul>
                     <fieldset style="margin-top: 12px;border: 1px solid black;">
                         <legend>Select Amount</legend>
-                        <section class="field-row" style="margin-top: 6px;">
+                        <section class="field-row" style="margin-top:6px;">
                             <input autocomplete="off" type="radio" name="amount" id="shop-one" onclick="game.shop_count(this);" value="1" aria-selected="true" checked>
                             <label for="shop-one">1</label>
                         </section>
-                        <section style="margin-top: 6px;">
+                        <section style="margin-top:6px;">
                             <input autocomplete="off" type="radio" name="amount" id="shop-ten" onclick="game.shop_count(this);" value="10">
                             <label for="shop-ten">10</label>
                         </section>
-                        <section style="margin-top: 6px;">
+                        <section style="margin-top:6px;">
                             <input autocomplete="off" type="radio" name="amount" id="shop-hundred" onclick="game.shop_count(this);" value="100">
                             <label for="shop-hundred">100</label>
                         </section>
@@ -152,7 +150,7 @@
             </div>
         </div>
         <div class="window-body">
-            <div class="ifoverlay" value="4" style="width: 455px;height: 650px;"></div>
+            <div class="ifoverlay"style="width:455px;height:650px;"></div>
             <iframe id="changelog" src="https://generic.fish/clicker/changelog.txt" frameborder="0"></iframe>
         </div>
     </div>
@@ -166,6 +164,7 @@
             </div>
         </div>
         <div id="player" class="window-body">
+            <div class="ifoverlay" style="margin-top:28px;width:560px;height:315px;"></div>
             <div>
                 <input autocomplete="off" type="text" id="link" placeholder="https://www.youtube.com/watch?v=uUnguqPxzNU">
                 <button onclick="set_video()">-></button>
@@ -193,24 +192,29 @@
                 | <span id="ms-time">0</span>s
                 <button onclick="ms.generate(-1)">Restart</button>
             </div>
-            <div id="minesweeper">
-                <div class="buy" style="margin-top:-50px;width:400px;text-align:center;padding: 5px;">
-                    <p>Purchase khoisweeper for 5000 gamergoo</p>
-                    <img style="margin: 0 auto;" src="assets/images/buildings/minesweeper.png" width="300" height="300" alt="">
-                </div>
-            </div>
+            <div id="minesweeper"></div>
         </div>
     </div>
     <div class="window">
         <div class="title-bar">
-            <div class="title-bar-text">khoimagotchi</div>
+            <div class="title-bar-text">tutorial</div>
             <div class="title-bar-controls">
-                <button aria-label="Minimize" onclick="win.minimize(6)"></button>
-                <button aria-label="Maximize" onclick="win.maximize(6)"></button>
-                <button aria-label="Close" onclick="win.exit(6)"></button>
+                <button aria-label="Minimize" onclick="win.minimize(7)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(7)"></button>
+                <button aria-label="Close" onclick="win.exit(7)"></button>
             </div>
         </div>
-        <div class="window-body">
+        <div class="window-body" style="width:550px;padding:10px;">
+            <p>In the <a href="#" onclick="win.maximize(1)">khoima clicker</a> window, click the khoima in order to earn gamergoo.</p>
+            <p>When you have enough gamergoo, you can buy buildings inside the <a href="#" onclick="win.maximize(3)">shop.</a></p>
+            <p>After you buy buildings from the shop, they will appear in the <a href="#" onclick="win.maximize(2)">buildings</a> window.</p>
+            <p>You can view the recent patchnotes in the <a href="#" onclick="win.maximize(4)">changelog</a>, or watch YouTube videos in <a href="#" onclick="win.maximize(5)">firekhoi.</a></p>
+            <p>Some buildings like <a href="#" onclick="win.maximize(6)">khoisweeper</a> unlock minigames that can be accessed by the desktop icons.</p>
+            <br>
+            <p>You can also drag around these windows, and use the window control buttons to minimize, maximize, and close the windows.</p>
+            <p>Use <b>CTRL+SHIFT+G</b> to reset the window positions back to default.</p>
+            <p>Use <b>CTRL+SHIFT+F</b> to switch between Windows XP and 98 themes.</p>
+            <button onclick="win.exit(7)">Close Tutorial</button>
         </div>
     </div>
     <script src="assets/js/windows.js"></script>

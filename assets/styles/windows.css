@@ -138,7 +138,7 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 
 #minesweeper div { display: block }
 
-#minesweeper div:not(.buy) button {
+#minesweeper button {
     display: inline;
     min-height: 35px;
     min-width: 35px;
@@ -239,4 +239,11 @@ select {
     border: 1px solid #ADD8E6AA;
 
     z-index: 10;
+}
+
+.xp .window .title-bar {
+    background: linear-gradient(180deg,#6cc2ff,#437eec 8%,#447ae6 40%,#428bf8 88%,#428bf8 93%,#4584fa 95%,#446eda 96%,#426dda);
+}
+.xp .window.focused .title-bar {
+    background: linear-gradient(180deg,#0997ff,#0053ee 8%,#0050ee 40%,#06f 88%,#06f 93%,#005bff 95%,#003dd7 96%,#003dd7);
 }

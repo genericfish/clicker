@@ -1,46 +1,54 @@
 PATCHNOTES:
+=== 22:18 UTC on 16 December 2020 (v0.3.10) ===
+# Gameplay
+* added tutorial window for new playesr
+* fixed gameplay bugs regarding khoisweeper
+
+# Misc
+* adjusted the way keybinds are handled
+* changed how windows with iframes are handled
 
 === 08:49 UTC on 16 December 2020 (v0.3.9) ===
 # Gameplay
-+ added khoisweeper building that unlocks the minigame
+* added khoisweeper building that unlocks the minigame
 
 === 08:02 UTC on 16 December 2020 (v0.3.8a) ===
 # Gameplay
-= made goldenkhoi less intrusive on gameply
-    - no longer applies rainbow effect on background
-    + applies rainbow effect on clicker
-    = doesn't pulse or rotate as much
+* made goldenkhoi less intrusive on gameply
+    * no longer applies rainbow effect on background
+    * applies rainbow effect on clicker
+    * doesn't pulse or rotate as much
 # Misc
-+ added drag selection while on desktop
+* added drag selection while on desktop
 
 === 03:02 UTC on 16 December 2020 (v0.3.8) ===
 # Misc
-+ fixed a bug for first time players where game wouldn't load
-+ added text for empty buildings window
+* fixed a bug for first time players where game wouldn't load
+* added text for empty buildings window
 
 === 21:19 UTC on 14 December 2020 (v0.3.7c) ===
 # Misc
-= fixed regressions regarding window focus and khoisweeper
+* fixed regressions regarding window focus and khoisweeper
 
 === 21:09 UTC on 14 December 2020 (v0.3.7b) ===
 # Gameplay
-= goldenkhoi less frequent
+* goldenkhoi less frequent
 
 ## khoisweeper
-= fixed regression with flag count
+* fixed regression with flag count
 
 # Misc
-= minor bug fixes with window focus
+* minor bug fixes with window focus
 
 === 07:56 UTC on 14 December 2020 (v0.3.7a) ===
 # Misc
 ## khoisweeper
-= fix bugs related to flags
+* fix bugs related to flags
 
 === 07:37 UTC on 14 December 2020 (v0.3.7) ===
 # Gameplay
 ## khoisweeper
-+ add more difficulties
+* add more difficulties
     0.1x reward for easy
     normal reward for medium
     1.25x reward for hard
@@ -48,93 +56,93 @@ PATCHNOTES:
 === 03:51 UTC on 14 December 2020 (v0.3.6b) ===
 # Gameplay
 ## khoisweeper
-+ hotfix fixing khoisweeper generation
+* hotfix fixing khoisweeper generation
 
 === 03:28 UTC on 14 December 2020 (v0.3.6a) ===
 # Misc
-+ added discord
-+ added icons for firekhoi and khoisweeper
+* added discord
+* added icons for firekhoi and khoisweeper
 
 # Gameplay
 ## khoisweeper
-+ improved khoisweeper readability
-+ changed khoisweeper font colors
-+ fixed bug where mines never spawned in bottom right
+* improved khoisweeper readability
+* changed khoisweeper font colors
+* fixed bug where mines never spawned in bottom right
 
 === 00:38 UTC on 14 December 2020 (v0.3.6) ===
 # Gameplay
 ## khoisweeper
-+ added reward for winning
+* added reward for winning
     20 minutes worth of gamergoo, capped at 20% of currently owned gamergoo
     minimum of 50000 per win
 
 === 22:03 UTC on 13 December 2020 (v0.3.6) ===
 # Gameplay
 ## khoisweeper
-+ added more coloring
-+ changed flag icon
-+ fixed bug with clicking flags
-+ fixed clicking after game over
-+ fixed board discovery with regards to flags
+* added more coloring
+* changed flag icon
+* fixed bug with clicking flags
+* fixed clicking after game over
+* fixed board discovery with regards to flags
 
 === 21:16 UTC on 13 December 2020 (v0.3.5) ===
 # Gameplay
-+ added new khoisweeper game
+* added new khoisweeper game
 
 === 05:16 UTC on 13 December 2020 (v0.3.4) ===
 # Gameplay
-+ added generic ghoti building
+* added generic ghoti building
 
 # Misc
-+ added ability to play any YouTube video in firekhoi
+* added ability to play any YouTube video in firekhoi
 
 === 03:39 UTC on 13 December 2020 (v0.3.3) ===
 # Misc
-+ added changelog window
-+ added browser
+* added changelog window
+* added browser
 
 === 03:23 UTC on 13 December 2020 (v0.3.2) ===
 # Misc
-+ desktop icons
+* desktop icons
 
 === 00:56 UTC on 13 December 2020 (v0.3.1) ===
 # Misc
-+ windows are now draggable
+* windows are now draggable
 
 === 20:51 UTC on 12 December 2020 (v0.3.0) ===
 # Gameplay
-+ made goo per click 7.5% of goo per second
-+ golden khoi now gives 20% of goo per second in addition to the base 7.5%
-+ golden khoi now lasts 12.5 seconds
-+ further limited number of clicks per second
+* made goo per click 7.5% of goo per second
+* golden khoi now gives 20% of goo per second in addition to the base 7.5%
+* golden khoi now lasts 12.5 seconds
+* further limited number of clicks per second
 
 # Misc
-+ khoima clicker is now multithreadded (better performance)
+* khoima clicker is now multithreadded (better performance)
 
 === 07:00 UTC on 12 December 2020 (v0.2.2) ===
 # Gameplay
-+ made goldenkhoi more frequent
-+ made goo per click 5% of goo per second
+* made goldenkhoi more frequent
+* made goo per click 5% of goo per second
 
 === 04:52 UTC on 12 December 2020 (v0.2.1) ===
 # Gameplay
-+ gamer girl water (art pending)
-= fixed goldenkhoi spawn
+* gamer girl water (art pending)
+* fixed goldenkhoi spawn
 
 # Misc
-= optimized building window generation
+* optimized building window generation
 
 === 00:42 UTC on 12 December 2020 (v0.2) ===
 # Gameplay
-+ game now runs in background
-+ after 5 minutes of no interaction, you only gain 15% your goo per second
+* game now runs in background
+* after 5 minutes of no interaction, you only gain 15% your goo per second
 
 # Misc
-+ gamergoo total is now displayed in page title
+* gamergoo total is now displayed in page title
 
 === Misc patches before 12 December 2020 (v0.1) ===
-+ added goldenkhoi
-+ added ability to sell buildings
-+ added window to view buildings
-+ gamergoo per click now gains 1% of gamer goo per second
-+ limited maximum clicks per second to approx 13
+* added goldenkhoi
+* added ability to sell buildings
+* added window to view buildings
+* gamergoo per click now gains 1% of gamer goo per second
+* limited maximum clicks per second to approx 13

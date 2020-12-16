@@ -1,12 +1,22 @@
 let windows = [null]
 let overlays = [null]
 
-for (let w of document.getElementsByClassName("window-body")) {
-    windows.push(w)
+let bodies = document.getElementsByClassName("window-body")
 
-    if (w.children.length && w.children[0].classList.contains("ifoverlay"))
-        overlays.push(w.children[0])
-    else
+for (let w in bodies) {
+    let body = bodies[w]
+    if (body == undefined || (typeof body != "object")) continue
+
+    windows.push(body)
+
+    if (body.hasChildNodes() && body.children[0].classList.contains("ifoverlay")) {
+        body.children[0].addEventListener("click", e => {
+            win.set_focus(w)
+            let iframe = body.children[body.children.length - 1]
+            iframe.contentWindow.postMessage(e)
+        })
+        overlays.push(body.children[0])
+    } else
         overlays.push(null)
 }
 
@@ -21,6 +31,7 @@ const themes = (() => {
         else
             return
 
+        document.body.classList = theme
         window.localStorage["theme"] = theme
         document.getElementById("theme").setAttribute("href", `https://unpkg.com/${theme}.css`)
     }
@@ -94,9 +105,9 @@ const desktop = (() => {
 
 const win = (() => {
     let default_window = {
-        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175], [170,240]],
-        focus: [null,7,6,5,4,3,2,1],
-        status: [null,0,0,0,0,2,2,2]
+        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175], [440,200]],
+        focus: [null,6,5,4,3,2,1,7],
+        status: [null,0,0,0,2,2,2,0]
     }
 
     let data = Object.assign({}, default_window)
@@ -119,6 +130,10 @@ const win = (() => {
 
             parent.style.left = data.positions[w][0] + "px"
             parent.style.top = data.positions[w][1] + "px"
+
+            if (data.focus[w] == Math.max(...data.focus))
+                parent.classList.add("focused")
+
             parent.style.zIndex = data.focus[w]
 
             if (data.status[w] == 1) minimize(w)
@@ -181,19 +196,13 @@ const win = (() => {
                 ) continue
 
                 windows[f].parentElement.style.zIndex = --data.focus[f]
+                windows[f].parentElement.classList.remove("focused")
             }
 
+            windows[w].parentElement.classList.add("focused")
             save()
         }
     }
-
-    // iframe workaround
-    document.addEventListener("click", e => {
-        if (e.target &&
-            e.target.classList.contains("ifoverlay") &&
-            e.target.value != undefined
-        ) set_focus(parseInt(e.target.value))
-    })
 
     for (let w in windows) {
         let display = windows[w]
@@ -240,6 +249,16 @@ const win = (() => {
         minimize: minimize,
         maximize: maximize,
         exit: exit,
+        focus: set_focus,
+        focused: () => {
+            let index = data.focus.indexOf(Math.max(...data.focus))
+            let open = data.status[index] != 2
+
+            return open ? [
+                index,
+                windows[index].parentElement.children[0].children[0].innerHTML
+            ] : null
+        },
         reset: () => {
             window.localStorage["windows"] = window.btoa(JSON.stringify(default_window))
             set_windows()
@@ -249,9 +268,26 @@ const win = (() => {
     }
 })()
 
+let pressed_keys = {}
+
+function pressed(keys) {
+    let is_pressed = true
+
+    for (let key of keys)
+        is_pressed &= pressed_keys.hasOwnProperty(key)
+
+    return is_pressed
+}
+
 document.addEventListener("keydown", e => {
-    if (e.key === "f") themes.toggle()
-    if (e.key === "g") win.reset()
+    pressed_keys[e.key.toLowerCase()] = true
+
+    if (pressed(["control", "shift", "f"])) themes.toggle()
+    if (pressed(["control", "shift", "g"])) win.reset()
+})
+
+document.addEventListener("keyup", e => {
+    delete pressed_keys[e.key.toLowerCase()]
 })
 
 document.addEventListener("contextmenu", e => e.preventDefault())
