@@ -1,14 +1,17 @@
-const windows = [
-    null,
-    document.getElementById("window-1"),
-    document.getElementById("window-2"),
-    document.getElementById("window-3"),
-    document.getElementById("window-4"),
-    document.getElementById("window-5"),
-    document.getElementById("window-6"),
-]
+let windows = [null]
+let overlays = [null]
 
-const win = (() => {
+let count = 0
+for (let w of document.getElementsByClassName("window-body")) {
+    windows.push(w)
+
+    if (w.children.length && w.children[0].classList.contains("ifoverlay"))
+        overlays.push(w.children[0])
+    else
+        overlays.push(null)
+}
+
+const themes = (() => {
     function set_theme(theme) {
         let background = document.getElementById("background")
 
@@ -23,42 +26,40 @@ const win = (() => {
         document.getElementById("theme").setAttribute("href", `https://unpkg.com/${theme}.css`)
     }
 
-    function toggle_theme() {
-        let current = window.localStorage["theme"] || "xp"
+    set_theme(window.localStorage["theme"] || "xp")
 
-        current = (current === "98") ? "xp" : "98"
-
-        set_theme(current)
+    return {
+        toggle: () => {
+            let current = window.localStorage["theme"] || "xp"
+    
+            current = (current === "98") ? "xp" : "98"
+    
+            set_theme(current)
+        }
     }
+})()
 
+const win = (() => {
     let default_window = {
         positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175]],
         focus: [null,6,5,4,3,2,1],
         status: [null,0,0,0,0,2,2]
     }
 
-    document.addEventListener("keydown", e => {
-        if (e.key === "f") toggle_theme()
-        if (e.key === "g") {
-            window.localStorage["windows"] = window.btoa(JSON.stringify(default_window))
-
-            set_windows()
-        }
-    })
-
-    set_theme(window.localStorage["theme"] || "xp")
-
     let data = Object.assign({}, default_window)
 
     function set_windows() {
+        let data_load = undefined
+
         if (window.localStorage["windows"] == undefined)
             save()
         else
             data_load = JSON.parse(window.atob(window.localStorage["windows"]))
 
-        if (data.positions.length == data_load.positions.length)
-            data = Object.assign(data, data_load)
-        else save()
+        if (data_load)
+            if (data.positions.length == data_load.positions.length)
+                data = Object.assign(data, data_load)
+            else save()
 
         for (let w in windows) {
             if (w == 0) continue
@@ -109,13 +110,26 @@ const win = (() => {
     set_windows()
 
     function set_focus(w) {
-        if (w == NaN) return
+        if (w == NaN || w == undefined) return
+
+        // iframe cross origin workaround
+        for (let overlay of overlays)
+            if (overlay != null)
+                overlay.style.pointerEvents = "auto"
+
+
+        if (overlays[w] != null)
+            overlays[w].style.pointerEvents = "none"
 
         if (data.focus[w] != (windows.length - 1)) {
             data.focus[w] = windows.length
 
             for (let f in data.focus) {
-                if (data.focus[f] == null || data.focus[f] <= 0) continue
+                if (f == NaN ||
+                    f == undefined ||
+                    data.focus[f] == null ||
+                    data.focus[f] <= 0
+                ) continue
 
                 windows[f].parentElement.style.zIndex = --data.focus[f]
             }
@@ -126,8 +140,10 @@ const win = (() => {
 
     // iframe workaround
     document.addEventListener("click", e => {
-        if (e.target && e.target.classList.contains("ifoverlay"))
-            set_focus(parseInt(e.target.value))
+        if (e.target &&
+            e.target.classList.contains("ifoverlay") &&
+            e.target.value != undefined
+        ) set_focus(parseInt(e.target.value))
     })
 
     for (let w in windows) {
@@ -175,9 +191,20 @@ const win = (() => {
     return {
         minimize: minimize,
         maximize: maximize,
-        exit: exit
+        exit: exit,
+        reset: () => {
+            window.localStorage["windows"] = window.btoa(JSON.stringify(default_window))
+            set_windows()
+
+            window.location.reload()
+        }
     }
 })()
+
+document.addEventListener("keydown", e => {
+    if (e.key === "f") themes.toggle()
+    if (e.key === "g") win.reset()
+})
 
 function set_video() {
     let link = document.getElementById("link").value || "https://www.youtube.com/watch?v=dGQtL1l5i0Q"

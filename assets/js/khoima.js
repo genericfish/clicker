@@ -111,6 +111,8 @@ const game = (() => {
         update_buildings: () => {
             windows[2].innerHTML = ""
 
+            let has_towers = false
+
             for (tower in towers) {
                 let count = game.towers[tower][0]
                 if (!count) continue
@@ -134,7 +136,11 @@ const game = (() => {
                 fieldset.appendChild(container)
 
                 windows[2].appendChild(fieldset)
+                has_towers = true
             }
+
+            if (!has_towers)
+                windows[2].innerHTML = "Purchase buildings for them to appear here."
         },
         goldenkhoi: () => {
             let khoi = document.createElement("div")

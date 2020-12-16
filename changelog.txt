@@ -1,16 +1,31 @@
 PATCHNOTES:
 
+=== 03:02 UTC on 16 December 2020 (v0.3.8) ===
+# Misc
++ fixed a bug for first time players where game wouldn't load
++ added text for empty buildings window
+
+=== 21:19 UTC on 14 December 2020 (v0.3.7c) ===
+# Misc
+= fixed regressions regarding window focus and khoisweeper
+
 === 21:09 UTC on 14 December 2020 (v0.3.7b) ===
+# Gameplay
+= goldenkhoi less frequent
+
+## khoisweeper
+= fixed regression with flag count
+
 # Misc
 = minor bug fixes with window focus
 
 === 07:56 UTC on 14 December 2020 (v0.3.7a) ===
 # Misc
 ## khoisweeper
-+ fix bugs related to flags
+= fix bugs related to flags
 
 === 07:37 UTC on 14 December 2020 (v0.3.7) ===
-# Misc
+# Gameplay
 ## khoisweeper
 + add more difficulties
     0.1x reward for easy
@@ -18,7 +33,7 @@ PATCHNOTES:
     1.25x reward for hard
 
 === 03:51 UTC on 14 December 2020 (v0.3.6b) ===
-# Misc
+# Gameplay
 ## khoisweeper
 + hotfix fixing khoisweeper generation
 
@@ -27,20 +42,21 @@ PATCHNOTES:
 + added discord
 + added icons for firekhoi and khoisweeper
 
+# Gameplay
 ## khoisweeper
 + improved khoisweeper readability
 + changed khoisweeper font colors
 + fixed bug where mines never spawned in bottom right
 
 === 00:38 UTC on 14 December 2020 (v0.3.6) ===
-# Misc
+# Gameplay
 ## khoisweeper
 + added reward for winning
     20 minutes worth of gamergoo, capped at 20% of currently owned gamergoo
     minimum of 50000 per win
 
 === 22:03 UTC on 13 December 2020 (v0.3.6) ===
-# Misc
+# Gameplay
 ## khoisweeper
 + added more coloring
 + changed flag icon
@@ -49,7 +65,7 @@ PATCHNOTES:
 + fixed board discovery with regards to flags
 
 === 21:16 UTC on 13 December 2020 (v0.3.5) ===
-# Misc
+# Gameplay
 + added new khoisweeper game
 
 === 05:16 UTC on 13 December 2020 (v0.3.4) ===

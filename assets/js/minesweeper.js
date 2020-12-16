@@ -25,7 +25,7 @@ let ms = (() => {
 
     let board = document.getElementById("minesweeper")
 
-    const ms_default = {
+    let ms = {
         mines: [],
         board: [],
         flags: MAX_MINE,
@@ -33,8 +33,6 @@ let ms = (() => {
         time: 0,
         over: false
     }
-
-    let ms = Object.assign({}, ms_default)
 
     let display = []
     let flags = document.getElementById("ms-flags")
@@ -229,7 +227,12 @@ let ms = (() => {
 
         clearInterval(timer)
 
-        ms = ms_default
+        ms.flags = MAX_MINE
+        ms.over = false
+        ms.visible = COLS * ROWS
+        ms.time = 0
+
+        timer = undefined
 
         flags.innerHTML = ms.flags
         time.innerHTML = 0
