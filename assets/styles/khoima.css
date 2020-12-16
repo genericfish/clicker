@@ -2,15 +2,15 @@
     from {
         width: 200px;
         height: 200px;
-        transform: rotate(-.1turn);
+        transform: rotate(0turn);
         margin: -100px 0 0 -100px;
         filter: hue-rotate(-1turn);
     }
     to {
-        width: 120px;
-        height: 120px;
-        transform: rotate(.1turn);
-        margin: -60px 0 0 -60px;
+        width: 180px;
+        height: 180px;
+        transform: rotate(.075turn);
+        margin: -90px 0 0 -90px;
         filter: hue-rotate(1turn);
     }
 }
@@ -172,16 +172,6 @@ body { padding: 0 }
 
 .rate { font-size: 1.5rem }
 
-.window h1 {
-    font-size: 22px;
-    line-height: 1.2em;
-}
-
-.window h2 {
-    font-size: 16px;
-    color: purple;
-}
-
 .row-container {
     max-height: 252px;
     overflow-y: auto;
@@ -189,14 +179,18 @@ body { padding: 0 }
 }
 
 #goldenkhoi {
+    position: absolute;
     background: url(../images/gameplay/strechmax.png);
     background-size: cover;
-    animation: bob .5s ease infinite alternate;
+    animation: bob 1s linear infinite alternate;
+
     width: 150px;
     height: 150px;
     margin: -75px 0 0 -75px;
+
     border-radius: 50%;
-    position: absolute;
+    border: 1px solid red;
+
     cursor: pointer;
     z-index: 10;
 }
