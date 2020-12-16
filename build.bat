@@ -1,4 +1,4 @@
-call terser .\assets\js\khoima-worker.js > .\dist\assets\js\khoima-worker.js
+call terser .\assets\js\workers\clicker.js > .\dist\assets\js\workers\clicker.js
 call terser .\assets\js\khoima.js > .\dist\assets\js\khoima.js
 call terser .\assets\js\windows.js > .\dist\assets\js\windows.js
 call terser .\assets\js\minesweeper.js > .\dist\assets\js\minesweeper.js
