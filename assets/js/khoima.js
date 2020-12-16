@@ -28,7 +28,7 @@ function nice_format(num) {
 }
 
 const game = (() => {
-    const game_worker = new Worker("assets/js/khoima-worker.js")
+    const game_worker = new Worker("assets/js/workers/clicker.js")
 
     const graphics = {
         bounce: (() => {

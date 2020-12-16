@@ -224,7 +224,8 @@ let game = (() => {
             update_rates()
             update_costs()
             save()
-        }
+        },
+        post: (data) => { postMessage(data) }
     }
 })()
 
