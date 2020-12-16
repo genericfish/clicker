@@ -35,13 +35,13 @@
             <span>firekhoi</span>
         </a>
         <a class="icon" href="#" ondblclick="win.maximize(6)">
-            <img src="assets/images/buildings/khoibomb.png" alt="">
+            <img src="assets/images/buildings/minesweeper.png" alt="">
             <span>khoi sweeper</span>
         </a>
-        <a class="icon" href="#" ondblclick="win.maximize(6)">
-            <img src="assets/images/buildings/khoibomb.png" alt="">
+        <!-- <a class="icon" href="#" ondblclick="win.maximize(7)">
+            <img src="assets/images/buildings/minesweeper.png" alt="">
             <span>khoimagotchi</span>
-        </a>
+        </a> -->
         <a class="icon" href="#" ondblclick="discord()">
             <img src="https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg" alt="">
             <span>discord</span>
@@ -105,6 +105,7 @@
                         <li>
                             <span style="color:purple;font-size: 20px;"><span  id="stats-header"></span> <span>stats</span></span>
                             <ul style="color:#f00;">
+                                <li id="stats-desc"></li>
                                 <li>gamergoo per second: +<span id="stats-rate">0.0</span></li>
                                 <li>gamergoo per click: +<span id="stats-click">0.0</span></li>
                                 <li>
@@ -192,7 +193,12 @@
                 | <span id="ms-time">0</span>s
                 <button onclick="ms.generate(-1)">Restart</button>
             </div>
-            <div id="minesweeper"></div>
+            <div id="minesweeper">
+                <div class="buy" style="margin-top:-50px;width:400px;text-align:center;padding: 5px;">
+                    <p>Purchase khoisweeper for 5000 gamergoo</p>
+                    <img style="margin: 0 auto;" src="assets/images/buildings/minesweeper.png" width="300" height="300" alt="">
+                </div>
+            </div>
         </div>
     </div>
     <div class="window">

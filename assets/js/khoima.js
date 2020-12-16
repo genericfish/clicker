@@ -27,6 +27,8 @@ function nice_format(num) {
         " " + english_numbers[place]
 }
 
+let flags = [false]
+
 const game = (() => {
     const game_worker = new Worker("assets/js/workers/clicker.js")
 
@@ -88,6 +90,11 @@ const game = (() => {
                         display.shop.rate.innerHTML = towers[tower].base_rate
                         display.shop.click.innerHTML = towers[tower].base_click
                         shop.active = tower
+
+                        if (towers[tower].hasOwnProperty("desc"))
+                            display.shop.desc.innerHTML = towers[tower].desc
+                        else
+                            display.shop.desc.innerHTML = ""
 
                         display.shop.owned.innerHTML = game.towers[shop.active][0]
                         display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
@@ -153,7 +160,7 @@ const game = (() => {
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
-                document.getElementById("background").classList.add("khoi")
+                windows[1].classList.add("khoi")
             })
 
             setTimeout(() => {
@@ -186,6 +193,14 @@ const game = (() => {
             cost_multiplier: 1.01375,
             base_rate: 10,
             base_click: 0,
+        },
+        minesweeper: {
+            name: "khoisweeper",
+            desc: "unlocks the khoisweeper minigame",
+            base_cost: 5000,
+            cost_multiplier: 1.015,
+            base_rate: 15,
+            base_click: 0
         },
         dogfarm: {
             name: "dog farm",
@@ -231,6 +246,7 @@ const game = (() => {
             owned: document.getElementById("stats-owned"),
             producing: document.getElementById("stats-producing"),
             listings: document.getElementById("listings"),
+            desc: document.getElementById("stats-desc")
         }
     }
 
@@ -239,6 +255,7 @@ const game = (() => {
             autoclicker: [0,0],
             stream: [0,0],
             coomfactory: [0,0],
+            minesweeper: [0,0],
             dogfarm: [0,0],
             water: [0,0],
             ghoti: [0,0],
@@ -249,6 +266,7 @@ const game = (() => {
             autoclicker: [0,0],
             stream: [0,0],
             coomfactory: [0,0],
+            minesweeper: [0,0],
             dogfarm: [0,0],
             water: [0,0],
             ghoti: [0,0],
@@ -290,6 +308,7 @@ const game = (() => {
                             display.shop.buy.setAttribute("disabled", "disabled")
                         else
                             display.shop.buy.removeAttribute("disabled")
+
                         break
                     case "title":
                         document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
@@ -319,6 +338,15 @@ const game = (() => {
                             display.shop.refundcontainer.removeAttribute("style")
                         }
 
+                        if (shop.active === "minesweeper") {
+                            if ((!flags[0] && game.towers.minesweeper[0] > 0) ||
+                                (flags[0] && game.towers.minesweeper[0] == 0)
+                            ) {
+                                ms.generate(-1)
+                                flags[0] = !flags[0]
+                            }
+                        }
+
                         display.shop.cost.innerHTML = nice_format(shop.active_cost)
                         display.shop.refund.innerHTML = nice_format(shop.active_refund)
                         break
@@ -346,7 +374,7 @@ const game = (() => {
             graphics.goldenkhoi()
         },
         goldenkhoi_end: () => {
-            document.getElementById("background").classList.remove("khoi")
+            windows[1].classList.remove("khoi")
         }
     }
 

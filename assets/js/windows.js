@@ -254,6 +254,8 @@ document.addEventListener("keydown", e => {
     if (e.key === "g") win.reset()
 })
 
+document.addEventListener("contextmenu", e => e.preventDefault())
+
 function set_video() {
     let link = document.getElementById("link").value || "https://www.youtube.com/watch?v=dGQtL1l5i0Q"
     let url = new URL(link)

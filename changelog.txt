@@ -1,5 +1,18 @@
 PATCHNOTES:
 
+=== 08:49 UTC on 16 December 2020 (v0.3.9) ===
+# Gameplay
++ added khoisweeper building that unlocks the minigame
+
+=== 08:02 UTC on 16 December 2020 (v0.3.8a) ===
+# Gameplay
+= made goldenkhoi less intrusive on gameply
+    - no longer applies rainbow effect on background
+    + applies rainbow effect on clicker
+    = doesn't pulse or rotate as much
+# Misc
++ added drag selection while on desktop
+
 === 03:02 UTC on 16 December 2020 (v0.3.8) ===
 # Misc
 + fixed a bug for first time players where game wouldn't load

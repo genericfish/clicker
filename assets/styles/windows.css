@@ -138,7 +138,7 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 
 #minesweeper div { display: block }
 
-#minesweeper div button {
+#minesweeper div:not(.buy) button {
     display: inline;
     min-height: 35px;
     min-width: 35px;
