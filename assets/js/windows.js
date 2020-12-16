@@ -1,7 +1,6 @@
 let windows = [null]
 let overlays = [null]
 
-let count = 0
 for (let w of document.getElementsByClassName("window-body")) {
     windows.push(w)
 
@@ -39,11 +38,65 @@ const themes = (() => {
     }
 })()
 
+const desktop = (() => {
+    let bg = document.getElementById("background")
+    let sel = document.createElement("div")
+    let start = undefined
+
+    sel.classList = "selection"
+
+    bg.addEventListener("mousedown", e => {
+        bg.appendChild(sel)
+        sel.style.top = e.clientY + "px"
+        sel.style.left = e.clientX + "px"
+        start = [e.clientX, e.clientY]
+    })
+
+    bg.addEventListener("mousemove", e => {
+        if (start == undefined) return
+
+        let box = sel.getBoundingClientRect()
+        let w, h
+
+
+        if (e.clientX <= start[0]) {
+            sel.style.right = (window.innerWidth - start[0]) + "px"
+            sel.style.left = null
+            w = box.right - e.clientX
+        } else {
+            sel.style.left = start[0] + "px"
+            sel.style.right = null
+            w = box.left - e.clientX
+        }
+
+        if (e.clientY <= start[1]) {
+            sel.style.bottom = (window.innerHeight - start[1]) + "px"
+            sel.style.top = null
+            h = box.bottom - e.clientY
+        } else {
+            sel.style.top = start[1] + "px"
+            sel.style.bottom = null
+            h = box.top - e.clientY
+        }
+
+        sel.style.width = Math.abs(w) + "px"
+        sel.style.height = Math.abs(h) + "px"
+    })
+
+    bg.addEventListener("mouseup", () => {
+        try {
+            bg.removeChild(sel)
+            sel.style = null
+            start = undefined
+        } catch (e) { }
+    })
+})()
+
 const win = (() => {
     let default_window = {
-        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175]],
-        focus: [null,6,5,4,3,2,1],
-        status: [null,0,0,0,0,2,2]
+        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175], [170,240]],
+        focus: [null,7,6,5,4,3,2,1],
+        status: [null,0,0,0,0,2,2,2]
     }
 
     let data = Object.assign({}, default_window)
@@ -51,10 +104,8 @@ const win = (() => {
     function set_windows() {
         let data_load = undefined
 
-        if (window.localStorage["windows"] == undefined)
-            save()
-        else
-            data_load = JSON.parse(window.atob(window.localStorage["windows"]))
+        if (window.localStorage["windows"] == undefined) save()
+        else data_load = JSON.parse(window.atob(window.localStorage["windows"]))
 
         if (data_load)
             if (data.positions.length == data_load.positions.length)
@@ -70,10 +121,8 @@ const win = (() => {
             parent.style.top = data.positions[w][1] + "px"
             parent.style.zIndex = data.focus[w]
 
-            if (data.status[w] == 1)
-                minimize(w)
-            else if (data.status[w] == 2)
-                exit(w)
+            if (data.status[w] == 1) minimize(w)
+            else if (data.status[w] == 2) exit(w)
         }
     }
 
@@ -186,7 +235,6 @@ const win = (() => {
 
         drag()
     }
-
 
     return {
         minimize: minimize,

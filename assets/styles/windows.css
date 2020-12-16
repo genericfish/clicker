@@ -69,8 +69,6 @@ ul.tree-view ul > li:last-child::after { top: .7em }
 
 .window { position: absolute }
 
-#window-2 { min-width: 465px }
-
 #desktop .icon {
     display: block;
     cursor: default;
@@ -115,13 +113,18 @@ ul.tree-view ul > li:last-child::after { top: .7em }
     border: 1px solid #ADD8E6AA;
 }
 
-#window-5 input {
+#player input {
     display: inline-block;
+
+    padding: 3px 4px;
     margin-bottom: 5px;
+    border: none;
+
     width: 475px;
+    height: 23px;
 }
 
-#window-5 button {
+#player button {
     display: inline-block;
     width: 50px;
 }
@@ -216,7 +219,7 @@ select {
     min-height: 28px;
 }
 
-#window-4 iframe {
+#changelog {
     width: 455px;
     height: 650px;
 
@@ -226,4 +229,14 @@ select {
 .ifoverlay {
     /* Cross origin iframe click event doesnt work */
     position: absolute;
+}
+
+#background .selection {
+    position: fixed;
+    display: block;
+
+    background: #ADD8E6CC;
+    border: 1px solid #ADD8E6AA;
+
+    z-index: 10;
 }

@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="assets/styles/windows.css">
 </head>
 <body>
-    <div id="background"></div>
+    <div id="background">
+        <div class="dummy"></div>
+    </div>
     <div id="desktop" style="position: fixed;">
         <a class="icon" href="#" ondblclick="win.maximize(2)">
             <img src="assets/images/buildings/autoclicker.png" alt="">
@@ -36,6 +38,10 @@
             <img src="assets/images/buildings/khoibomb.png" alt="">
             <span>khoi sweeper</span>
         </a>
+        <a class="icon" href="#" ondblclick="win.maximize(6)">
+            <img src="assets/images/buildings/khoibomb.png" alt="">
+            <span>khoimagotchi</span>
+        </a>
         <a class="icon" href="#" ondblclick="discord()">
             <img src="https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg" alt="">
             <span>discord</span>
@@ -50,7 +56,7 @@
                 <button aria-label="Close" onclick="win.exit(1)"></button>
             </div>
         </div>
-        <div id="window-1"  class="window-body">
+        <div class="window-body">
             <div id="gamergoo">
                 <div id="counter">0</div>
                 gamergoo
@@ -70,7 +76,7 @@
                 <button aria-label="Close" onclick="win.exit(2)"></button>
             </div>
         </div>
-        <div id="window-2" class="window-body"></div>
+        <div class="window-body" style="min-width: 465px;"></div>
     </div>
     <div class="window">
         <div class="title-bar">
@@ -81,7 +87,7 @@
                 <button aria-label="Close" onclick="win.exit(3)"></button>
             </div>
         </div>
-        <div id="window-3" class="window-body">
+        <div class="window-body">
             <div class="content">
                 <div class="left">
                     <ul class="tree-view">
@@ -144,9 +150,9 @@
                 <button aria-label="Close" onclick="win.exit(4)"></button>
             </div>
         </div>
-        <div id="window-4" class="window-body">
+        <div class="window-body">
             <div class="ifoverlay" value="4" style="width: 455px;height: 650px;"></div>
-            <iframe src="https://generic.fish/clicker/changelog.txt" frameborder="0"></iframe>
+            <iframe id="changelog" src="https://generic.fish/clicker/changelog.txt" frameborder="0"></iframe>
         </div>
     </div>
     <div class="window">
@@ -158,7 +164,7 @@
                 <button aria-label="Close" onclick="win.exit(5)"></button>
             </div>
         </div>
-        <div id="window-5" class="window-body">
+        <div id="player" class="window-body">
             <div>
                 <input autocomplete="off" type="text" id="link" placeholder="https://www.youtube.com/watch?v=uUnguqPxzNU">
                 <button onclick="set_video()">-></button>
@@ -175,7 +181,7 @@
                 <button aria-label="Close" onclick="win.exit(6)"></button>
             </div>
         </div>
-        <div id="window-6" class="window-body">
+        <div class="window-body">
             <div id="ms-stats">
                 <select autocomplete="off" onchange="ms.difficulty(this.options[this.selectedIndex])">
                     <option value="1">Easy</option>
@@ -189,7 +195,18 @@
             <div id="minesweeper"></div>
         </div>
     </div>
-
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">khoimagotchi</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(6)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(6)"></button>
+                <button aria-label="Close" onclick="win.exit(6)"></button>
+            </div>
+        </div>
+        <div class="window-body">
+        </div>
+    </div>
     <script src="assets/js/windows.js"></script>
     <script src="assets/js/khoima.js"></script>
     <script src="assets/js/minesweeper.js" onload="ms.generate(-1)"></script>
