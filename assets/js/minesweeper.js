@@ -222,7 +222,18 @@ let ms = (() => {
 
         if (win) win.remove()
 
-        if (!make &&display.length != COLS * ROWS) {
+        if (game.get("towers").minesweeper[0] == 0) {
+            document.getElementById("ms-stats").style.visibility = "hidden"
+            board.innerHTML = defaultHTML
+            board.style.minWidth = null
+            return
+        } else {
+            document.getElementById("ms-stats").style.visibility = null
+            display = []
+            make = true
+        }
+
+        if (!make && display.length != COLS * ROWS) {
             display = []
             make = true
         }
@@ -239,16 +250,6 @@ let ms = (() => {
         flags.innerHTML = ms.flags
         time.innerHTML = 0
 
-        if (game.get("towers").minesweeper[0] == 0) {
-            document.getElementById("ms-stats").style.visibility = "hidden"
-            board.innerHTML = defaultHTML
-            board.style.minWidth = null
-            return
-        } else {
-            document.getElementById("ms-stats").style.visibility = "visible"
-            make = true
-            board.innerHTML = ""
-        }
         if (!make)
             // Clear all classes from existing buttons
             for (let e of display)

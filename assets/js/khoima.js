@@ -339,11 +339,13 @@ const game = (() => {
                         }
 
                         if (shop.active === "minesweeper") {
-                            if ((!flags[0] && game.towers.minesweeper[0] > 0) ||
-                                (flags[0] && game.towers.minesweeper[0] == 0)
-                            ) {
+                            if (!flags[0] && game.towers.minesweeper[0] > 0) {
+                                flags[0] = true
                                 ms.generate(-1)
-                                flags[0] = !flags[0]
+                            }
+                            if (flags[0] && game.towers.minesweeper[0] == 0) {
+                                flags[0] = false
+                                ms.generate(-1)
                             }
                         }
 
