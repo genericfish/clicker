@@ -51,24 +51,25 @@ const themes = (() => {
 
 const desktop = (() => {
     let bg = document.getElementById("background")
-    let sel = document.createElement("div")
+    let sel = undefined
     let start = undefined
 
-    sel.classList = "selection"
+    document.addEventListener("mousedown", e => {
+        if (e.target != bg) return
 
-    bg.addEventListener("mousedown", e => {
+        sel = document.createElement("div")
+        sel.classList = "selection"
         bg.appendChild(sel)
         sel.style.top = e.clientY + "px"
         sel.style.left = e.clientX + "px"
         start = [e.clientX, e.clientY]
     })
 
-    bg.addEventListener("mousemove", e => {
+    document.addEventListener("mousemove", e => {
         if (start == undefined) return
 
         let box = sel.getBoundingClientRect()
         let w, h
-
 
         if (e.clientX <= start[0]) {
             sel.style.right = (window.innerWidth - start[0]) + "px"
@@ -94,20 +95,25 @@ const desktop = (() => {
         sel.style.height = Math.abs(h) + "px"
     })
 
-    bg.addEventListener("mouseup", () => {
+    document.addEventListener("mouseup", () => {
+        if (start == undefined) return
+
         try {
-            bg.removeChild(sel)
-            sel.style = null
-            start = undefined
+            sel.classList.add("fade")
+
+            setTimeout(() => {
+                bg.removeChild(sel)
+                start = undefined
+            }, 75)
         } catch (e) { }
     })
 })()
 
 const win = (() => {
     let default_window = {
-        positions: [null, [110,5], [485,5], [975,5], [5,562], [130,90], [150,175], [440,200]],
-        focus: [null,6,5,4,3,2,1,7],
-        status: [null,0,0,0,2,2,2,0]
+        positions: [null, [100,5], [1155,5], [476,5], [5,562], [130,90], [150,175], [525,200], [170,240]],
+        focus: [null,7,6,5,4,3,2,8,1],
+        status: [null,0,0,0,2,2,2,0,2]
     }
 
     let data = Object.assign({}, default_window)
@@ -283,7 +289,10 @@ document.addEventListener("keydown", e => {
     pressed_keys[e.key.toLowerCase()] = true
 
     if (pressed(["control", "shift", "f"])) themes.toggle()
-    if (pressed(["control", "shift", "g"])) win.reset()
+    else if (pressed(["control", "shift", "g"])) win.reset()
+    else return
+
+    e.preventDefault()
 })
 
 document.addEventListener("keyup", e => {

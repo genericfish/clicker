@@ -57,7 +57,7 @@
     to { bottom: 200px; opacity: 0; }
 }
 
-body { padding: 0 }
+body, html { padding: 0; margin: 0 }
 
 * { user-select: none }
 
@@ -69,40 +69,37 @@ body { padding: 0 }
     text-align: center;
 }
 
-#clicker { margin: 0 auto }
-
-#clicker,
-#clicker input[type="button"] {
+#clicker {
     position: relative;
 
+    margin: 0 auto;
     width: 350px;
     height: 350px;
+
+    & input[type="button"] {
+        position: absolute;
+
+        background: url(images/gameplay/khoima.png);
+        background-size: contain;
+
+        border-radius: 50%;
+
+        width: 100%;
+        height: 100%;
+
+        top: 50%;
+        left: 50%;
+        margin: -50% 0 0 -50%;
+
+        border: none;
+        pointer-events: auto;
+
+        cursor: pointer;
+
+        &.clicked { animation: bounce .3s ease }
+        &:focus { outline: 0 }
+    }
 }
-
-#clicker input[type="button"] {
-    position: absolute;
-
-    background: url(../images/gameplay/khoima.png);
-    background-size: contain;
-
-    border-radius: 50%;
-
-    width: 100%;
-    height: 100%;
-
-    top: 50%;
-    left: 50%;
-    margin: -50% 0 0 -50%;
-
-    border: none;
-    pointer-events: auto;
-
-    cursor: pointer;
-}
-
-#clicker input[type="button"].clicked { animation: bounce .3s ease }
-
-#clicker input[type="button"]:focus { outline: 0 }
 
 .khoi {
     color: #0ff;
@@ -114,52 +111,46 @@ body { padding: 0 }
     animation: float 1.5s ease;
 
     pointer-events: none;
-}
 
-.click-float::after {
-    position: absolute;
-    content: " ";
-    background: url(../images/gameplay/mini.png);
-    background-size: contain;
+    &::after {
+        position: absolute;
+        content: " ";
+        background: url(images/gameplay/mini.png);
+        background-size: contain;
 
-    width: 1.5rem;
-    height: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
 
-    pointer-events: none;
-}
+        pointer-events: none
+    }
 
-.click-float div {
-    display: inline-block;
-    font-size: 1.5rem;
-    padding-right: 0.25rem;
-    line-height: 1.5rem;
-    background: transparent;
-    text-shadow: 2px 2px silver;
+    & div {
+        display: inline-block;
+        font-size: 1.5rem;
+        padding-right: 0.25rem;
+        line-height: 1.5rem;
+        background: transparent;
+        text-shadow: 2px 2px silver;
 
-    pointer-events: none;
-    user-select: none;
+        pointer-events: none;
+        user-select: none
+    }
 }
 
 .content {
     display: flex;
     justify-content: space-between;
     width: 100%;
-}
 
-.content .left {
-    flex: 1;
-    padding: 3px;
-}
+    & .left {
+        flex: 1;
+        padding: 3px
+    }
 
-.content .middle {
-    flex: 2;
-    padding: 3px;
-    max-width: 525px;
-}
-
-.content .right {
-    flex: 2;
-    padding: 3px;
+    & .right {
+        flex: 2;
+        padding: 3px
+    }
 }
 
 #gamergoo {
@@ -167,7 +158,7 @@ body { padding: 0 }
     font-size: 3rem;
     line-height: 1em;
     
-    padding-bottom: 10px;
+    padding-bottom: 10px
 }
 
 .rate { font-size: 1.5rem }
@@ -175,22 +166,21 @@ body { padding: 0 }
 .row-container {
     max-height: 252px;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: hidden
 }
 
 #goldenkhoi {
     position: absolute;
-    background: url(../images/gameplay/strechmax.png);
+    background: url(images/gameplay/strechmax.png);
     background-size: cover;
-    animation: bob 1s linear infinite alternate;
+    animation: bob 0.75s linear infinite alternate;
 
     width: 150px;
     height: 150px;
     margin: -75px 0 0 -75px;
 
     border-radius: 50%;
-    border: 1px solid red;
 
     cursor: pointer;
-    z-index: 10;
+    z-index: 10
 }

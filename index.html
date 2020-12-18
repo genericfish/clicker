@@ -6,8 +6,9 @@
     <title>Khoima Clicker</title>
 
     <link id="theme" rel="stylesheet" href="https://unpkg.com/98.css">
-    <link rel="stylesheet" href="assets/styles/khoima.css">
-    <link rel="stylesheet" href="assets/styles/windows.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Oleo+Script&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="assets/clicker.css">
 </head>
 <body>
     <div id="background"></div>
@@ -39,6 +40,10 @@
         <a class="icon" href="#" ondblclick="win.maximize(7)">
             <img src="assets/images/buildings/minesweeper.png" alt="">
             <span>tutorial</span>
+        </a>
+        <a href="#" class="icon" ondblclick="win.maximize(8)">
+            <img src="assets/images/buildings/minesweeper.png" alt="">
+            <span>vending machine</span>
         </a>
         <a class="icon" href="#" ondblclick="discord()">
             <img src="https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg" alt="">
@@ -74,7 +79,7 @@
                 <button aria-label="Close" onclick="win.exit(2)"></button>
             </div>
         </div>
-        <div class="window-body" style="min-width: 465px;"></div>
+        <div class="window-body" style="min-width:495px;"></div>
     </div>
     <div class="window">
         <div class="title-bar">
@@ -217,8 +222,56 @@
             <button onclick="win.exit(7)">Close Tutorial</button>
         </div>
     </div>
-    <script src="assets/js/windows.js"></script>
-    <script src="assets/js/khoima.js"></script>
-    <script src="assets/js/minesweeper.js" onload="ms.generate(-1)"></script>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">vending machine</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(8)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(8)"></button>
+                <button aria-label="Close" onclick="win.exit(8)"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div id="machine">
+                <ul>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                </ul>
+                <ul>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                </ul>
+                <ul>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                </ul>
+                <ul>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                </ul>
+                <ul>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                    <li><span>soda!</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/game.js" onload="ms.generate(-1)"></script>
 </body>
 </html>

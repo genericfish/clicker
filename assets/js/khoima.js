@@ -119,6 +119,10 @@ const game = (() => {
             windows[2].innerHTML = ""
 
             let has_towers = false
+            let fs_container = document.createElement("div")
+
+            fs_container.style.maxHeight = "500px"
+            fs_container.style.overflowY = "scroll"
 
             for (tower in towers) {
                 let count = game.towers[tower][0]
@@ -142,12 +146,14 @@ const game = (() => {
                 fieldset.appendChild(legend)
                 fieldset.appendChild(container)
 
-                windows[2].appendChild(fieldset)
+                fs_container.appendChild(fieldset)
                 has_towers = true
             }
 
             if (!has_towers)
                 windows[2].innerHTML = "Purchase buildings for them to appear here."
+            else
+                windows[2].appendChild(fs_container)
         },
         goldenkhoi: () => {
             let khoi = document.createElement("div")
