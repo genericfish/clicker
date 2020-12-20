@@ -455,5 +455,5 @@ const game = (() => {
 game.start()
 
 function discord() {
-    window.open("https://discord.gg/WaU2dpvVCX", "_blank")
+    window.open("https://discord.gg/ZTnCdcM", "_blank")
 }

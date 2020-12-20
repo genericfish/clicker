@@ -28,15 +28,9 @@
             counter-increment: vm-numeric;
 
             margin: 0;padding: 0;
-            line-height: 80px;
-            font-size: 20px;
 
-            max-width: 70px;
-            min-height: 100px;
-
-            text-align: center;
-            text-orientation: sideways;
-            writing-mode: vertical-rl;
+            width: 70px;
+            height: 100px;
 
             &::after {
                 position: absolute;
@@ -48,8 +42,6 @@
                 line-height: 1em;
                 bottom: 0;left: 0;
 
-                text-orientation: mixed;
-                writing-mode: horizontal-tb;
                 font-family: "VT323", monospace;
             }
 
@@ -74,8 +66,21 @@
 
                 background: purple;
                 color: white;
-                padding: 8px 0 8px 4px;
+
                 border-radius: 6px;
+                padding: 8px 0 8px 4px;
+                width: 28px;
+
+                font-size: 18px;
+                line-height: 28px;
+
+                text-align: center;
+                vertical-align: center;
+                margin: 0 auto;
+
+                text-orientation: sideways;
+                writing-mode: vertical-rl;
+                transform: scale(-1);
             }
 
             & span:before {
