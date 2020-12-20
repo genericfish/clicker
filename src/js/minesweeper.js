@@ -1,6 +1,6 @@
 let ms = (() => {
     const colors = [
-        "black",   // empty
+        null,      // empty
         "blue",    // 1
         "green",   // 2
         "red",     // 3
@@ -163,7 +163,7 @@ let ms = (() => {
             } else {
                 html = "&nbsp;"
                 ms.flags++
-                display[i].style.color = "#000"
+                display[i].style.color = null
             }
 
             display[i].innerHTML = html
@@ -276,7 +276,7 @@ let ms = (() => {
             let cell = make ? document.createElement("button") : display[i]
 
             cell.innerHTML = "&nbsp;"
-            cell.style.color = "#000"
+            cell.style.color = null
 
             if (SMALL) cell.classList.add("small")
 
@@ -306,11 +306,6 @@ let ms = (() => {
         difficulty: (e) => {
             try {
                 let i = parseInt(e.value) - 1
-
-                /**
-                 * For some reason this doesnt work?
-                 * [ROWS, COLS, MAX_MINE] = difficulties[i]
-                 */
 
                 ROWS = difficulties[i][0]
                 COLS = difficulties[i][1]
