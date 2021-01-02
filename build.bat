@@ -10,7 +10,7 @@ call terser .\src\js\windows.js ^
             .\src\js\minesweeper.js ^
             > .\dist\assets\js\game.js
 call lessc .\src\styles\clicker.less | call  minify --css > .\dist\assets\clicker.css
-call minify index.html > .\dist\index.html
+call minify .\src\index.html > .\dist\index.html
 xcopy changelog.txt .\dist\changelog.txt /Y
 xcopy /s .\images .\dist\assets\images /Y
 endlocal
