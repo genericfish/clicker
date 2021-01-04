@@ -185,6 +185,11 @@ const game = (() => {
             cost_multiplier: 1.013,
             base_rate: .25,
             base_click: 0,
+            modifiers: {
+                "wallhack": [500, 1.5],
+                "aimlock": [5000, 1.5],
+                "spinbot": [15000, 2]
+            }
         },
         stream: {
             name: "bigfollows",
