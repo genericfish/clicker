@@ -8,7 +8,8 @@ mkdir -p "./dist/assets/images"
 
 if [ -d ./src/js ] && [ -d ./dist/assets/js ]; then
     touch ./dist/assets/js/clicker.js
-    cmd="${minify} ./src/js/windows.js ./src/js/khoima.js ./src/js/minesweeper.js"
+    cmd="${minify} ./src/js/core/keyhandler.js ./src/js/desktop/windows.js\
+    ./src/js/desktop/desktop.js ./src/js/khoima.js ./src/js/minesweeper.js"
     eval "${cmd} > ./dist/assets/js/game.js"
     echo "Minified ./src/js/*.js to ./dist/assets/js/game.js"
     unset cmd

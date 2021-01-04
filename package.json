@@ -1,0 +1,27 @@
+{
+    "name": "clicker",
+    "version": "0.3.11",
+    "description": "Live game: [generic.fish/clicker](https://generic.fish/clicker)",
+    "main": "index.js",
+    "dependencies": {},
+    "devDependencies": {
+        "lessc": "^1.0.2",
+        "minify": "^6.0.1"
+    },
+    "scripts": {},
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/genericfish/clicker.git"
+    },
+    "keywords": [],
+    "author": {
+        "name": "Brandon Nguyen",
+        "email": "brandon@barnden.dev",
+        "url": "https://barnden.dev"
+    },
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/genericfish/clicker/issues"
+    },
+    "homepage": "https://github.com/genericfish/clicker#readme"
+}

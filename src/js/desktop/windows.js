@@ -111,9 +111,10 @@ const desktop = (() => {
 
 const win = (() => {
     let default_window = {
-        positions: [null, [100,5], [1155,5], [476,5], [5,562], [130,90], [150,175], [525,200], [170,240]],
-        focus: [null,7,6,5,4,3,2,8,1],
-        status: [null,0,0,0,2,2,2,0,2]
+        positions: [null, [100,5], [1155,5], [476,5], [5,562], [130,90], [150,175], [525,200],
+                    [170,240], [190, 305], [210, 370]],
+        focus: [null,9,8,7,6,5,4,10,3,2,1],
+        status: [null,0,0,0,2,2,2,0,2,2,2]
     }
 
     let data = Object.assign({}, default_window)
@@ -274,33 +275,6 @@ const win = (() => {
     }
 })()
 
-let pressed_keys = {}
-
-function pressed(keys) {
-    let is_pressed = true
-
-    for (let key of keys)
-        is_pressed &= pressed_keys.hasOwnProperty(key)
-
-    return is_pressed
-}
-
-document.addEventListener("keydown", e => {
-    pressed_keys[e.key.toLowerCase()] = true
-
-    if (pressed(["control", "shift", "f"])) themes.toggle()
-    else if (pressed(["control", "shift", "g"])) win.reset()
-    else return
-
-    e.preventDefault()
-})
-
-document.addEventListener("keyup", e => {
-    delete pressed_keys[e.key.toLowerCase()]
-})
-
-document.addEventListener("contextmenu", e => e.preventDefault())
-
 function set_video() {
     let link = document.getElementById("link").value || "https://www.youtube.com/watch?v=dGQtL1l5i0Q"
     let url = new URL(link)
@@ -314,3 +288,6 @@ function set_video() {
         document.getElementById("browser").src = "https://www.youtube.com/embed/" + video
     }
 }
+
+KH.set_bind(["control", "shift", "z"], themes.toggle)
+KH.set_bind(["control", "shift", "x"], win.reset)
