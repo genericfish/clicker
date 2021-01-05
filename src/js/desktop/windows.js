@@ -1,3 +1,106 @@
+class WindowManager {
+    constructor () {
+        this.windows = []
+    }
+
+    add(win) { this.windows.append(win) }
+
+    close(e) {}
+    minimize(e) {}
+    maximize(e) {}
+}
+
+class Window {
+    constructor (x, y, z, title = "", max_width = "0", max_height = "0", iframe = false) {
+        this.x = x
+        this.y = y
+        this.z = z
+        this.title = title
+        this.mw = max_width
+        this.mh = max_height
+        this.overlay = undefined
+
+        // bool on whether the body will contain an iframe
+        this.iframe = iframe == true
+
+        this.create_window()
+    }
+
+    focus() { this.win.classList.add("focused") }
+    unfocus() { this.win.classList.remove("focused") }
+
+    move(x, y) {
+        this.win.style.left = x + 'px'
+        this.win.style.top = y + 'px'
+    }
+
+    index(z) { this.win.style.zIndex = z }
+
+    create_window() {
+        // Window container
+        this.win = document.createElement("div")
+        win.classList.add("window")
+
+        // Title bar
+        let bar = document.createElement("div")
+        bar.classList.add("title-bar")
+
+        // Title
+        let title = document.createElement("div")
+        title.innerHTML = this.title
+        title.classList.add("title-bar-text")
+
+        bar.append(title)
+
+        // Window controls
+        let controls = document.createElement("div")
+        let buttons = [
+            document.createElement("button"),
+            document.createElement("button"),
+            document.createElement("button")
+        ]
+
+        controls.classList.add("title-bar-controls")
+
+        buttons[0].setAttribute("aria-label", "Minimize")
+        buttons[0].setAttribute("onclick", "WM.minimize(this)")
+
+        buttons[1].setAttribute("aria-label", "Maximize")
+        buttons[1].setAttribute("onclick", "WM.maximize(this)")
+
+        buttons[2].setAttribute("aria-label", "Close")
+        buttons[2].setAttribute("onclick", "WM.close(this)")
+
+        buttons.forEach(e => controls.appendChild(e))
+
+        bar.appendChild(controls)
+
+        // Window body
+        let body = document.createElement("div")
+        body.classList.add("window-body")
+
+        if (this.iframe) this.add_overlay()
+
+        // Append children to root window elementqqq
+        win.appendChild(bar)
+        win.appendChild(body)
+
+        // Move to initial x and y
+        this.move(this.x, this.y)
+        this.index(this.z)
+
+        // Add to window manager
+        if (WM != undefined)
+            WM.add(this)
+    }
+
+    add_overlay() {
+        // Invisible div that overlays entire window body
+        // Workaround for focusing cross origin iframes
+        this.overlay = document.createElement("div")
+    }
+}
+
 let windows = [null]
 let overlays = [null]
 

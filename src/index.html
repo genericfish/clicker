@@ -152,7 +152,7 @@
         </div>
         <div class="window-body">
             <div class="ifoverlay"style="width:455px;height:650px;"></div>
-            <iframe id="changelog" src="https://generic.fish/clicker/changelog.txt" frameborder="0"></iframe>
+            <iframe id="changelog" src="/changelog.txt" frameborder="0"></iframe>
         </div>
     </div>
     <div class="window">
@@ -266,6 +266,28 @@
                 </ul>
             </div>
         </div>
+    </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Khoi TD</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(9)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(9)"></button>
+                <button aria-label="Close" onclick="win.exit(9)"></button>
+            </div>
+        </div>
+        <div class="window-body"></div>
+    </div>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Khoi Solitaire</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="win.minimize(10)"></button>
+                <button aria-label="Maximize" onclick="win.maximize(10)"></button>
+                <button aria-label="Close" onclick="win.exit(10)"></button>
+            </div>
+        </div>
+        <div class="window-body"></div>
     </div>
 
     <script src="assets/js/game.js" onload="ms.generate(-1)"></script>

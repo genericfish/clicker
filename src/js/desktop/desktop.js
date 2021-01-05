@@ -1,1 +1,5 @@
-const desktop_experience = () => {}
+class Desktop {
+    constructor () {
+
+    }
+}

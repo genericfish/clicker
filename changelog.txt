@@ -3,14 +3,16 @@
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
 ## Version 0.4.0
-4 January 2020
+5 January 2021
 - enchancements
     - changed keybind for theme to CTRL+SHIFT+Z
     - changed keybind for resetting windows to CTRL+SHIFT+X
 - misc
     - reworked keybinds
     - reworked desktop emulator
+    - reworked windows and windows manager
     - updated changelog format
+    - extended browser support (namely Steam overlay)
 
 ## Version 0.3.10
 16 December 2020 at 22:18 UTC

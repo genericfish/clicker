@@ -80,7 +80,7 @@ const game = (() => {
             return row
         },
         create_shop: () => {
-            for (tower in towers) {
+            for (let tower in towers) {
                 let listing = document.createElement("li")
                 let link = document.createElement("a")
 
@@ -124,7 +124,7 @@ const game = (() => {
             fs_container.style.maxHeight = "500px"
             fs_container.style.overflowY = "scroll"
 
-            for (tower in towers) {
+            for (let tower in towers) {
                 let count = game.towers[tower][0]
                 if (!count) continue
 
@@ -394,7 +394,7 @@ const game = (() => {
     function setup() {
         if (window.localStorage["gamestate"] == undefined) functions.save()
 
-        game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
+        let game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
 
         if (game.last_save === undefined)
             game.last_save = Date.now()
@@ -432,7 +432,6 @@ const game = (() => {
     // Exports
     return {
         start: () => {
-            running = true
             // Setup save file, graphics, and sync with worker thread
             setup()
         },

@@ -22,7 +22,7 @@ let game = (() => {
     function update_rates() {
         game.rate = 0
 
-        for (tower in towers) {
+        for (let tower in towers) {
             let rate = game.towers[tower][0] * towers[tower].base_rate
             game.towers[tower][1] = rate
             game.rate += rate
