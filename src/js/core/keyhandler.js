@@ -39,5 +39,5 @@ class KeyHandler {
     k() { return this.keys }
 }
 
-const KH = new KeyHandler()
+H.KH = new KeyHandler()
 document.addEventListener("contextmenu", e => e.preventDefault())

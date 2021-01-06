@@ -11,13 +11,21 @@ eval "${babel} ./src -d ./babel"
 
 if [ -d ./babel/js ] && [ -d ./dist/assets/js ]; then
     touch ./dist/assets/js/game.js
-    cmd="${minify} ./babel/js/core/keyhandler.js ./babel/js/desktop/windows.js\
-    ./babel/js/desktop/desktop.js ./babel/js/khoima.js ./babel/js/minesweeper.js"
+
+    templates=""
+    for f in ./babel/js/templates/*.js; do
+        templates="${templates} ${f}"
+    done
+
+    cmd="${minify} ./babel/js/core/drag.js ./babel/js/core/keyhandler.js\
+    ./babel/js/core/windows.js ./babel/js/core/desktop.js\
+    ./babel/js/programs.js ${templates} ./babel/js/khoima.js ./babel/js/minesweeper.js"
+
     eval "${cmd} > ./dist/assets/js/game.js"
-    echo "Minified ./babel/js/*.js to ./dist/assets/js/game.js"
+    echo "Minified all core, game, and template JS files to ./dist/assets/js/game.js"
     unset cmd
 
-    for f in ./babel/js/workers/*; do
+    for f in ./babel/js/workers/*.js; do
         touch "./dist/assets/js/workers/${f##*/}"
         eval "${minify} ${f} > ./dist/assets/js/workers/${f##*/}"
         echo "Minified ${f} to ./dist/assets/js/workers/${f##*/}"

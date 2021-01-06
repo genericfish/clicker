@@ -8,11 +8,9 @@
     - changed keybind for theme to CTRL+SHIFT+Z
     - changed keybind for resetting windows to CTRL+SHIFT+X
 - misc
-    - reworked keybinds
-    - reworked desktop emulator
-    - reworked windows and windows manager
+    - overhauled game engine
     - updated changelog format
-    - extended browser support (namely Steam overlay)
+    - extended browser support
 
 ## Version 0.3.10
 16 December 2020 at 22:18 UTC
