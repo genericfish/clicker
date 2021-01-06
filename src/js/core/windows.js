@@ -232,11 +232,13 @@ class Window {
         this.win.addEventListener("mousedown", _ => { H.WM.focus(this) })
 
         if (iframe) {
-            let id = this.id
-            this.drag.add_hook("mousedown", _ => { this.overlay.style.pointerEvents = "auto" })
+            // Focus event on window set pointerEvents to "none", but we want "auto" if we
+            // are dragging, use timeout.
+            this.drag.add_hook("mousedown", _ => {
+                setTimeout(_=>{ this.overlay.style.pointerEvents = "auto" }, 1)
+            })
             this.drag.add_hook("mouseup", _ => {
-                if (H.WM.focused.id == id)
-                    this.overlay.style.pointerEvents = "none"
+                this.overlay.style.pointerEvents = "none"
                 H.WM.save()
             })
         } else this.drag.add_hook("mouseup", _ => { H.WM.save() })
