@@ -136,7 +136,7 @@ let ms = (() => {
         if (difficulty == 0) gamergoo *= .1
         else if (difficulty == 2) gamergoo *= 1.25
 
-        game.worker.postMessage(["add", [gamergoo, true]])
+        game.worker.port.postMessage(["add", [gamergoo, true]])
 
         win.id = "winner"
         xin.innerHTML = `you are win<br>+${nice_format(Math.ceil(gamergoo))} gamergoo`

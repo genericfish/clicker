@@ -324,7 +324,7 @@ class Window {
         H.WM.add(this)
 
         win.setAttribute("window", this.id)
-        document.getElementById("desktop").appendChild(win)
+        document.getElementById("windows").appendChild(win)
 
         this.win = win
 

@@ -1,8 +1,6 @@
 (() => {
     let win = H.WM.get("shop")
 
-    win.win.style.width = "675px"
-
     // Append this in order to force the browser to update
     let content = document.createElement("div")
     content.classList.add("content")
