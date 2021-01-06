@@ -4,6 +4,8 @@
 
 ## Version 0.4.0
 5 January 2021
+- additions
+    - concurrency is now kept if multiple game tabs are open (provided browser support)
 - enchancements
     - changed keybind for theme to CTRL+SHIFT+Z
     - changed keybind for resetting windows to CTRL+SHIFT+X

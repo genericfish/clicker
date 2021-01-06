@@ -16,7 +16,7 @@ let game = (() => {
         if (amt > 0 && add)
             game.gamergoo_history += amt
 
-        postMessage(["update_goo", [game.gamergoo, game.gamergoo_history]])
+        postAll(["update_goo", [game.gamergoo, game.gamergoo_history]])
     }
 
     function update_rates() {
@@ -28,7 +28,7 @@ let game = (() => {
             game.rate += rate
         }
 
-        postMessage(["update_graphics", [["rate"], game.rate]])
+        postAll(["update_graphics", [["rate"], game.rate]])
         save()
     }
 
@@ -58,11 +58,11 @@ let game = (() => {
             ) * .925
         )
 
-        postMessage(["update_graphics", [["shop", "listings"], shop]])
+        postAll(["update_graphics", [["shop", "listings"], shop]])
     }
 
     function save() {
-        postMessage(["save", [game]])
+        postActive(["save", [game]])
     }
 
     let loop = (() => {
@@ -94,7 +94,7 @@ let game = (() => {
 
             // Every 33rd frame (~330ms) update shop buy button
             if (frames - last_updates[1] >= 33) {
-                postMessage(["update_graphics", [["buttons", "title"]]])
+                postAll(["update_graphics", [["buttons", "title"]]])
                 last_updates[1] = frames
             }
 
@@ -107,7 +107,7 @@ let game = (() => {
             // Spawn goldenkhoi
             if (frames >= game_state.golden_khoi_frame) {
                 game_state.golden_khoi_frame = frames + Math.ceil((Math.random() * 60000) + 3000)
-                postMessage(["goldenkhoi"])
+                postAll(["goldenkhoi"])
             }
 
             last_frame = now
@@ -163,7 +163,7 @@ let game = (() => {
 
             // Put amount added to use in floaters
             data.push(amount)
-            postMessage(["click", data])
+            postAll(["click", data])
         },
         shop: (data) => {
             // Handle buying and selling
@@ -191,7 +191,7 @@ let game = (() => {
                 save()
                 update_rates()
                 update_costs()
-                postMessage(["update_graphics", [["listings"]]])
+                postAll(["update_graphics", [["listings"]]])
             }
         },
         interact: () => {
@@ -204,7 +204,7 @@ let game = (() => {
 
             setTimeout(() => {
                 game_state.golden_khoi = false
-                postMessage(["goldenkhoi_end"])
+                postAll(["goldenkhoi_end"])
             }, 12500)
         },
         update_costs: (data) => {
@@ -225,11 +225,25 @@ let game = (() => {
             update_costs()
             save()
         },
-        post: (data) => { postMessage(data) }
+        postMessage: (data) => { postActive(data) }
     }
 })()
 
-onmessage = e => {
-    if (game.hasOwnProperty(e.data[0]))
-        game[e.data[0]](e.data[1])
+let instances = []
+
+onconnect = e => {
+    let port = e.ports[0]
+    instances.push(port)
+
+    // Listen from input from all instances
+    port.onmessage = e => {
+        if (game.hasOwnProperty(e.data[0]))
+            game[e.data[0]](e.data[1])
+    }
 }
+
+// Post message to all connected instances
+function postAll(data) { for (let instance of instances) instance.postMessage(data) }
+
+// Post message to active instance
+function postActive(data) { instances[instances.length - 1].postMessage(data) }

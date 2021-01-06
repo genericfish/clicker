@@ -101,9 +101,6 @@ function set_video() {
     }
 }
 
-H.KH.set_bind(["control", "shift", "z"], themes.toggle)
-//H.KH.set_bind(["control", "shift", "x"], win.reset)
-
 class WindowManager {
     constructor () {
         this._wm_ver = 1
@@ -166,8 +163,20 @@ class WindowManager {
         this.windows[w].state = data[w]
     }
 
+    reset() {
+        for (let [_, w] of this.entries) w.state = w.initial
+        this.save()
+    }
+
     get(v) {
-        if (typeof v === "number") return this.length < v ? this.entries[v][1] : null
+        if (typeof v === "number")
+            if (v == -1){
+                for (let [_,w] of this.entries)
+                    if (w.z == this.length)
+                        return w
+
+                return null
+            } else return (this.length < v || v < 0) ? null : this.entries[v][1]
 
         let b64 = window.btoa(v)
         return this.windows.hasOwnProperty(b64) ? this.windows[b64] : null
@@ -271,7 +280,7 @@ class Window {
         bar.classList.add("title-bar")
 
         // Handle dragging on title bar
-        this.drag = new Drag(bar, win)
+        this.drag = new Draggable(bar, win)
 
         // Title
         let title = document.createElement("div")
@@ -359,7 +368,7 @@ class Window {
 
     get x() { return this.win.style.left.replace("px", "") }
     get y() { return this.win.style.top.replace("px", "") }
-    get z() { return this.win.style.zIndex || 0 }
+    get z() { return parseInt(this.win.style.zIndex) || 0 }
     get s() { return this._state }
 
     set state(s) { ({x: this.x, y: this.y, z: this.z, s: this.s} = s) }
@@ -367,5 +376,3 @@ class Window {
 
     get body() { return this.win.children[1] }
 }
-
-H.WM = new WindowManager()

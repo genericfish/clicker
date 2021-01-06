@@ -1,4 +1,4 @@
-class Drag {
+class Draggable {
     constructor (interactive, parent) {
         if (!(interactive instanceof Element) || !(parent instanceof Element))
             throw new Exception("[Drag] Expected HTML Element.")

@@ -38,6 +38,3 @@ class KeyHandler {
 
     k() { return this.keys }
 }
-
-H.KH = new KeyHandler()
-document.addEventListener("contextmenu", e => e.preventDefault())

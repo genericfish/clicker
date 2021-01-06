@@ -30,7 +30,10 @@ function nice_format(num) {
 let flags = [false]
 
 const game = (() => {
-    const game_worker = new Worker("assets/js/workers/clicker.js")
+    const game_worker =
+        typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
+        typeof(Worker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
+        null // FIXME: Handle no worker found
 
     const graphics = {
         bounce: (() => {
@@ -63,9 +66,7 @@ const game = (() => {
 
             H.WM.get("khoima clicker").body.appendChild(container)
 
-            setTimeout(() => {
-                H.WM.get("khoima clicker").body.removeChild(container)
-            }, 1000)
+            setTimeout(() => { H.WM.get("khoima clicker").body.removeChild(container) }, 1000)
         },
         create_row: (tower, number) => {
             let row = document.createElement("div")
@@ -99,7 +100,7 @@ const game = (() => {
                         display.shop.owned.innerHTML = game.towers[shop.active][0]
                         display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
-                        game_worker.postMessage(["update_costs", shop])
+                        game_worker.port.postMessage(["update_costs", shop])
                     }
                 }
 
@@ -162,7 +163,7 @@ const game = (() => {
             khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%`
 
             khoi.addEventListener("click", () => {
-                game_worker.postMessage(["goldenkhoi"])
+                game_worker.port.postMessage(["goldenkhoi"])
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
@@ -403,14 +404,14 @@ const game = (() => {
                     game[key] = game_load[key]
 
         display.button.addEventListener("mousedown", e => {
-            game_worker.postMessage(["click", [e.clientX, e.clientY]])
+            game_worker.port.postMessage(["click", [e.clientX, e.clientY]])
         })
 
         document.addEventListener("click", () => {
-            game_worker.postMessage(["interact"])
+            game_worker.port.postMessage(["interact"])
         })
 
-        game_worker.postMessage([
+        game_worker.port.postMessage([
             "setup",
             [ game, towers, shop ]
         ])
@@ -418,7 +419,7 @@ const game = (() => {
         graphics.create_shop()
         graphics.update_buildings()
 
-        game_worker.onmessage = e => {
+        game_worker.port.onmessage = e => {
             if (functions.hasOwnProperty(e.data[0]))
                 functions[e.data[0]](e.data[1])
         }
@@ -432,10 +433,10 @@ const game = (() => {
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
-            game_worker.postMessage(["update_costs", shop])
+            game_worker.port.postMessage(["update_costs", shop])
         },
         shop: (action) => {
-            game_worker.postMessage(["shop", [action, shop]])
+            game_worker.port.postMessage(["shop", [action, shop]])
         },
         stats: () => {
             console.log(
