@@ -1,3 +1,5 @@
+let active = 0
+
 let game = (() => {
     let game, towers, shop;
     let game_state = {
@@ -61,11 +63,12 @@ let game = (() => {
         postAll(["update_graphics", [["shop", "listings"], shop]])
     }
 
-    function save() {
-        postActive(["save", [game]])
+    function save(instance) {
+        // Do not send "save" to all instances, concurrency issues will occur
+        post(["save", [game]], instance || active)
     }
 
-    let loop = (() => {
+    let loop = ((instance) => {
         let last_frame = Date.now()
         let frames = 0
         let last_updates = [0,0,0]
@@ -79,35 +82,38 @@ let game = (() => {
             if (now - last_frame >= 10)
                 frames += Math.round((now - last_frame) / 10)
 
-            // Every other frame (~20ms)
-            if (frames - last_updates[0] >= 2) {
-                last_updates[0] = frames
-
-                // Add 1/50th of goo every other frame
-                let goo = game.rate / 50
-
-                // After 5 minutes of no clicking, only give 15% of rate
-                if (now - game_state.last_interaction > 300000) goo *= .15
-
-                add_goo(goo)
-            }
-
             // Every 33rd frame (~330ms) update shop buy button
             if (frames - last_updates[1] >= 33) {
                 postAll(["update_graphics", [["buttons", "title"]]])
                 last_updates[1] = frames
             }
 
-            // Save game every second (~100 frames)
-            if (frames - last_updates[2] >= 100) {
-                save()
-                last_updates[2] = frames
-            }
+            // Only execute these functions on the main loop, otherwise duplication will occur
+            if (active == instance) {
+                // Every other frame (~20ms)
+                if (frames - last_updates[0] >= 2) {
+                    last_updates[0] = frames
 
-            // Spawn goldenkhoi
-            if (frames >= game_state.golden_khoi_frame) {
-                game_state.golden_khoi_frame = frames + Math.ceil((Math.random() * 60000) + 3000)
-                postAll(["goldenkhoi"])
+                    // Add 1/50th of goo every other frame
+                    let goo = game.rate / 50
+
+                    // After 5 minutes of no clicking, only give 15% of rate
+                    if (now - game_state.last_interaction > 300000) goo *= .15
+
+                    add_goo(goo)
+                }
+
+                // Save game every second (~100 frames)
+                if (frames - last_updates[2] >= 100) {
+                    save()
+                    last_updates[2] = frames
+                }
+
+                // Spawn goldenkhoi
+                if (frames >= game_state.golden_khoi_frame) {
+                    game_state.golden_khoi_frame = frames + Math.ceil((Math.random() * 60000) + 3000)
+                    postAll(["goldenkhoi"])
+                }
             }
 
             last_frame = now
@@ -115,7 +121,7 @@ let game = (() => {
     })
 
     return {
-        setup: (data) => {
+        setup: (data, instance) => {
             // Sync gamestate and towers with main thread
             game = data[0]
             towers = data[1]
@@ -140,7 +146,7 @@ let game = (() => {
             add_goo(offline_goo)
 
             // Start game loop
-            setInterval(loop(), 10)
+            setInterval(loop(instance), 10)
         },
         click: (data) => {
             let now = Date.now()
@@ -194,9 +200,10 @@ let game = (() => {
                 postAll(["update_graphics", [["listings"]]])
             }
         },
-        interact: () => {
+        interact: (_, instance) => {
             // User has interacted with the page via click
             game_state.last_interaction = Date.now()
+            active = instance
         },
         goldenkhoi: () => {
             // User has clicked the golden khoi
@@ -225,7 +232,8 @@ let game = (() => {
             update_costs()
             save()
         },
-        postMessage: (data) => { postActive(data) }
+        postMessage: (data) => { postAll(data) },
+        post: (data, instance) => { post(data, instance) },
     }
 })()
 
@@ -235,15 +243,20 @@ onconnect = e => {
     let port = e.ports[0]
     instances.push(port)
 
+    let instance = instances.length - 1
+
+    // Presumably, the last open tab will be the active one (at the moment its created)
+    active = instance
+
     // Listen from input from all instances
     port.onmessage = e => {
         if (game.hasOwnProperty(e.data[0]))
-            game[e.data[0]](e.data[1])
+            game[e.data[0]](e.data[1], instance)
     }
 }
 
 // Post message to all connected instances
 function postAll(data) { for (let instance of instances) instance.postMessage(data) }
 
-// Post message to active instance
-function postActive(data) { instances[instances.length - 1].postMessage(data) }
+// Post message to specific instance
+function post(data, instance) { instances[instance].postMessage(data) }
