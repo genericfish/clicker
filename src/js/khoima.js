@@ -159,8 +159,8 @@ const game = (() => {
         goldenkhoi: () => {
             let khoi = document.createElement("div")
             khoi.id = "goldenkhoi"
-            khoi.style.top = `${Math.ceil(Math.random() * 70) + 15}%`
-            khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%`
+            khoi.style.top = `${~~(Math.random() * 70) + 15}%`
+            khoi.style.left = `${~~(Math.random() * 70) + 15}%`
 
             khoi.addEventListener("click", () => {
                 game_worker.port.postMessage(["goldenkhoi"])
@@ -302,11 +302,11 @@ const game = (() => {
             game.gamergoo = data[0]
             game.gamergoo_history = data[1]
 
-            display.total.innerHTML = nice_format(Math.round(game.gamergoo))
+            display.total.innerHTML = nice_format(~~(game.gamergoo))
         },
         click: (data) => {
             // Click graphics assuming successful click
-            graphics.floater(Math.round(data[2] * 100) / 100, data[0], data[1])
+            graphics.floater(~~(data[2] * 100) / 100, data[0], data[1])
             graphics.bounce()
         },
         update_graphics: (data) => {

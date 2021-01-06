@@ -36,9 +36,7 @@ let game = (() => {
 
     function geometric_sum(base, ratio, exp) {
         // Geometric Partial Sum
-        return Math.ceil(
-            base * (1 - ratio ** exp) / (1 - ratio)
-        )
+        return ~~(base * (1 - ratio ** exp) / (1 - ratio))
     }
 
     function update_costs() {
@@ -51,7 +49,7 @@ let game = (() => {
         )
 
         // Refund 92.5% of the buy price.
-        shop.active_refund = Math.ceil(
+        shop.active_refund = ~~(
             geometric_sum(
                 tower.base_cost * tower.cost_multiplier **
                     (game.towers[shop.active][0] - shop.active_amount),
@@ -111,7 +109,7 @@ let game = (() => {
 
                 // Spawn goldenkhoi
                 if (frames >= game_state.golden_khoi_frame) {
-                    game_state.golden_khoi_frame = frames + Math.ceil((Math.random() * 60000) + 3000)
+                    game_state.golden_khoi_frame = frames + ~~(Math.random() * 60000) + 3000
                     postAll(["goldenkhoi"])
                 }
             }
@@ -131,7 +129,7 @@ let game = (() => {
             game_state.last_click = Date.now()
             game_state.last_interaction = Date.now()
             game_state.golden_khoi = false
-            game_state.golden_khoi_frame = Math.ceil((Math.random() * 30000) + 3000)
+            game_state.golden_khoi_frame = ~~(Math.random() * 30000) + 3000
 
             // Update rates then give user gamergoo based on last save
             update_rates()
