@@ -1,148 +1,73 @@
-PATCHNOTES:
-=== 22:18 UTC on 16 December 2020 (v0.3.10) ===
-# Gameplay
-* added tutorial window for new playesr
-* fixed gameplay bugs regarding khoisweeper
+# Changelog
 
-# Misc
-* adjusted the way keybinds are handled
-* changed how windows with iframes are handled
+## Report bugs to https://github.com/genericfish/clicker/issues
 
-=== 08:49 UTC on 16 December 2020 (v0.3.9) ===
-# Gameplay
-* added khoisweeper building that unlocks the minigame
+## Version 0.4.0
+5 January 2021
+- enchancements
+    - changed keybind for theme to CTRL+SHIFT+Z
+    - changed keybind for resetting windows to CTRL+SHIFT+X
+- misc
+    - overhauled game engine
+    - updated changelog format
+    - extended browser support
 
-=== 08:02 UTC on 16 December 2020 (v0.3.8a) ===
-# Gameplay
-* made goldenkhoi less intrusive on gameply
-    * no longer applies rainbow effect on background
-    * applies rainbow effect on clicker
-    * doesn't pulse or rotate as much
-# Misc
-* added drag selection while on desktop
+## Version 0.3.10
+16 December 2020 at 22:18 UTC
+- additions
+    - added tutorial window for new players
+- bug fixes
+    - fixed gameplay bugs regarding khoisweeper
+    - fixed bugs regarding windows with iframes (firekhoi, changelog)
+- misc
+    - changed how keybinds are handled
 
-=== 03:02 UTC on 16 December 2020 (v0.3.8) ===
-# Misc
-* fixed a bug for first time players where game wouldn't load
-* added text for empty buildings window
+## Version 0.3.9
+16 December 2020 at 08:49 UTC
+- additions
+    - added new khoisweeper tower
 
-=== 21:19 UTC on 14 December 2020 (v0.3.7c) ===
-# Misc
-* fixed regressions regarding window focus and khoisweeper
+## Version 0.3.8a
+16 December 2020 at 08:02 UTC
+- enhancements
+    - goldenkhoi is less intrusive on gameplay
+        - effect no longer applies rainow effect on background
+        - button doesn't pulse or rotate as much nor as quickly
+        - the rainbow effect is now apllied on the clicker window
+- additions
+    - added drag selection on desktop
 
-=== 21:09 UTC on 14 December 2020 (v0.3.7b) ===
-# Gameplay
-* goldenkhoi less frequent
+## Version 0.3.8
+16 December 2020 at 03:02 UTC
+- bug fixes
+    - fixed a bug where first time players were not able to load
+- enchancements
+    - added text for buildings window when none are owned
 
-## khoisweeper
-* fixed regression with flag count
+## Version 0.3.7c
+14 December 2020 at 21:19 UTC
+- bug fixes
+    - fixed regressions regarding window focus and khoisweeper
 
-# Misc
-* minor bug fixes with window focus
+## Version 0.3.7b
+14 December 2020 at 21:09 UTC
+- enhancements
+    - made goldenkhoi less frequent
+- bug fixes
+    - fixed regression on khoisweeper flag count
+    - fixed bugs with window focus
 
-=== 07:56 UTC on 14 December 2020 (v0.3.7a) ===
-# Misc
-## khoisweeper
-* fix bugs related to flags
+## Version 0.3.7a
+14 December 2020 at 07:56 UTC
+- bug fixes
+    - fixed bug regarding khoisweeper flags
 
-=== 07:37 UTC on 14 December 2020 (v0.3.7) ===
-# Gameplay
-## khoisweeper
-* add more difficulties
-    0.1x reward for easy
-    normal reward for medium
-    1.25x reward for hard
+## Version 0.3.7
+14 December 2020 at 07:37 UTC
+- additions
+    - khoisweeper has more difficulties
+        - easy (0.1x reward)
+        - normal (1x reward)
+        - hard (1.25x reward)
 
-=== 03:51 UTC on 14 December 2020 (v0.3.6b) ===
-# Gameplay
-## khoisweeper
-* hotfix fixing khoisweeper generation
-
-=== 03:28 UTC on 14 December 2020 (v0.3.6a) ===
-# Misc
-* added discord
-* added icons for firekhoi and khoisweeper
-
-# Gameplay
-## khoisweeper
-* improved khoisweeper readability
-* changed khoisweeper font colors
-* fixed bug where mines never spawned in bottom right
-
-=== 00:38 UTC on 14 December 2020 (v0.3.6) ===
-# Gameplay
-## khoisweeper
-* added reward for winning
-    20 minutes worth of gamergoo, capped at 20% of currently owned gamergoo
-    minimum of 50000 per win
-
-=== 22:03 UTC on 13 December 2020 (v0.3.6) ===
-# Gameplay
-## khoisweeper
-* added more coloring
-* changed flag icon
-* fixed bug with clicking flags
-* fixed clicking after game over
-* fixed board discovery with regards to flags
-
-=== 21:16 UTC on 13 December 2020 (v0.3.5) ===
-# Gameplay
-* added new khoisweeper game
-
-=== 05:16 UTC on 13 December 2020 (v0.3.4) ===
-# Gameplay
-* added generic ghoti building
-
-# Misc
-* added ability to play any YouTube video in firekhoi
-
-=== 03:39 UTC on 13 December 2020 (v0.3.3) ===
-# Misc
-* added changelog window
-* added browser
-
-=== 03:23 UTC on 13 December 2020 (v0.3.2) ===
-# Misc
-* desktop icons
-
-=== 00:56 UTC on 13 December 2020 (v0.3.1) ===
-# Misc
-* windows are now draggable
-
-=== 20:51 UTC on 12 December 2020 (v0.3.0) ===
-# Gameplay
-* made goo per click 7.5% of goo per second
-* golden khoi now gives 20% of goo per second in addition to the base 7.5%
-* golden khoi now lasts 12.5 seconds
-* further limited number of clicks per second
-
-# Misc
-* khoima clicker is now multithreadded (better performance)
-
-=== 07:00 UTC on 12 December 2020 (v0.2.2) ===
-# Gameplay
-* made goldenkhoi more frequent
-* made goo per click 5% of goo per second
-
-=== 04:52 UTC on 12 December 2020 (v0.2.1) ===
-# Gameplay
-* gamer girl water (art pending)
-* fixed goldenkhoi spawn
-
-# Misc
-* optimized building window generation
-
-=== 00:42 UTC on 12 December 2020 (v0.2) ===
-# Gameplay
-* game now runs in background
-* after 5 minutes of no interaction, you only gain 15% your goo per second
-
-# Misc
-* gamergoo total is now displayed in page title
-
-=== Misc patches before 12 December 2020 (v0.1) ===
-* added goldenkhoi
-* added ability to sell buildings
-* added window to view buildings
-* gamergoo per click now gains 1% of gamer goo per second
-* limited maximum clicks per second to approx 13
+(Older logs have not been updated to the new format.)

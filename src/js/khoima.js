@@ -51,7 +51,7 @@ const game = (() => {
 
             floater.classList.add("click-float")
 
-            let box = windows[1].getBoundingClientRect()
+            let box = H.WM.get("khoima clicker").win.getBoundingClientRect()
 
             container.style.position = "absolute"
             container.style.top = (y - box.top) + "px"
@@ -61,10 +61,10 @@ const game = (() => {
 
             display.innerHTML = `+${amount}`
 
-            windows[1].appendChild(container)
+            H.WM.get("khoima clicker").body.appendChild(container)
 
             setTimeout(() => {
-                windows[1].removeChild(container)
+                H.WM.get("khoima clicker").body.removeChild(container)
             }, 1000)
         },
         create_row: (tower, number) => {
@@ -80,7 +80,7 @@ const game = (() => {
             return row
         },
         create_shop: () => {
-            for (tower in towers) {
+            for (let tower in towers) {
                 let listing = document.createElement("li")
                 let link = document.createElement("a")
 
@@ -116,7 +116,7 @@ const game = (() => {
             display.shop.radio[0].click()
         },
         update_buildings: () => {
-            windows[2].innerHTML = ""
+            H.WM.get("buildings").body.innerHTML = ""
 
             let has_towers = false
             let fs_container = document.createElement("div")
@@ -124,7 +124,7 @@ const game = (() => {
             fs_container.style.maxHeight = "500px"
             fs_container.style.overflowY = "scroll"
 
-            for (tower in towers) {
+            for (let tower in towers) {
                 let count = game.towers[tower][0]
                 if (!count) continue
 
@@ -151,9 +151,9 @@ const game = (() => {
             }
 
             if (!has_towers)
-                windows[2].innerHTML = "Purchase buildings for them to appear here."
+                H.WM.get("buildings").body.innerHTML = "Purchase buildings for them to appear here."
             else
-                windows[2].appendChild(fs_container)
+                H.WM.get("buildings").body.appendChild(fs_container)
         },
         goldenkhoi: () => {
             let khoi = document.createElement("div")
@@ -166,7 +166,7 @@ const game = (() => {
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
-                windows[1].classList.add("khoi")
+                H.WM.get("khoima clicker").win.classList.add("khoi")
             })
 
             setTimeout(() => {
@@ -185,6 +185,11 @@ const game = (() => {
             cost_multiplier: 1.013,
             base_rate: .25,
             base_click: 0,
+            modifiers: {
+                "wallhack": [500, 1.5],
+                "aimlock": [5000, 1.5],
+                "spinbot": [15000, 2]
+            }
         },
         stream: {
             name: "bigfollows",
@@ -377,19 +382,14 @@ const game = (() => {
                 window.location.reload()
             }
         },
-        goldenkhoi: () => {
-            // Spawn golden khoi
-            graphics.goldenkhoi()
-        },
-        goldenkhoi_end: () => {
-            windows[1].classList.remove("khoi")
-        }
+        goldenkhoi: () => { /** Spawn golden khoi */ graphics.goldenkhoi() },
+        goldenkhoi_end: () => { H.WM.get("khoima clicker").win.classList.remove("khoi") }
     }
 
     function setup() {
         if (window.localStorage["gamestate"] == undefined) functions.save()
 
-        game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
+        let game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
 
         if (game.last_save === undefined)
             game.last_save = Date.now()
@@ -427,7 +427,6 @@ const game = (() => {
     // Exports
     return {
         start: () => {
-            running = true
             // Setup save file, graphics, and sync with worker thread
             setup()
         },

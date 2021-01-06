@@ -2,18 +2,30 @@
 
 lessc="./node_modules/.bin/lessc"
 minify="./node_modules/.bin/minify"
+babel="./node_modules/.bin/babel"
 
 mkdir -p "./dist/assets/js/workers"
 mkdir -p "./dist/assets/images"
 
-if [ -d ./src/js ] && [ -d ./dist/assets/js ]; then
-    touch ./dist/assets/js/clicker.js
-    cmd="${minify} ./src/js/windows.js ./src/js/khoima.js ./src/js/minesweeper.js"
+eval "${babel} ./src -d ./babel"
+
+if [ -d ./babel/js ] && [ -d ./dist/assets/js ]; then
+    touch ./dist/assets/js/game.js
+
+    templates=""
+    for f in ./babel/js/templates/*.js; do
+        templates="${templates} ${f}"
+    done
+
+    cmd="${minify} ./babel/js/core/drag.js ./babel/js/core/keyhandler.js\
+    ./babel/js/core/windows.js ./babel/js/core/desktop.js\
+    ./babel/js/programs.js ${templates} ./babel/js/khoima.js ./babel/js/minesweeper.js"
+
     eval "${cmd} > ./dist/assets/js/game.js"
-    echo "Minified ./src/js/*.js to ./dist/assets/js/game.js"
+    echo "Minified all core, game, and template JS files to ./dist/assets/js/game.js"
     unset cmd
 
-    for f in ./src/js/workers/*; do
+    for f in ./babel/js/workers/*.js; do
         touch "./dist/assets/js/workers/${f##*/}"
         eval "${minify} ${f} > ./dist/assets/js/workers/${f##*/}"
         echo "Minified ${f} to ./dist/assets/js/workers/${f##*/}"
@@ -21,7 +33,7 @@ if [ -d ./src/js ] && [ -d ./dist/assets/js ]; then
 
     unset f
 else
-    echo "Missing either ./src/js or ./dist/assets/js, check file/directory permissions."
+    echo "Missing either ./babel/js or ./dist/assets/js, check file/directory permissions."
 fi
 
 if [ -d ./src/styles ] && [ -d ./dist/assets ]; then
@@ -38,7 +50,7 @@ else
 fi
 
 if [ -f changelog.txt ]; then
-    cat changelog.txt > ./dist/changelog.txt
+    cp changelog.txt ./dist/changelog.txt
     echo "Copied ./changelog.txt to ./dist/changelog.txt"
 else
     echo "Missing changelog.txt."
