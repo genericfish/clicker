@@ -131,9 +131,9 @@ class WindowManager {
 
     focus(w) {
         if (w instanceof Window) w = w.id
-        if (this.windows[w].z == this.length) return
-
         this.windows[w].focus()
+        if (this.windows[w].z == this.length)
+            return
         this.windows[w].z = this.length
 
         for (let [id, win] of Object.entries(this.windows)) {
@@ -191,6 +191,7 @@ class WindowManager {
 
     get entries() { return Object.entries(this.windows)}
     get length() { return this.entries.length }
+    get focused() { for (let [_,w] of this.entries) if (w.z == this.length) return w}
 
     set data(v) {
         v.version = this._wm_ver
@@ -231,9 +232,11 @@ class Window {
         this.win.addEventListener("mousedown", _ => { H.WM.focus(this) })
 
         if (iframe) {
-            this.drag.add_hook("mousedown", _ => { this.overlay.style.pointerEvents = "none" })
+            let id = this.id
+            this.drag.add_hook("mousedown", _ => { this.overlay.style.pointerEvents = "auto" })
             this.drag.add_hook("mouseup", _ => {
-                this.overlay.style.pointerEvents = "auto"
+                if (H.WM.focused.id == id)
+                    this.overlay.style.pointerEvents = "none"
                 H.WM.save()
             })
         } else this.drag.add_hook("mouseup", _ => { H.WM.save() })

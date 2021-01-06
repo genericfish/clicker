@@ -7,3 +7,5 @@ new Window("changelog", -1, -1, 2, H.WM.length, true)
 new Window("firekhoi", -1, -1, 2, H.WM.length, true)
 new Window("khoisweeper", -1, -1, 2)
 new Window("vending machine", -1, -1, 2)
+
+H.WM.focus(H.WM.focused)
