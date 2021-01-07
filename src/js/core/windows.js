@@ -14,6 +14,7 @@ class WindowManager {
 
         this.windows[id].maximize()
         this.focus(id)
+        this.save()
     }
 
     decode(e) {

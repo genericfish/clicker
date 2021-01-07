@@ -28,7 +28,11 @@ new Window("khoisweeper", -1, -1, 2)
 new Window("vending machine", -1, -1, 2)
 new Window("solitaire", -1, -1, 0)
 
-for (let template of document.getElementsByTagName("template"))
-    H.WM.load_template(template)
+// Leading semicolon is required for the below to work
+;(() => {
+    let templates = Array.from(document.getElementsByTagName("template"))
+    for (let template of templates)
+        H.WM.load_template(template)
+})()
 
 H.WM.focus(H.WM.focused)
