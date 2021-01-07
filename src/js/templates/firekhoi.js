@@ -27,3 +27,17 @@
     win.appendChild(div)
     win.appendChild(iframe)
 })()
+
+function set_video() {
+    let link = document.getElementById("link").value || "https://www.youtube.com/watch?v=dGQtL1l5i0Q"
+    let url = new URL(link)
+
+    if (url.host === "youtube.com" || url.host === "www.youtube.com") {
+        let video = "dGQtL1l5i0Q"
+
+        if (url.search)
+            video = url.search.split("=")[1]
+
+        document.getElementById("browser").src = "https://www.youtube.com/embed/" + video
+    }
+}
