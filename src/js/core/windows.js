@@ -19,7 +19,7 @@ class WindowManager {
     decode(e) {
         let id = e
         if (e instanceof Element)
-            id = e.parentElement.parentElement.parentElement.getAttribute("window")
+            id = e.parentElement.parentElement.parentElement.getAttribute("data-window")
         if (e instanceof Window)
             id = e.id
 
@@ -61,6 +61,8 @@ class WindowManager {
     }
 
     get(v) {
+        if (v === null) return null
+
         if (typeof v === "number")
             if (v == -1){
                 for (let [_,w] of this.entries)
@@ -69,6 +71,8 @@ class WindowManager {
 
                 return null
             } else return (this.length < v || v < 0) ? null : this.entries[v][1]
+
+        if (this.windows.hasOwnProperty(v)) return v
 
         let b64 = window.btoa(v)
         return this.windows.hasOwnProperty(b64) ? this.windows[b64] : null
@@ -79,6 +83,39 @@ class WindowManager {
             x: 100 + 20 * ++this.generated,
             y: 5 + 65 * this.generated
         }
+    }
+
+    load_template(e) {
+        if (!(e instanceof Element)) return
+        let win = this.get(e.getAttribute("data-window"))
+
+        if (win == null) return
+
+        // Clone template content into window body
+        win.appendChild(e.content.cloneNode(true))
+
+        // Copy over template attributes to the window body
+        for (let a of e.attributes) {
+            let attr, val
+            ({name: attr, value: val} = a)
+
+            switch (attr) {
+                case "data-window": continue
+                case "style":
+                case "class":
+                    let cur = win.body.getAttribute(attr)
+
+                    win.body.setAttribute(attr, cur != null ? cur : "" + val)
+                    continue
+                case "id":
+                    win.body.setAttribute(attr, val)
+                    continue
+                default: continue
+            }
+        }
+
+        // Remove the template
+        e.remove()
     }
 
     get entries() { return Object.entries(this.windows)}
@@ -226,7 +263,7 @@ class Window {
         // Add to window manager
         H.WM.add(this)
 
-        win.setAttribute("window", this.id)
+        win.setAttribute("data-window", this.id)
         document.getElementById("windows").appendChild(win)
 
         this.win = win

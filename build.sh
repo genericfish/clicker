@@ -12,17 +12,12 @@ eval "${babel} ./src -d ./babel"
 if [ -d ./babel/js ] && [ -d ./dist/assets/js ]; then
     touch ./dist/assets/js/game.js
 
-    templates=""
-    for f in ./babel/js/templates/*.js; do
-        templates="${templates} ${f}"
-    done
-
     cmd="${minify} ./babel/js/core/selection.js ./babel/js/core/desktop.js ./babel/js/core/theme.js\
     ./babel/js/core/draggable.js ./babel/js/core/keyhandler.js ./babel/js/core/windows.js\
-    ./babel/js/core/core.js ${templates} ./babel/js/khoima.js ./babel/js/minesweeper.js"
+    ./babel/js/core/core.js ./babel/js/khoima.js"
 
-    eval "${cmd} > ./dist/assets/js/game.js"
-    echo "Minified all core, game, and template JS files to ./dist/assets/js/game.js"
+    eval "${cmd}" ./babel/js/minigames/*.js " > ./dist/assets/js/game.js"
+    echo "Minified all non-worker JS files to ./dist/assets/js/game.js"
     unset cmd
 
     for f in ./babel/js/workers/*.js; do
@@ -36,15 +31,21 @@ else
     echo "Missing either ./babel/js or ./dist/assets/js, check file/directory permissions."
 fi
 
-if [ -d ./src/styles ] && [ -d ./dist/assets ]; then
+if [ -d ./src/styles ] && [ -d ./dist/assets ] && [ -d ./src/templates ]; then
     touch ./dist/assets/clicker.css
     touch ./dist/index.html
 
     eval "${lessc} ./src/styles/clicker.less | ${minify} --css > ./dist/assets/clicker.css"
     echo "Compiled ./src/styles/clicker.less and minified to ./dist/assets/clicker.css"
 
-    eval "${minify} ./src/index.html > ./dist/index.html"
-    echo "Minified ./src/index.html to ./dist/index.html"
+    eval "cat " ./src/templates/*.html " |\
+        sed -e '/<!-- o\/ templates here -->/{r /dev/stdin' -e 'd;}' ./src/index.html |\
+        ${minify} --html\
+        > ./dist/index.html"
+    echo "Minified all templates and ./src/index.html into ./dist/index.html"
+
+    unset f
+    unset templates
 else
     echo "Missing either ./src/styles or ./dist/assets, check file/directory permissions."
 fi

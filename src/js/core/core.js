@@ -26,5 +26,9 @@ new Window("changelog", -1, -1, 2, H.WM.length, true)
 new Window("firekhoi", -1, -1, 2, H.WM.length, true)
 new Window("khoisweeper", -1, -1, 2)
 new Window("vending machine", -1, -1, 2)
+new Window("solitaire", -1, -1, 0)
+
+for (let template of document.getElementsByTagName("template"))
+    H.WM.load_template(template)
 
 H.WM.focus(H.WM.focused)
