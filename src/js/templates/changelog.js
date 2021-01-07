@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("changelog")
     let iframe = document.createElement("iframe")
 

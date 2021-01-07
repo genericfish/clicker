@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("tutorial")
 
     win.body.style.width = "550px"

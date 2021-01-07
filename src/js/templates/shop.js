@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("shop")
 
     // Append this in order to force the browser to update

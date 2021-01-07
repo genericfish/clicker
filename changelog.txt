@@ -3,13 +3,13 @@
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
 ## Version 0.4.0
-5 January 2021
+6 January 2021
 - additions
     - concurrency is now kept if multiple game tabs are open (provided browser support)
-- enchancements
+- enhancements
+    - changed to higher quality "Bliss" background for XP theme
     - changed keybind for theme to CTRL+SHIFT+Z
     - changed keybind for resetting windows to CTRL+SHIFT+X
-- misc
     - overhauled game engine
     - updated changelog format
     - extended browser support
@@ -21,7 +21,7 @@
 - bug fixes
     - fixed gameplay bugs regarding khoisweeper
     - fixed bugs regarding windows with iframes (firekhoi, changelog)
-- misc
+- enhancements
     - changed how keybinds are handled
 
 ## Version 0.3.9
@@ -43,7 +43,7 @@
 16 December 2020 at 03:02 UTC
 - bug fixes
     - fixed a bug where first time players were not able to load
-- enchancements
+- enhancements
     - added text for buildings window when none are owned
 
 ## Version 0.3.7c

@@ -8,7 +8,7 @@ class Selection {
         this.imouseup = this.mouseup(this)
 
         // Add handlers
-        document.addEventListener("mousedown", this.mousedown(this))
+        e.addEventListener("mousedown", this.mousedown(this))
     }
 
     create_selection(x, y) {

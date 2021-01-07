@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("khoisweeper")
 
     win.body.innerHTML =

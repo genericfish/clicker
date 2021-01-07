@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("vending machine")
     let machine = document.createElement("div")
     machine.id = "machine"

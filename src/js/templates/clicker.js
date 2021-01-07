@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("khoima clicker")
 
     let gamergoo = document.createElement("div")

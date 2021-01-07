@@ -19,8 +19,7 @@ if [ -d ./babel/js ] && [ -d ./dist/assets/js ]; then
 
     cmd="${minify} ./babel/js/core/selection.js ./babel/js/core/desktop.js ./babel/js/core/theme.js\
     ./babel/js/core/draggable.js ./babel/js/core/keyhandler.js ./babel/js/core/windows.js\
-    ./babel/js/core/desktop.js ./babel/js/core/core.js ${templates}\
-    ./babel/js/khoima.js ./babel/js/minesweeper.js"
+    ./babel/js/core/core.js ${templates} ./babel/js/khoima.js ./babel/js/minesweeper.js"
 
     eval "${cmd} > ./dist/assets/js/game.js"
     echo "Minified all core, game, and template JS files to ./dist/assets/js/game.js"

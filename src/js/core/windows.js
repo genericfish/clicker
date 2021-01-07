@@ -60,11 +60,6 @@ class WindowManager {
         this.windows[w].state = data[w]
     }
 
-    reset() {
-        for (let [_, w] of this.entries) w.state = w.initial
-        this.save()
-    }
-
     get(v) {
         if (typeof v === "number")
             if (v == -1){
@@ -88,7 +83,13 @@ class WindowManager {
 
     get entries() { return Object.entries(this.windows)}
     get length() { return this.entries.length }
-    get focused() { for (let [_,w] of this.entries) if (w.z == this.length) return w}
+    get focused() {
+        for (let [_,w] of this.entries)
+            if (w.z == this.length)
+                return w
+
+        return this.get(0)
+    }
 
     set data(v) {
         v.version = this._wm_ver

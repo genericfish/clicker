@@ -1,4 +1,4 @@
-(() => {
+_ = (() => {
     let win = H.WM.get("firekhoi")
     let div = document.createElement("div")
     let button = document.createElement("button")
