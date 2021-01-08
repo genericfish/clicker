@@ -10,11 +10,11 @@ rm -rf ./dist
 mkdir -p "./dist/assets/js/workers"
 mkdir -p "./dist/assets/images"
 
-src="./src"
+src="src"
 
 if [ ${1-prod} != "debug" ]; then
 eval "${babel} ./src -d ./babel"
-src="./babel"
+src="babel"
 fi
 
 if [ -d "./${src}/js" ] && [ -d ./dist/assets/js ]; then
