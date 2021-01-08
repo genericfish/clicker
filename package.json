@@ -1,6 +1,6 @@
 {
     "name": "clicker",
-    "version": "0.3.11",
+    "version": "1.4.0a",
     "description": "Live game: [generic.fish/clicker](https://generic.fish/clicker)",
     "main": "index.js",
     "dependencies": {},
