@@ -25,7 +25,6 @@ new App("shop", 476, 5, "assets/images/buildings/water.png")
 new App("changelog", -1, -1, "assets/images/buildings/text.png", "", 2, H.WM.length, true)
 new App("firekhoi", -1, -1, "assets/images/buildings/firekhoi.png", "", 2, H.WM.length, true)
 new App("khoisweeper", -1, -1, "assets/images/buildings/minesweeper.png", "khoi sweeper", 2)
-new App("vending machine", -1, -1, "", "", 2)
 
 new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg", "discord()")
 
