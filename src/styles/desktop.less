@@ -1,0 +1,67 @@
+#desktop {
+    display: flex;
+    align-items: flex-start;
+
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    height: 100vh;
+    position: fixed;
+
+    & .icon {
+        pointer-events: none;
+        height: 120px;
+    }
+
+    & a {
+        display: block;
+
+        pointer-events: auto;
+
+        margin: 5px;
+        padding: 3px;
+
+        border: 1px solid transparent;
+
+        cursor: default;
+        text-decoration: none;
+
+        & img {
+            position: relative;
+
+            width: 60px;
+            height: 60px;
+
+            left: 50%;
+            margin-left: -30px
+        }
+
+        & span {
+            display: block;
+
+            width: 80px;
+
+            font-family: "VT323", Arial, sans-serif;
+            font-size: 1.25rem;
+            color: #FFF;
+
+            text-align: center;
+            word-wrap: normal
+        }
+
+        &:hover {
+            background: #ADD8E6AA;
+            border: 1px solid #ADD8E6CC
+        }
+
+        &:active {
+            background: #ADD8E6CC;
+            border: 1px solid #ADD8E6AA
+        }
+    }
+}
+
+select {
+    background-size: 19px;
+    min-height: 28px
+}

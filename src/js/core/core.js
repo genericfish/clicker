@@ -4,7 +4,6 @@ const H = {
     WM: new WindowManager(),
     D: new Desktop()
 }
-let _ = ""
 
 document.addEventListener("contextmenu", e => e.preventDefault())
 
@@ -18,15 +17,17 @@ H.KH.set_bind(["control", "shift", "x"], _ => {
 H.KH.set_bind(["control", "shift", "z"], H.TM.toggle)
 
 // Generate the windows for each "program"
-new Window("tutorial", 525, 200)
-new Window("khoima clicker", 100, 5)
-new Window("shop", 476, 5)
-new Window("buildings", 1155, 5).win.style.minWidth = "495px"
-new Window("changelog", -1, -1, 2, H.WM.length, true)
-new Window("firekhoi", -1, -1, 2, H.WM.length, true)
-new Window("khoisweeper", -1, -1, 2)
-new Window("vending machine", -1, -1, 2)
-new Window("solitaire", -1, -1, 0)
+new App("tutorial", 525, 200, "assets/images/buildings/minesweeper.png")
+new App("buildings", 1155, 5, "assets/images/buildings/autoclicker.png")
+    .window.win.style.minWidth = "495px"
+new App("khoima clicker", 100, 5, "assets/images/gameplay/khoima.png")
+new App("shop", 476, 5, "assets/images/buildings/water.png")
+new App("changelog", -1, -1, "assets/images/buildings/text.png", "", 2, H.WM.length, true)
+new App("firekhoi", -1, -1, "assets/images/buildings/firekhoi.png", "", 2, H.WM.length, true)
+new App("khoisweeper", -1, -1, "assets/images/buildings/minesweeper.png", "khoi sweeper", 2)
+new App("vending machine", -1, -1, "", "", 2)
+
+new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg", "discord()")
 
 // Leading semicolon is required for the below to work
 ;(() => {
@@ -34,5 +35,7 @@ new Window("solitaire", -1, -1, 0)
     for (let template of templates)
         H.WM.load_template(template)
 })()
+
+function discord() { window.open("https://discord.gg/ZTnCdcM", "_blank") }
 
 H.WM.focus(H.WM.focused)
