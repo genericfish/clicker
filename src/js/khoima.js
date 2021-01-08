@@ -30,7 +30,10 @@ function nice_format(num) {
 let flags = [false]
 
 const game = (() => {
-    const game_worker = new Worker("assets/js/workers/clicker.js")
+    const game_worker =
+        typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
+        typeof(Worker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
+        null // FIXME: Handle no worker found
 
     const graphics = {
         bounce: (() => {
@@ -51,7 +54,7 @@ const game = (() => {
 
             floater.classList.add("click-float")
 
-            let box = windows[1].getBoundingClientRect()
+            let box = H.WM.get("khoima clicker").win.getBoundingClientRect()
 
             container.style.position = "absolute"
             container.style.top = (y - box.top) + "px"
@@ -61,11 +64,9 @@ const game = (() => {
 
             display.innerHTML = `+${amount}`
 
-            windows[1].appendChild(container)
+            H.WM.get("khoima clicker").body.appendChild(container)
 
-            setTimeout(() => {
-                windows[1].removeChild(container)
-            }, 1000)
+            setTimeout(() => { H.WM.get("khoima clicker").body.removeChild(container) }, 1000)
         },
         create_row: (tower, number) => {
             let row = document.createElement("div")
@@ -80,7 +81,7 @@ const game = (() => {
             return row
         },
         create_shop: () => {
-            for (tower in towers) {
+            for (let tower in towers) {
                 let listing = document.createElement("li")
                 let link = document.createElement("a")
 
@@ -99,7 +100,7 @@ const game = (() => {
                         display.shop.owned.innerHTML = game.towers[shop.active][0]
                         display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
-                        game_worker.postMessage(["update_costs", shop])
+                        game_worker.port.postMessage(["update_costs", shop])
                     }
                 }
 
@@ -116,7 +117,7 @@ const game = (() => {
             display.shop.radio[0].click()
         },
         update_buildings: () => {
-            windows[2].innerHTML = ""
+            H.WM.get("buildings").body.innerHTML = ""
 
             let has_towers = false
             let fs_container = document.createElement("div")
@@ -124,7 +125,7 @@ const game = (() => {
             fs_container.style.maxHeight = "500px"
             fs_container.style.overflowY = "scroll"
 
-            for (tower in towers) {
+            for (let tower in towers) {
                 let count = game.towers[tower][0]
                 if (!count) continue
 
@@ -151,22 +152,22 @@ const game = (() => {
             }
 
             if (!has_towers)
-                windows[2].innerHTML = "Purchase buildings for them to appear here."
+                H.WM.get("buildings").body.innerHTML = "Purchase buildings for them to appear here."
             else
-                windows[2].appendChild(fs_container)
+                H.WM.get("buildings").body.appendChild(fs_container)
         },
         goldenkhoi: () => {
             let khoi = document.createElement("div")
             khoi.id = "goldenkhoi"
-            khoi.style.top = `${Math.ceil(Math.random() * 70) + 15}%`
-            khoi.style.left = `${Math.ceil(Math.random() * 70) + 15}%`
+            khoi.style.top = `${~~(Math.random() * 70) + 15}%`
+            khoi.style.left = `${~~(Math.random() * 70) + 15}%`
 
             khoi.addEventListener("click", () => {
-                game_worker.postMessage(["goldenkhoi"])
+                game_worker.port.postMessage(["goldenkhoi"])
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
-                windows[1].classList.add("khoi")
+                H.WM.get("khoima clicker").win.classList.add("khoi")
             })
 
             setTimeout(() => {
@@ -185,6 +186,11 @@ const game = (() => {
             cost_multiplier: 1.013,
             base_rate: .25,
             base_click: 0,
+            modifiers: {
+                "wallhack": [500, 1.5],
+                "aimlock": [5000, 1.5],
+                "spinbot": [15000, 2]
+            }
         },
         stream: {
             name: "bigfollows",
@@ -296,11 +302,11 @@ const game = (() => {
             game.gamergoo = data[0]
             game.gamergoo_history = data[1]
 
-            display.total.innerHTML = nice_format(Math.round(game.gamergoo))
+            display.total.innerHTML = nice_format(~~(game.gamergoo))
         },
         click: (data) => {
             // Click graphics assuming successful click
-            graphics.floater(Math.round(data[2] * 100) / 100, data[0], data[1])
+            graphics.floater(~~(data[2] * 100) / 100, data[0], data[1])
             graphics.bounce()
         },
         update_graphics: (data) => {
@@ -377,19 +383,14 @@ const game = (() => {
                 window.location.reload()
             }
         },
-        goldenkhoi: () => {
-            // Spawn golden khoi
-            graphics.goldenkhoi()
-        },
-        goldenkhoi_end: () => {
-            windows[1].classList.remove("khoi")
-        }
+        goldenkhoi: () => { /** Spawn golden khoi */ graphics.goldenkhoi() },
+        goldenkhoi_end: () => { H.WM.get("khoima clicker").win.classList.remove("khoi") }
     }
 
     function setup() {
         if (window.localStorage["gamestate"] == undefined) functions.save()
 
-        game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
+        let game_load = JSON.parse(window.atob(window.localStorage["gamestate"]))
 
         if (game.last_save === undefined)
             game.last_save = Date.now()
@@ -403,14 +404,14 @@ const game = (() => {
                     game[key] = game_load[key]
 
         display.button.addEventListener("mousedown", e => {
-            game_worker.postMessage(["click", [e.clientX, e.clientY]])
+            game_worker.port.postMessage(["click", [e.clientX, e.clientY]])
         })
 
         document.addEventListener("click", () => {
-            game_worker.postMessage(["interact"])
+            game_worker.port.postMessage(["interact"])
         })
 
-        game_worker.postMessage([
+        game_worker.port.postMessage([
             "setup",
             [ game, towers, shop ]
         ])
@@ -418,7 +419,7 @@ const game = (() => {
         graphics.create_shop()
         graphics.update_buildings()
 
-        game_worker.onmessage = e => {
+        game_worker.port.onmessage = e => {
             if (functions.hasOwnProperty(e.data[0]))
                 functions[e.data[0]](e.data[1])
         }
@@ -427,16 +428,15 @@ const game = (() => {
     // Exports
     return {
         start: () => {
-            running = true
             // Setup save file, graphics, and sync with worker thread
             setup()
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
-            game_worker.postMessage(["update_costs", shop])
+            game_worker.port.postMessage(["update_costs", shop])
         },
         shop: (action) => {
-            game_worker.postMessage(["shop", [action, shop]])
+            game_worker.port.postMessage(["shop", [action, shop]])
         },
         stats: () => {
             console.log(
@@ -453,7 +453,3 @@ const game = (() => {
 })()
 
 game.start()
-
-function discord() {
-    window.open("https://discord.gg/ZTnCdcM", "_blank")
-}
