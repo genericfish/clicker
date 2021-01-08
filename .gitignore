@@ -5,3 +5,5 @@ babel/*
 node_modules/*
 package-lock.json
 .vscode
+*.zip
+*.tar.gz
