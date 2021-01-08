@@ -4,23 +4,31 @@ lessc="./node_modules/.bin/lessc"
 minify="./node_modules/.bin/minify"
 babel="./node_modules/.bin/babel"
 
+rm -rf ./babel
+rm -rf ./dist
+
 mkdir -p "./dist/assets/js/workers"
 mkdir -p "./dist/assets/images"
 
-eval "${babel} ./src -d ./babel"
+src="./src"
 
-if [ -d ./babel/js ] && [ -d ./dist/assets/js ]; then
+if [ ${1-prod} != "debug" ]; then
+eval "${babel} ./src -d ./babel"
+src="./babel"
+fi
+
+if [ -d "./${src}/js" ] && [ -d ./dist/assets/js ]; then
     touch ./dist/assets/js/game.js
 
-    cmd="${minify} ./babel/js/core/selection.js ./babel/js/core/desktop.js ./babel/js/core/theme.js\
-    ./babel/js/core/draggable.js ./babel/js/core/keyhandler.js ./babel/js/core/windows.js\
-    ./babel/js/core/core.js ./babel/js/khoima.js"
+    cmd="${minify} ./${src}/js/core/selection.js ./${src}/js/core/desktop.js ./${src}/js/core/theme.js\
+    ./${src}/js/core/draggable.js ./${src}/js/core/keyhandler.js ./${src}/js/core/windows.js\
+    ./${src}/js/core/core.js ./${src}/js/khoima.js"
 
-    eval "${cmd}" ./babel/js/minigames/*.js " > ./dist/assets/js/game.js"
+    eval "${cmd} ./${src}/js/minigames/"*.js " > ./dist/assets/js/game.js"
     echo "Minified all non-worker JS files to ./dist/assets/js/game.js"
     unset cmd
 
-    for f in ./babel/js/workers/*.js; do
+    for f in "./${src}/js/workers/"*.js; do
         touch "./dist/assets/js/workers/${f##*/}"
         eval "${minify} ${f} > ./dist/assets/js/workers/${f##*/}"
         echo "Minified ${f} to ./dist/assets/js/workers/${f##*/}"
@@ -28,7 +36,7 @@ if [ -d ./babel/js ] && [ -d ./dist/assets/js ]; then
 
     unset f
 else
-    echo "Missing either ./babel/js or ./dist/assets/js, check file/directory permissions."
+    echo "Missing either ./${src}/js or ./dist/assets/js, check file/directory permissions."
 fi
 
 if [ -d ./src/styles ] && [ -d ./dist/assets ] && [ -d ./src/templates ]; then
@@ -66,3 +74,5 @@ fi
 
 unset lessc
 unset minify
+unset babel
+unset src
