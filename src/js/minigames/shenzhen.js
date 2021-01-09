@@ -1,7 +1,8 @@
 class Card {
-    constructor (color, number) {
+    constructor (color, number, container) {
         this.color = color
         this.number = number
+        this.container = container
 
         this.generate_card()
     }
@@ -15,6 +16,9 @@ class Card {
         card.classList.add("card-" + this.number)
 
         this.drag = new Draggable(card)
+
+        if (this.container)
+            this.drag.container = this.container
     }
 }
 
@@ -27,7 +31,10 @@ class Column {
 class Shenzhen {
     constructor () {
         this.board = document.getElementById("shenzhen")
+
         this.rows = Array.from(document.getElementById("shenzhen").children[1].children[0].children)
-        this.rows[0].appendChild(new Card("black", "5").card)
+        this.rows[0].appendChild(new Card("black", "5", this.board).card)
     }
 }
+
+H.SH = new Shenzhen()
