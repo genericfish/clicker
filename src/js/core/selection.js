@@ -4,11 +4,15 @@ class Selection {
         this.sel = undefined
         this.initial = undefined
 
-        this.imousemove = this.mousemove(this)
-        this.imouseup = this.mouseup(this)
+        this.imousemove = this.mousemove
+        this.imouseup = this.mouseup
 
         // Add handlers
-        e.addEventListener("mousedown", this.mousedown(this))
+        e.addEventListener("mousedown", this.mousedown)
+
+        e.addEventListener("mousedown", _ => {
+            console.log("HELLO")
+        })
     }
 
     create_selection(x, y) {
@@ -22,53 +26,52 @@ class Selection {
         this.element.appendChild(this.sel)
     }
 
-    mousedown(inst) {
-        return e => {
-            inst.create_selection(e.clientX, e.clientY)
-            inst.initial = [e.clientX, e.clientY]
+    mousedown = e => {
+        this.create_selection(e.clientX, e.clientY)
+        this.initial = [e.clientX, e.clientY]
 
-            document.addEventListener("mousemove", inst.imousemove)
-            document.addEventListener("mouseup", inst.imouseup)
+        document.addEventListener("mousemove", this.imousemove)
+        document.addEventListener("mouseup", this.imouseup)
+    }
+
+    mousemove = e => {
+        if (this.initial == undefined) return
+
+        this.sel.style.width = Math.abs(this.initial[0] - e.clientX) + "px"
+        this.sel.style.height = Math.abs(this.initial[1] - e.clientY) + "px"
+
+        // For some reason inner(Width|Height) is larger than the actual
+        // size of the document. This causes a gap when going from
+        // one side of the initial point to another (e.g. left->right).
+        // Therefore, use the bounding client rect of background element
+        // to get the size of the viewable portion.
+        // The selection element uses fixed positioning, so coordinates
+        // are relative to the top left of the screen.
+        let box = document.getElementById("background").getBoundingClientRect()
+
+        if (e.clientX <= this.initial[0]) {
+            this.sel.style.right = (box.width - this.initial[0]) + "px"
+            this.sel.style.left = null
+        } else {
+            this.sel.style.left = this.initial[0] + "px"
+            this.sel.style.right = null
+        }
+
+        if (e.clientY <= this.initial[1]) {
+            this.sel.style.bottom = (box.height - this.initial[1]) + "px"
+            this.sel.style.top = null
+        } else {
+            this.sel.style.top = this.initial[1] + "px"
+            this.sel.style.bottom = null
         }
     }
 
-    mousemove(inst) {
-        return e => {
-            if (inst.initial == undefined) return
+    mouseup = _ => {
+        if (this.initial == undefined) return
+        let sel = this.sel
+        sel.classList.add("fade")
+        this.initial = undefined
 
-            inst.sel.style.width = Math.abs(inst.initial[0] - e.clientX) + "px"
-            inst.sel.style.height = Math.abs(inst.initial[1] - e.clientY) + "px"
-
-            if (e.clientX <= inst.initial[0]) {
-                // For some reason innerWidth is larger than client rect width
-                // This causes the selection to have a gap when going from
-                // right to left of initial selection, or vice versa.
-                inst.sel.style.right =
-                    (document.body.getBoundingClientRect().width - inst.initial[0]) + "px"
-                inst.sel.style.left = null
-            } else {
-                inst.sel.style.left = inst.initial[0] + "px"
-                inst.sel.style.right = null
-            }
-
-            if (e.clientY <= inst.initial[1]) {
-                inst.sel.style.bottom = (window.innerHeight - inst.initial[1]) + "px"
-                inst.sel.style.top = null
-            } else {
-                inst.sel.style.top = inst.initial[1] + "px"
-                inst.sel.style.bottom = null
-            }
-        }
-    }
-
-    mouseup(inst) {
-        return _ => {
-            if (inst.initial == undefined) return
-            let sel = inst.sel
-            sel.classList.add("fade")
-            inst.initial = undefined
-
-            setTimeout(() => { sel.remove() }, 75)
-        }
+        setTimeout(() => { sel.remove() }, 75)
     }
 }

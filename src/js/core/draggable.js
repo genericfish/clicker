@@ -15,62 +15,67 @@ class Draggable {
     }
 
     setup() {
-        this.f_drag = this.drag(this)
+        this.draggable.addEventListener("touchstart", this.start)
+        this.draggable.addEventListener("mousedown", this.start)
 
-        this.draggable.addEventListener("mousedown", e => {
-            e.preventDefault()
-
-            // only activate on lmb
-            if (e.buttons != 1) return
-
-            // don't double drag
-            if (this.parent.hasAttribute("data-dragged")) return
-
-            let cancel = false
-
-            if (this.hooks.mousedown.length)
-                for (let cb of this.hooks.mousedown)
-                    cancel |= cb(e)
-
-            if (cancel) return
-
-            this.onmousedown(e)
-        })
-
-        document.addEventListener("mouseup", e => {
-            if (this.parent.hasAttribute("data-dragged")) {
-                if (this.hooks.mouseup.length)
-                    for (let cb of this.hooks.mouseup)
-                        cb(e)
-
-                this.parent.removeAttribute("data-dragged")
-
-                document.removeEventListener("mousemove", this.f_drag)
-            }
-        })
+        document.addEventListener("mouseup", this.stop)
+        document.addEventListener("touchend", this.stop)
+        document.addEventListener("touchcancel", this.stop)
     }
 
-    drag(inst) {
-        return e => {
-            e.preventDefault()
+    start = e => {
+        e.preventDefault()
 
-            let cancel = false
+        // only activate on lmb
+        if (e.buttons != 1) return
 
-            if (inst.hooks.mousemove.length)
-                for (let cb of inst.hooks.mousemove)
-                    cancel |= cb(e)
+        // don't double drag
+        if (this.parent.hasAttribute("data-dragged")) return
 
-            if (cancel) return
+        let cancel = false
 
-            inst.onmousemove(e)
+        if (this.hooks.mousedown.length)
+            for (let cb of this.hooks.mousedown)
+                cancel |= cb(e)
+
+        if (cancel) return
+
+        this.onmousedown(e)
+    }
+
+    stop = e => {
+        if (this.parent.hasAttribute("data-dragged")) {
+            if (this.hooks.mouseup.length)
+                for (let cb of this.hooks.mouseup)
+                    cb(e)
+
+            this.parent.removeAttribute("data-dragged")
+
+            document.removeEventListener("mousemove", this.drag)
+            document.removeEventListener("touchmove", this.drag)
         }
+    }
+
+    drag = e => {
+        e.preventDefault()
+
+        let cancel = false
+
+        if (this.hooks.mousemove.length)
+            for (let cb of this.hooks.mousemove)
+                cancel |= cb(e)
+
+        if (cancel) return
+
+        this.onmousemove(e)
     }
 
     onmousedown(e) {
         this.previous = [e.clientX, e.clientY]
         this.parent.setAttribute("data-dragged", "data-dragged")
 
-        document.addEventListener("mousemove", this.f_drag)
+        document.addEventListener("mousemove", this.drag)
+        document.addEventListener("touchmove", this.drag)
     }
 
     onmousemove(e) {
@@ -152,14 +157,4 @@ class Draggable {
             if (this.hooks[event].includes(cb))
                 this.hooks[event].splice(this.hooks[event].indexOf(cb), 1)
     }
-}
-
-class Area {
-    constructor (e) {
-        if (!(e instanceof Element))
-            throw new Exception("[DropArea] Expected HTML Element.")
-            this.e = e
-    }
-
-    in_bounds(x, y) { Array.from(document.elementsFromPoint(x, y)).includes(this.e) }
 }
