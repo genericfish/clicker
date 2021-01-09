@@ -10,18 +10,29 @@
             this.generate_card()
         }
 
-        attach(e, focus = 0, offset_x = 0, offset_y = 0, mousemove, mouseup) {
-            this.parent = e
-            e.appendChild(this.card)
+        attach(e, move = true, x = 0, y = 0) {
+            let focus = e.focus
+            let mousemove = e.drag
+            let mouseup = e.lift
+
+            this.col = e
+            this.parent = e.element
+            this.parent.appendChild(this.card)
 
             this.initial = [
-                this.card.offsetLeft + offset_x,
-                this.card.offsetTop + offset_y
+                x + this.parent.offsetLeft + ~~((
+                    this.parent.getBoundingClientRect().width -
+                    this.card.getBoundingClientRect().width
+                    ) / 2),
+                y + 35 * (e.cards.length - 1)
             ]
 
+            if (move) {
+                this.x = this.initial[0]
+                this.y = this.initial[1]
+            }
+
             this.focus = focus
-            this.x = this.initial[0]
-            this.y = this.initial[1]
             this.z = focus
             this._mousemove = mousemove
             this._mouseup = mouseup
@@ -46,16 +57,23 @@
                     ret = ret[0]
 
                     if (ret.element != this.parent) {
-                        this.detach()
-                        this.attach(...ret.pack)
+                        this.col.remove(this)
+                        ret.add(this, false)
+
+                        return true
                     }
                 }
             }
+
+            return false
         }
 
         slide(x, y, z) {
+            console.log(z)
             let xn = x - this.card.offsetLeft
             let yn = y - this.card.offsetTop
+
+            if (!xn && !yn) return this.z = z
 
             this.card.style.transform = `translate(${xn}px,${yn}px)`
             this.card.style.transition = "transform .2s ease"
@@ -85,7 +103,7 @@
 
             this.drag.add_hook("mouseup", _ => {
                 this.reattach()
-                this.slide(...[...this.initial, this.focus])
+                this.slide(...this.initial, this.focus)
             })
             this.drag.add_hook("mousedown", _ => { return !this.draggable || !(++this.z || 1) })
         }
@@ -117,14 +135,14 @@
             this.count = 0
         }
 
-        add(v) {
+        add(v, move) {
             if (!(v instanceof Card)) return
 
             for (let card of this.cards)
                 card.draggable = false
 
             this.cards.push(v)
-            v.attach(...this.pack)
+            v.attach(this, move)
         }
 
         remove(v) {
@@ -132,11 +150,10 @@
 
             if (this.cards.includes(v)) {
                 this.cards.splice(this.cards.indexOf(v), 1)
+                this.cards[this.cards.length - 1].draggable = true
                 v.detach()
             }
         }
-
-        get pack() { return [this.element,this.focus,0,this.count++*35,this.drag,this.lift] }
     }
 
     class Shenzhen {
