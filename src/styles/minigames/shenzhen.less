@@ -1,4 +1,6 @@
 #shenzhen {
+    display: flex;
+
     min-width: 1000px;
     min-height: 750px;
 
@@ -28,14 +30,34 @@
             position: absolute;
             top: .2em; left: .2em;
         }
-        .o (@i) when not (@i = 0) {
+
+        .o (@i) when (@i <= 9) {
             &.card-@{i} {
-                &::after, &::before {
-                    content: "@{i}"
-                }
+                &::after, &::before { content: "@{i}" }
             }
-            .o(@i - 1)
+            .o(@i + 1)
+        } .o(1);
+
+        .j (@i) when (@i < 4) {
+            @j: @i + 10;
+
+            &.card-@{j} {
+                &::after, &::before { content: "D" }
+            }
+            .j(@i + 1)
+        } .j(0);
+
+        &.card-f {
+            &::after, &::before { content: "F" }
         }
-        .o(9);
+    }
+
+    .col {
+        display: block;
+        flex: 1;
+
+        min-height: 100%;
+
+        padding: 10px;
     }
 }

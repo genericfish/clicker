@@ -24,7 +24,7 @@ class Draggable {
             if (e.buttons != 1) return
 
             // don't double drag
-            if (this.draggable.hasAttribute("data-dragged")) return
+            if (this.parent.hasAttribute("data-dragged")) return
 
             let cancel = false
 
@@ -168,22 +168,6 @@ class DropArea {
             box.left + box.width,
             box.top + box.height
         ]
-    }
-
-    add(v) {
-        if (typeof v == "string")
-            if (v.charAt(0) == '#')
-                this.whitelist.id.push(v.substr(1))
-            else
-                this.whitelist.class.push(v)
-        else if (v instanceof Element)
-            this.whitelist.elements.push(v)
-    }
-
-    in_whitelist(e) {
-        return this.whitelist.id.includes(e.id) ||
-                Array.from(e.classList).reduce(a,b => a || this.whitelist.class.includes(b)) ||
-                this.elements.includes(e)
     }
 
     in_bounds(x, y) {
