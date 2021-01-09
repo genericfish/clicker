@@ -10,7 +10,7 @@
             this.generate_card()
         }
 
-        attach(e, focus = 0, offset_x = 0, offset_y = 0) {
+        attach(e, focus = 0, offset_x = 0, offset_y = 0, mousemove, mouseup) {
             this.parent = e
             e.appendChild(this.card)
 
@@ -23,13 +23,34 @@
             this.x = this.initial[0]
             this.y = this.initial[1]
             this.z = focus
+            this._mousemove = mousemove
+            this._mouseup = mouseup
+
+            if (this._mousemove != undefined)
+                this.drag.add_hook("mousemove", this._mousemove)
         }
 
         detach() {
             if (this.parent == undefined) return
 
-            e.removeChild(this.card)
+            this.parent.removeChild(this.card)
+            this.drag.remove_hook("mousemove", this._mousemove)
             this.initial = [0, 0]
+            this._mousemove = undefined
+        }
+
+        reattach() {
+            if (this._mouseup) {
+                let ret = this._mouseup()
+                if (ret instanceof Array && ret.length) {
+                    ret = ret[0]
+
+                    if (ret.element != this.parent) {
+                        this.detach()
+                        this.attach(...ret.pack)
+                    }
+                }
+            }
         }
 
         slide(x, y, z) {
@@ -62,7 +83,10 @@
             if (this.container)
                 this.drag.container = this.container
 
-            this.drag.add_hook("mouseup", _ => { this.slide(...[...this.initial, this.focus]) })
+            this.drag.add_hook("mouseup", _ => {
+                this.reattach()
+                this.slide(...[...this.initial, this.focus])
+            })
             this.drag.add_hook("mousedown", _ => { return !this.draggable || !(++this.z || 1) })
         }
 
@@ -75,8 +99,8 @@
         get z() { return parseInt(this.card.style.zIndex) || 0 }
     }
 
-    class Column extends DropArea {
-        constructor (id, parent, focus) {
+    class Column extends Area {
+        constructor (id, parent, focus, drag, lift) {
             let element = document.createElement("div")
             super(element)
 
@@ -87,6 +111,8 @@
             this.id = id || 0
             this.focus = focus
             this.cards = []
+            this.drag = drag
+            this.lift = lift
 
             this.count = 0
         }
@@ -98,8 +124,19 @@
                 card.draggable = false
 
             this.cards.push(v)
-            v.attach(this.element, this.focus, 0, this.count++ * 35)
+            v.attach(...this.pack)
         }
+
+        remove(v) {
+            if (!(v instanceof Card)) return
+
+            if (this.cards.includes(v)) {
+                this.cards.splice(this.cards.indexOf(v), 1)
+                v.detach()
+            }
+        }
+
+        get pack() { return [this.element,this.focus,0,this.count++*35,this.drag,this.lift] }
     }
 
     class Shenzhen {
@@ -118,7 +155,30 @@
             this.columns = []
 
             for (let i = 0; i < 8; i++) {
-                let col = new Column(i, this.board, this.z)
+                let col = new Column(i, this.board, this.z,
+                    e => {
+                        for (let el of document.elementsFromPoint(e.clientX, e.clientY)) {
+                            if (Array.from(el.classList).includes("col") &&
+                                this.focused != el
+                            ) {
+                                if (this.focused != undefined)
+                                    this.focused.classList.remove("active")
+
+                                this.focused = el
+                                el.classList.add("active")
+                            }
+                        }
+                    },
+                    _ => {
+                        if (this.focused != undefined) {
+                            let focused = this.focused
+
+                            this.focused.classList.remove("active")
+                            this.focused = undefined
+
+                            return this.columns.filter(col => col.element == focused)
+                        }
+                    })
                 this.columns.push(col)
             }
         }

@@ -147,33 +147,19 @@ class Draggable {
     }
 
     add_hook(event, cb) { if (this.hooks.hasOwnProperty(event)) this.hooks[event].push(cb) }
+    remove_hook(event, cb) {
+        if (this.hooks.hasOwnProperty(event))
+            if (this.hooks[event].includes(cb))
+                this.hooks[event].splice(this.hooks[event].indexOf(cb), 1)
+    }
 }
 
-class DropArea {
+class Area {
     constructor (e) {
         if (!(e instanceof Element))
             throw new Exception("[DropArea] Expected HTML Element.")
-
-        this.area = e
-        this.whitelist = {
-            id: [],
-            class: [],
-            elements: []
-        }
-
-        let box = e.getBoundingClientRect()
-        this.bounds = [
-            box.left,
-            box.top,
-            box.left + box.width,
-            box.top + box.height
-        ]
+            this.e = e
     }
 
-    in_bounds(x, y) {
-        return x >= this.bounds[0] &&
-                x <= this.bounds[2] &&
-                y >= this.bounds[1] &&
-                y <= this.bounds[3]
-    }
+    in_bounds(x, y) { Array.from(document.elementsFromPoint(x, y)).includes(this.e) }
 }
