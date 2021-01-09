@@ -23,6 +23,9 @@ class Draggable {
             // only activate on lmb
             if (e.buttons != 1) return
 
+            // don't double drag
+            if (this.draggable.hasAttribute("data-dragged")) return
+
             let cancel = false
 
             if (this.hooks.mousedown.length)
@@ -35,12 +38,15 @@ class Draggable {
         })
 
         document.addEventListener("mouseup", e => {
-            document.removeEventListener("mousemove", this.f_drag)
-            this.parent.removeAttribute("data-dragged")
+            if (this.parent.hasAttribute("data-dragged")) {
+                if (this.hooks.mouseup.length)
+                    for (let cb of this.hooks.mouseup)
+                        cb(e)
 
-            if (this.hooks.mouseup.length)
-                for (let cb of this.hooks.mouseup)
-                    cb(e)
+                this.parent.removeAttribute("data-dragged")
+
+                document.removeEventListener("mousemove", this.f_drag)
+            }
         })
     }
 
