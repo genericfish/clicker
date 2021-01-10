@@ -7,8 +7,16 @@ class WindowManager {
 
     add(win) { this.windows[win.id] = win }
 
-    exit(e) { this.windows[this.decode(e)].exit() }
-    minimize(e) { this.windows[this.decode(e)].minimize() }
+    exit(e) {
+        this.windows[this.decode(e)].exit()
+        this.save()
+    }
+
+    minimize(e) {
+        this.windows[this.decode(e)].minimize()
+        this.save()
+    }
+
     maximize(e) {
         let id = this.decode(e)
 
@@ -101,17 +109,17 @@ class WindowManager {
             ({name: attr, value: val} = a)
 
             switch (attr) {
-                case "data-window": continue
+                case "data-window": break
                 case "style":
                 case "class":
                     let cur = win.body.getAttribute(attr)
 
-                    win.body.setAttribute(attr, cur != null ? cur : "" + val)
-                    continue
+                    win.body.setAttribute(attr, cur != null ? cur + val : val)
+                    break
                 case "id":
                     win.body.setAttribute(attr, val)
-                    continue
-                default: continue
+                    break
+                default: break
             }
         }
 
