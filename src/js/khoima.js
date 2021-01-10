@@ -31,12 +31,12 @@ let flags = [false]
 
 const game = (() => {
     const game_worker =
-        typeof(SharedWorker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
+        typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
         typeof(Worker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
         null // FIXME: Handle no worker found
 
     let postMessage =
-        typeof(SharedWorker) !== "undefined" ? msg => { game_worker.postMessage(msg) } :
+        typeof(SharedWorker) !== "undefined" ? msg => { game_worker.port.postMessage(msg) } :
         typeof(Worker) !== "undefined" ? msg => { game_worker.postMessage(msg) } :
         _ => {}
 
@@ -425,7 +425,7 @@ const game = (() => {
         graphics.update_buildings()
 
         if (typeof(SharedWorker) !== "undefined") {
-            game_worker.onmessage = e => {
+            game_worker.port.onmessage = e => {
                 if (functions.hasOwnProperty(e.data[0]))
                     functions[e.data[0]](e.data[1])
             }
