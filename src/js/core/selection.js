@@ -9,10 +9,6 @@ class Selection {
 
         // Add handlers
         e.addEventListener("mousedown", this.mousedown)
-
-        e.addEventListener("mousedown", _ => {
-            console.log("HELLO")
-        })
     }
 
     create_selection(x, y) {

@@ -193,23 +193,13 @@
             for (let i = 0; i < 8; i++) {
                 let col = new Column(i, this.rules, this.z,
                     e => {
-                        for (let el of document.elementsFromPoint(e.clientX, e.clientY)) {
-                            if (Array.from(el.classList).includes("col") &&
-                                this.focused != el
-                            ) {
-                                if (this.focused != undefined)
-                                    this.focused.classList.remove("active")
-
+                        for (let el of document.elementsFromPoint(e.clientX, e.clientY))
+                            if (Array.from(el.classList).includes("col") && this.focused != el)
                                 this.focused = el
-                                el.classList.add("active")
-                            }
-                        }
                     },
                     _ => {
                         if (this.focused != undefined) {
                             let focused = this.focused
-
-                            this.focused.classList.remove("active")
                             this.focused = undefined
 
                             return this.columns.filter(col => col.element == focused)
@@ -222,12 +212,10 @@
 
         generate_cards() {
             let colors = ["red", "green", "black"]
-            let cards = []
+            let cards = [new Card(colors[0], 'f', this.board)]
 
             for (let i = 0; i < 39; i++)
                 cards.push(new Card(colors[~~(i / 13)], i % 13 + 1, this.board))
-
-            cards.push(new Card(colors[0], 'f', this.board))
 
             let k = _ => { return crypto.getRandomValues(new Uint8Array(1))[0] % 40 }
             for (let j = 39, g = k(); j > 0; j--, g = k())
