@@ -24,7 +24,7 @@
                     this.parent.getBoundingClientRect().width -
                     this.card.getBoundingClientRect().width
                     ) / 2),
-                y + 35 * (e.cards.length - 1)
+                y + 35 * (e.count - 1)
             ]
 
             if (move) {
@@ -56,7 +56,7 @@
                 if (ret instanceof Array && ret.length) {
                     ret = ret[0]
 
-                    if (ret.element != this.parent) {
+                    if (ret.element != this.parent && ret.check(this)) {
                         this.col.remove(this)
                         ret.add(this, false)
 
@@ -69,7 +69,6 @@
         }
 
         slide(x, y, z) {
-            console.log(z)
             let xn = x - this.card.offsetLeft
             let yn = y - this.card.offsetTop
 
@@ -117,13 +116,11 @@
         get z() { return parseInt(this.card.style.zIndex) || 0 }
     }
 
-    class Column extends Area {
-        constructor (id, parent, focus, drag, lift) {
+    class Column {
+        constructor (id, rules, focus, drag, lift) {
             let element = document.createElement("div")
-            super(element)
 
             element.classList.add("col")
-            parent.appendChild(element)
 
             this.element = element
             this.id = id || 0
@@ -131,8 +128,7 @@
             this.cards = []
             this.drag = drag
             this.lift = lift
-
-            this.count = 0
+            this.rules = rules
         }
 
         add(v, move) {
@@ -150,10 +146,21 @@
 
             if (this.cards.includes(v)) {
                 this.cards.splice(this.cards.indexOf(v), 1)
-                this.cards[this.cards.length - 1].draggable = true
+                this.last.draggable = true
                 v.detach()
             }
         }
+
+        check(v) {
+            return !!this.count &&
+                this.rules[v.color] != this.last.color &&
+                !(this.rules["" + v.number] || []).includes(this.last.number) &&
+                !(this.rules["" + v.number] || []).includes("*") &&
+                (parseInt(v.number) || -1) == (parseInt(this.last.number) || -1) - 1
+        }
+
+        get count() { return this.cards.length }
+        get last() { return this.cards[this.count - 1] }
     }
 
     class Shenzhen {
@@ -161,6 +168,18 @@
             this.board = document.getElementById("shenzhen")
             this.cards = []
             this.z = parseInt(this.board.parentElement.parentElement.style.zIndex)
+
+            this.rules = {
+                // rules define the set of exclusions
+                "red": "red",
+                "green": "green",
+                "black": "black",
+                "f": "*",
+                "10": "*",
+                "11": "*",
+                "12": "*",
+                "13": "*",
+            }
 
             this.generate_columns()
             this.generate_cards()
@@ -172,7 +191,7 @@
             this.columns = []
 
             for (let i = 0; i < 8; i++) {
-                let col = new Column(i, this.board, this.z,
+                let col = new Column(i, this.rules, this.z,
                     e => {
                         for (let el of document.elementsFromPoint(e.clientX, e.clientY)) {
                             if (Array.from(el.classList).includes("col") &&
@@ -197,19 +216,24 @@
                         }
                     })
                 this.columns.push(col)
+                this.board.appendChild(col.element)
             }
         }
 
         generate_cards() {
             let colors = ["red", "green", "black"]
+            let cards = []
 
-            for (let i = 0; i < 39; i++) {
-                this.columns[i % 8].add(
-                    new Card(colors[~~(i / 13)], i % 13 + 1, this.board)
-                )
-            }
+            for (let i = 0; i < 39; i++)
+                cards.push(new Card(colors[~~(i / 13)], i % 13 + 1, this.board))
 
-            this.columns[7].add(new Card(colors[0], 'f', this.board))
+            cards.push(new Card(colors[0], 'f', this.board))
+
+            let k = _ => { return crypto.getRandomValues(new Uint8Array(1))[0] % 40 }
+            for (let j = 39, g = k(); j > 0; j--, g = k())
+                [cards[g], cards[j]] = [cards[j], cards[g]]
+
+            cards.forEach((card, index) => this.columns[index % 8].add(card))
         }
 
         ready() { }
