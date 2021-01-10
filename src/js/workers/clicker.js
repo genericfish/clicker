@@ -237,24 +237,39 @@ let game = (() => {
 
 let instances = []
 
-onconnect = e => {
-    let port = e.ports[0]
-    instances.push(port)
+console.log(typeof(onconnect))
 
-    let instance = instances.length - 1
+if (typeof(onconnect) !== "undefined") {
+    // SharedWorker
+    onconnect = e => {
+        let port = e.ports[0]
 
-    // Presumably, the last open tab will be the active one (at the moment its created)
-    active = instance
+        instances.push(port)
 
-    // Listen from input from all instances
-    port.onmessage = e => {
-        if (game.hasOwnProperty(e.data[0]))
-            game[e.data[0]](e.data[1], instance)
+        let instance = instances.length - 1
+
+        // Presumably, the last open tab will be the active one (at the moment its created)
+        active = instance
+
+        // Listen from input from all instances
+        port.onmessage = e => {
+            if (game.hasOwnProperty(e.data[0]))
+                game[e.data[0]](e.data[1], instance)
+        }
     }
+    
+    // Post message to all connected instances
+    function postAll(data) { for (let instance of instances) instance.postMessage(data) }
+
+    // Post message to specific instance
+    function post(data, instance) { instances[instance].postMessage(data) }
+} else {
+    // Worker
+    onmessage = e => {
+        if (game.hasOwnProperty(e.data[0]))
+            game[e.data[0]](e.data[1])
+    }
+
+    function postAll(data) { postMessage(data) }
+    function post(data) { postMessage(data) }
 }
-
-// Post message to all connected instances
-function postAll(data) { for (let instance of instances) instance.postMessage(data) }
-
-// Post message to specific instance
-function post(data, instance) { instances[instance].postMessage(data) }

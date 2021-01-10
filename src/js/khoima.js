@@ -31,9 +31,14 @@ let flags = [false]
 
 const game = (() => {
     const game_worker =
-        typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
+        typeof(SharedWorker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
         typeof(Worker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
         null // FIXME: Handle no worker found
+
+    let postMessage =
+        typeof(SharedWorker) !== "undefined" ? msg => { game_worker.postMessage(msg) } :
+        typeof(Worker) !== "undefined" ? msg => { game_worker.postMessage(msg) } :
+        _ => {}
 
     const graphics = {
         bounce: (() => {
@@ -100,7 +105,7 @@ const game = (() => {
                         display.shop.owned.innerHTML = game.towers[shop.active][0]
                         display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
 
-                        game_worker.port.postMessage(["update_costs", shop])
+                        postMessage(["update_costs", shop])
                     }
                 }
 
@@ -163,7 +168,7 @@ const game = (() => {
             khoi.style.left = random(15, 70) + '%'
 
             khoi.addEventListener("click", () => {
-                game_worker.port.postMessage(["goldenkhoi"])
+                postMessage(["goldenkhoi"])
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
@@ -404,14 +409,14 @@ const game = (() => {
                     game[key] = game_load[key]
 
         display.button.addEventListener("mousedown", e => {
-            game_worker.port.postMessage(["click", [e.clientX, e.clientY]])
+            postMessage(["click", [e.clientX, e.clientY]])
         })
 
         document.addEventListener("click", () => {
-            game_worker.port.postMessage(["interact"])
+            postMessage(["interact"])
         })
 
-        game_worker.port.postMessage([
+        postMessage([
             "setup",
             [ game, towers, shop ]
         ])
@@ -419,9 +424,16 @@ const game = (() => {
         graphics.create_shop()
         graphics.update_buildings()
 
-        game_worker.port.onmessage = e => {
-            if (functions.hasOwnProperty(e.data[0]))
-                functions[e.data[0]](e.data[1])
+        if (typeof(SharedWorker) !== "undefined") {
+            game_worker.onmessage = e => {
+                if (functions.hasOwnProperty(e.data[0]))
+                    functions[e.data[0]](e.data[1])
+            }
+        } else if (typeof(Worker) !== "undefined") {
+            game_worker.onmessage = e => {
+                if (functions.hasOwnProperty(e.data[0]))
+                    functions[e.data[0]](e.data[1])
+            }
         }
     }
 
@@ -433,10 +445,10 @@ const game = (() => {
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
-            game_worker.port.postMessage(["update_costs", shop])
+            postMessage(["update_costs", shop])
         },
         shop: (action) => {
-            game_worker.port.postMessage(["shop", [action, shop]])
+            postMessage(["shop", [action, shop]])
         },
         stats: () => {
             console.log(
