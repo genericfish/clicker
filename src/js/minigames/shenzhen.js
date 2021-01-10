@@ -217,8 +217,7 @@
             for (let i = 0; i < 39; i++)
                 cards.push(new Card(colors[~~(i / 13)], i % 13 + 1, this.board))
 
-            let k = _ => { return crypto.getRandomValues(new Uint8Array(1))[0] % 40 }
-            for (let j = 39, g = k(); j > 0; j--, g = k())
+            for (let j = 39, g = random(39); j > 0; j--, g = random(39))
                 [cards[g], cards[j]] = [cards[j], cards[g]]
 
             cards.forEach((card, index) => this.columns[index % 8].add(card))
