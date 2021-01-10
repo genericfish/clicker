@@ -236,8 +236,7 @@ let game = (() => {
 })()
 
 let instances = []
-
-console.log(typeof(onconnect))
+let postAll, post
 
 if (typeof(onconnect) !== "undefined") {
     // SharedWorker
@@ -257,12 +256,12 @@ if (typeof(onconnect) !== "undefined") {
                 game[e.data[0]](e.data[1], instance)
         }
     }
-    
+
     // Post message to all connected instances
-    function postAll(data) { for (let instance of instances) instance.postMessage(data) }
+    postAll = (data) => { for (let instance of instances) instance.postMessage(data) }
 
     // Post message to specific instance
-    function post(data, instance) { instances[instance].postMessage(data) }
+    post = (data, instance) => { instances[instance].postMessage(data) }
 } else {
     // Worker
     onmessage = e => {
@@ -270,6 +269,6 @@ if (typeof(onconnect) !== "undefined") {
             game[e.data[0]](e.data[1])
     }
 
-    function postAll(data) { postMessage(data) }
-    function post(data) { postMessage(data) }
+    postAll = (data) => { postMessage(data) }
+    post = (data) => { postMessage(data) }
 }
