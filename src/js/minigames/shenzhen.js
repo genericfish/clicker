@@ -24,7 +24,7 @@
                     this.parent.getBoundingClientRect().width -
                     this.card.getBoundingClientRect().width
                     ) / 2),
-                y + 35 * (e.count - 1)
+                y + 28 * (e.count - 1) + 175
             ]
 
             if (move) {
@@ -50,18 +50,29 @@
             this._mousemove = undefined
         }
 
+        move(col, verify = false, offset_x = 0, offset_y = 0) {
+            if (col instanceof Column && col.element != this.parent && (!verify || col.verify(this))) {
+                this.col.remove(this)
+                col.add(this, false, offset_x, offset_y)
+                this.slide(...this.initial, this.focus)
+
+                return true
+            }
+
+            return false
+        }
+
         reattach() {
             if (this._mouseup) {
                 let ret = this._mouseup()
                 if (ret instanceof Array && ret.length) {
-                    ret = ret[0]
+                    let children = this.children.slice()
+                    let m = this.move(ret[0], true)
 
-                    if (ret.element != this.parent && ret.check(this)) {
-                        this.col.remove(this)
-                        ret.add(this, false)
+                    if (children.length && m)
+                        children.forEach(child => child.move(ret[0], true))
 
-                        return true
-                    }
+                    return m
                 }
             }
 
@@ -101,10 +112,26 @@
                 this.drag.container = this.container
 
             this.drag.add_hook("mouseup", _ => {
-                this.reattach()
-                this.slide(...this.initial, this.focus)
+                if (!this.reattach()) {
+                    this.slide(...this.initial, this.focus)
+
+                    if (this.children.length)
+                        this.children.forEach(child => child.slide(...child.initial, child.focus))
+                }
             })
-            this.drag.add_hook("mousedown", _ => { return !this.draggable || !(++this.z || 1) })
+
+            // very bad abuse of syntax
+            this.drag.add_hook("mousedown", _ => !this.draggable || !(++this.z || 1) || !(!this.children.length || this.children.forEach(child => ++child.z) || 1) )
+
+            this.drag.add_hook("mousemove", _ => {
+                if (!this.children.length) return
+
+                this.children.forEach((child, i) => {
+                    child.x = this.x
+                    child.y = this.y + 28 * (i + 1)
+                    child.z = this.z
+                })
+            })
         }
 
         set x(v) { this.card.style.left = v + "px" }
@@ -114,31 +141,45 @@
         get x() { return parseInt(this.card.style.left) || 0 }
         get y() { return parseInt(this.card.style.top) || 0 }
         get z() { return parseInt(this.card.style.zIndex) || 0 }
+
+        get children() {
+            if (this.col && this.col.count)
+                return this.col.cards.slice(this.col.cards.indexOf(this) + 1, this.col.count)
+        }
     }
 
     class Column {
-        constructor (id, rules, focus, drag, lift) {
-            let element = document.createElement("div")
+        constructor (id, rules, focus, drag, lift, check) {
+            this.element = document.createElement("div")
+            this.element.classList.add("col")
 
-            element.classList.add("col")
-
-            this.element = element
             this.id = id || 0
+            this.rules = rules
             this.focus = focus
-            this.cards = []
             this.drag = drag
             this.lift = lift
-            this.rules = rules
+            this.check = check
+
+            this.cards = []
         }
 
-        add(v, move) {
+        add(v, move, offset_x = 0, offset_y = 0) {
             if (!(v instanceof Card)) return
 
             for (let card of this.cards)
                 card.draggable = false
 
             this.cards.push(v)
-            v.attach(this, move)
+            v.attach(this, move, offset_x, offset_y)
+
+            if (this.count <= 1) return
+
+            for (let i = this.count - 1; i > 0; i--) {
+                if (this.verify(this.cards[i], this.cards[i - 1]))
+                    this.cards[i - 1].draggable = true
+                else
+                    break
+            }
         }
 
         remove(v) {
@@ -146,26 +187,77 @@
 
             if (this.cards.includes(v)) {
                 this.cards.splice(this.cards.indexOf(v), 1)
-                this.last.draggable = true
+
+                if (this.last != undefined)
+                    this.last.draggable = true
+
                 v.detach()
+
+                setTimeout(this.check, 15)
             }
         }
 
-        check(v) {
-            return !!this.count &&
-                this.rules[v.color] != this.last.color &&
-                !(this.rules["" + v.number] || []).includes(this.last.number) &&
-                !(this.rules["" + v.number] || []).includes("*") &&
-                (parseInt(v.number) || -1) == (parseInt(this.last.number) || -1) - 1
+        verify(v, n) {
+            n = n || this.last
+
+            return !this.count || this.count &&
+                this.rules[v.color] != n.color &&
+                !(this.rules[n.number] || []).includes(v.number) &&
+                !(this.rules[n.number] || []).includes("*") &&
+                (parseInt(v.number) || MAX_INT) == (parseInt(n.number) || MAX_INT) - 1
         }
 
         get count() { return this.cards.length }
         get last() { return this.cards[this.count - 1] }
     }
 
+    class Tray extends Column {
+        constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
+
+        add(v, move) { super.add(v, move, 0, -160) }
+        verify() { return !this.count }
+    }
+
+    class Bin extends Column {
+        constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
+
+        add(v, move) {
+            super.add(v, move, 0, -160 - this.count * 28)
+            v.drag.remove()
+        }
+
+        verify(v) {
+            let num = parseInt(v.number) || MAX_INT
+
+            if (this.count)
+                return num == (parseInt(this.last.number) || MAX_INT) + 1 &&
+                        v.color == this.last.color
+            else
+                return num == 1
+        }
+    }
+
+    class FlowerBin extends Column {
+        constructor (id, focus, drag, lift) {
+            super(id, {}, focus, drag, lift)
+
+            this.element.classList.add("flower")
+        }
+
+        add(v, move) {
+            super.add(v, move, 0, -160)
+            v.drag.remove()
+        }
+
+        verify(v) { return v.number == 'f' }
+    }
+
     class Shenzhen {
         constructor () {
             this.board = document.getElementById("shenzhen")
+            this.trays = document.getElementById("trays")
+            this.bins = document.getElementById("bins")
+
             this.cards = []
             this.z = parseInt(this.board.parentElement.parentElement.style.zIndex)
 
@@ -181,33 +273,30 @@
                 "13": "*",
             }
 
-            this.generate_columns()
-            this.generate_cards()
+            this.win = H.WM.get("shenzhen solitaire")
+            this.id = this.win.id
+            this.generate = true
+
+            H.WM.add_hook("maximize", this.id, this.maximize_hook)
+            this.win.body.parentElement.style.background = "#028A0F"
+
+            if (this.win.s == 0) {
+                this.generate_columns()
+                this.generate_cards()
+                this.generate = false
+            }
 
             this.ready()
         }
 
-        generate_columns() {
-            this.columns = []
-
-            for (let i = 0; i < 8; i++) {
-                let col = new Column(i, this.rules, this.z,
-                    e => {
-                        for (let el of document.elementsFromPoint(e.clientX, e.clientY))
-                            if (Array.from(el.classList).includes("col") && this.focused != el)
-                                this.focused = el
-                    },
-                    _ => {
-                        if (this.focused != undefined) {
-                            let focused = this.focused
-                            this.focused = undefined
-
-                            return this.columns.filter(col => col.element == focused)
-                        }
-                    })
-                this.columns.push(col)
-                this.board.appendChild(col.element)
-            }
+        maximize_hook = _ => {
+            if (this.generate) {
+                setTimeout(_ => {
+                    this.generate_columns()
+                    this.generate_cards()
+                    this.generate = false
+                }, 15)
+            } else H.WM.remove_hook("maximize", this.id, this.maximize_hook)
         }
 
         generate_cards() {
@@ -223,7 +312,82 @@
             cards.forEach((card, index) => this.columns[index % 8].add(card))
         }
 
-        ready() { }
+        generate_columns() {
+            this.columns = []
+
+            for (let i = 0; i < 8; i++) {
+                let col = new Column(i, this.rules, this.z, this.drag, this.lift, this.check)
+                this.columns.push(col)
+                this.board.appendChild(col.element)
+            }
+
+            for (let i = 8; i < 11; i++) {
+                let tray = new Tray(i, this.z, this.drag, this.lift, this.check)
+                this.columns.push(tray)
+                this.trays.appendChild(tray.element)
+            }
+
+            let flower_bin = new FlowerBin(11, this.z, this.drag, this.lift, this.check)
+            this.columns.push(flower_bin)
+            this.bins.appendChild(flower_bin.element)
+
+            for (let i = 12; i < 15; i++) {
+                let bin = new Bin(i, this.z, this.drag, this.lift, this.check)
+                this.columns.push(bin)
+                this.bins.appendChild(bin.element)
+            }
+        }
+
+        drag = e => {
+            for (let el of document.elementsFromPoint(e.clientX, e.clientY))
+                if (Array.from(el.classList).includes("col") && this.focused != el)
+                    this.focused = el
+        }
+
+        lift = _ => {
+            if (this.focused != undefined) {
+                let focused = this.focused
+                this.focused = undefined
+
+                return this.columns.filter(col => col.element == focused)
+            }
+        }
+
+        check = _ => {
+            let empty = 0
+            let dragons = {
+                "red": 0,
+                "green": 0,
+                "black": 0
+            }
+
+            for (let i = 0; i < 11; i++) {
+                let col = this.columns[i]
+
+                if (i < 8 && !col.count) {
+                    ++empty
+                    continue
+                }
+
+                if (col.count) {
+                    for (let j = 12; j < 15; j++) {
+                        let bin = this.columns[j]
+    
+                        // TODO: add more game logic to determine whether
+                        // moving a card is detrimental to the player
+                        if (bin.verify(col.last))
+                            col.last.move(bin)
+                    }
+                }
+            }
+            if (empty == 8) game_win()
+        }
+
+        game_win() { console.log("[Shenzhen] Game won") }
+
+        ready() {
+            this.check()
+        }
     }
 
     H.SH = new Shenzhen()
