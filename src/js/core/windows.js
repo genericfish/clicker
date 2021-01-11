@@ -224,6 +224,7 @@ class Window {
         H.WM.load(this)
 
         this.win.addEventListener("mousedown", _ => { H.WM.focus(this) })
+        this.win.addEventListener("touchstart", _ => { H.WM.focus(this) })
 
         if (iframe) {
             // Focus event on window set pointerEvents to "none", but we want "auto" if we
@@ -300,12 +301,15 @@ class Window {
 
         buttons[0].setAttribute("aria-label", "Minimize")
         buttons[0].setAttribute("onclick", "H.WM.minimize(this)")
+        buttons[0].setAttribute("ontouchstart", "H.WM.minimize(this)")
 
         buttons[1].setAttribute("aria-label", "Maximize")
         buttons[1].setAttribute("onclick", "H.WM.maximize(this)")
+        buttons[1].setAttribute("ontouchstart", "H.WM.maximize(this)")
 
         buttons[2].setAttribute("aria-label", "Close")
         buttons[2].setAttribute("onclick", "H.WM.exit(this)")
+        buttons[2].setAttribute("ontouchstart", "H.WM.exit(this)")
 
         buttons.forEach(e => controls.appendChild(e))
 

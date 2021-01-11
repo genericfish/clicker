@@ -31,6 +31,7 @@ class Icon {
 
         link.href = "#"
         link.setAttribute("ondblclick", this.ondblclick)
+        link.setAttribute("ontouchstart", this.ondblclick)
 
         img.src = this.src
 

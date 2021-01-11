@@ -26,7 +26,7 @@ class Draggable {
         e.preventDefault()
 
         // only activate on lmb
-        if (e.buttons != 1) return
+        if (e.buttons != 1 && typeof e.touches == "undefined") return
 
         // don't double drag
         if (this.parent.hasAttribute("data-dragged")) return
@@ -70,7 +70,6 @@ class Draggable {
     }
 
     onmousedown(e) {
-        console.log(e.type)
         this.previous = e.type == "touchstart" ?
             [e.touches[0].clientX, e.touches[0].clientY] :
             [e.clientX, e.clientY]
@@ -81,7 +80,7 @@ class Draggable {
     }
 
     onmousemove(e) {
-        let [cx, cy] = e.type == "touchstart" ?
+        let [cx, cy] = e.type == "touchmove" ?
             [e.touches[0].clientX, e.touches[0].clientY] :
             [e.clientX, e.clientY]
 

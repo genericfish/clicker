@@ -293,6 +293,7 @@ let ms = (() => {
             if (make) {
                 cell.addEventListener("contextmenu", flag(i))
                 cell.onclick = press(i)
+                cell.ontouchstart = press(i)
                 row.appendChild(cell)
                 display.push(cell)
             }
