@@ -36,7 +36,7 @@ let game = (() => {
 
     function geometric_sum(base, ratio, exp) {
         // Geometric Partial Sum
-        return ~~(base * (1 - ratio ** exp) / (1 - ratio))
+        return Math.trunc(base * (1 - ratio ** exp) / (1 - ratio))
     }
 
     function update_costs() {
@@ -49,7 +49,7 @@ let game = (() => {
         )
 
         // Refund 92.5% of the buy price.
-        shop.active_refund = ~~(
+        shop.active_refund = Math.trunc(
             geometric_sum(
                 tower.base_cost * tower.cost_multiplier **
                     (game.towers[shop.active][0] - shop.active_amount),
