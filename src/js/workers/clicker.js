@@ -48,14 +48,14 @@ let game = (() => {
             shop.active_amount
         )
 
-        // Refund 92.5% of the buy price.
+        // Refund 85% of the buy price.
         shop.active_refund = Math.trunc(
             geometric_sum(
                 tower.base_cost * tower.cost_multiplier **
                     (game.towers[shop.active][0] - shop.active_amount),
                 tower.cost_multiplier,
                 shop.active_amount
-            ) * .925
+            ) * .85
         )
 
         postAll(["update_graphics", [["shop", "listings"], shop]])
