@@ -172,14 +172,7 @@
             this.cards.push(v)
             v.attach(this, move, offset_x, offset_y)
 
-            if (this.count <= 1) return
-
-            for (let i = this.count - 1; i > 0; i--) {
-                if (this.verify(this.cards[i], this.cards[i - 1]))
-                    this.cards[i - 1].draggable = true
-                else
-                    break
-            }
+            this.detect()
         }
 
         remove(v) {
@@ -193,6 +186,21 @@
 
                 v.detach()
                 setTimeout(this.check, 15)
+                this.detect()
+            }
+        }
+
+        detect() {
+            // detect whether cards that are not last in column
+            // should be able to move
+
+            if (this.count <= 1) return
+
+            for (let i = this.count - 1; i > 0; i--) {
+                if (this.verify(this.cards[i], this.cards[i - 1]))
+                    this.cards[i - 1].draggable = true
+                else
+                    break
             }
         }
 
@@ -213,22 +221,22 @@
     class Tray extends Column {
         constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
 
-        add(v, move) { super.add(v, move, 0, -160) }
-        verify() { return !this.count }
+        add(v, move, offset_x = 0, offset_y = 0) { super.add(v, move, offset_x, -160 + offset_y) }
+        verify(v) { return !this.count && !v.children.length }
     }
 
     class Bin extends Column {
         constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
 
-        add(v, move) {
-            super.add(v, move, 0, -160 - this.count * 28)
+        add(v, move, offset_x = 0, offset_y = 0) {
+            super.add(v, move, offset_x, -160 - this.count * 28 + offset_y)
             v.drag.remove()
         }
 
         verify(v) {
             let num = parseInt(v.number) || MAX_INT
 
-            if (num > 9) return false
+            if (num > 9 || v.children.length) return false
 
             if (this.count)
                 return this.last.color == v.color &&
@@ -281,11 +289,8 @@
             H.WM.add_hook("maximize", this.id, this.maximize_hook)
             this.win.body.parentElement.style.background = "#028A0F"
 
-            if (this.win.s == 0) {
-                this.generate_columns()
-                this.generate_cards()
-                this.generate = false
-            }
+            if (this.win.s == 0)
+                this.restart()
 
             this.moves = 0
 
@@ -293,13 +298,10 @@
         }
 
         maximize_hook = _ => {
-            if (this.generate) {
-                setTimeout(_ => {
-                    this.generate_columns()
-                    this.generate_cards()
-                    this.generate = false
-                }, 15)
-            } else H.WM.remove_hook("maximize", this.id, this.maximize_hook)
+            if (this.generate)
+                setTimeout(_ => this.restart, 15)
+            else
+                H.WM.remove_hook("maximize", this.id, this.maximize_hook)
         }
 
         generate_cards() {
@@ -361,9 +363,9 @@
 
             let empty = 0
             let dragons = {
-                "red": 0,
-                "green": 0,
-                "black": 0
+                "red": [],
+                "green": [],
+                "black": []
             }
 
             for (let i = 0; i < 11; i++) {
@@ -389,7 +391,7 @@
                     // On move, the remove function will be called, which
                     // calls this function again.
 
-                    if (last.number > 9) dragons[last.color]++
+                    if (last.number > 9) dragons[last.color].push(i)
 
                     // Automatically move flower card to flower bin
                     if (last.number == 'f')
@@ -409,14 +411,67 @@
                 }
             }
 
-            for (let [dragon, count] of Object.entries(dragons)) {
-                if (count == 4) console.log(dragon, "move")
-            }
-
+            this.check_dragon(dragons)
             if (empty == 8) this.game_win()
         }
 
+        check_dragon(dragons) {
+            this.dragons = dragons
+
+            for (let [dragon, cols] of Object.entries(dragons)) {
+                if (cols.length < 4) continue
+
+                let trays = this.columns.slice(8, 11)
+                let available = trays.reduce((acc, cur, ind) =>
+                    Math.min(
+                        acc,
+                        cur.count ?
+                            cur.last.color == dragon && cur.last.number > 9 ?
+                                ind :
+                                MAX_INT :
+                        ind
+                    ), MAX_INT
+                )
+
+
+                let button = document.getElementById("dragon-" + dragon)
+
+                if (available != MAX_INT) {
+                    button.removeAttribute("disabled")
+                    button.onclick = _ => {
+                        button.setAttribute("disabled", "disable")
+                        this.collect(dragon, available)
+                    }
+                } else {
+                    button.setAttribute("disabled", "disabled")
+                    button.onclick = null
+                }
+            }
+        }
+
+        collect(dragon, available) {
+            for (let i in this.dragons[dragon]) {
+                let card = this.columns[this.dragons[dragon][i]].last
+                let tray = this.columns[8 + available]
+                console.log(tray, false, 0, -i * 28)
+
+                card.move(tray, false, 0, -i * 28)
+                card.drag.remove()
+            }
+        }
+
         game_win() { console.log("[Shenzhen] Game won") }
+
+        restart() {
+            this.cards = []
+
+            if (this.columns)
+                this.columns.forEach(col => col.element.remove())
+
+            this.generate_columns()
+            this.generate_cards()
+            this.generate = false
+        }
 
         ready() {
             this.check()
