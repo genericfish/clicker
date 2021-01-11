@@ -15,7 +15,6 @@ src="src"
 if [ ${1-prod} != "debug" ]; then
 eval "${babel} ./src -d ./babel"
 src="babel"
-minify="./node_modules/.bin/minify"
 fi
 
 if [ -d "./${src}/js" ] && [ -d ./dist/assets/js ]; then
@@ -73,6 +72,15 @@ if [ -d ./images ] && [ -d ./dist/assets/images ]; then
 else
     echo "Missing ./images or ./dist/assets/images, check file/directory permissions."
 fi
+
+if [ ${1-prod} == "release" ]; then
+    mv ./dist ./clicker
+    zip -r9 "clicker-${2-MISSING_VER}.zip ./clicker"
+    tar -cvzf "clicker-${2-MISSING_VER}.tar.gz ./clicker"
+    mv ./clicker ./dist
+    echo "Generated release zip and tar files."
+fi
+
 
 unset lessc
 unset minify

@@ -4,3 +4,5 @@ babel/*
 *.test.*
 node_modules/*
 .vscode
+*.zip
+*.tar.gz

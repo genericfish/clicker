@@ -123,11 +123,11 @@ let ms = (() => {
         // Give 20 minutes worth of gamergoo
         let gamergoo = game.get("rate") * (20 * 60)
 
-        // Capped at 20% of currently owned gamergoo
-        if (gamergoo > (game.get("gamergoo") * .2)) gamergoo = game.get("gamergoo") * .2
+        // Capped at 25% of currently owned gamergoo
+        if (gamergoo > (game.get("gamergoo") * .25)) gamergoo = game.get("gamergoo") * .25
 
-        // Regardless, give 50k gamergoo
-        gamergoo = Math.max(50000, gamergoo)
+        // Regardless, give 65k gamergoo
+        gamergoo = Math.max(65000, gamergoo)
 
         // Multiplier depending on difficulty
         //     Easy: 0.1x
