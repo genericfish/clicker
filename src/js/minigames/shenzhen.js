@@ -134,6 +134,13 @@
             })
         }
 
+        flip() {
+            if (Array.from(this.card.classList).includes("back"))
+                this.card.classList.remove("back")
+            else
+                this.card.classList.add("back")
+        }
+
         set x(v) { this.card.style.left = v + "px" }
         set y(v) { this.card.style.top = v + "px" }
         set z(v) { this.card.style.zIndex = v }
@@ -289,19 +296,12 @@
             H.WM.add_hook("maximize", this.id, this.maximize_hook)
             this.win.body.parentElement.style.background = "#028A0F"
 
-            if (this.win.s == 0)
-                this.restart()
-
-            this.moves = 0
-
-            this.ready()
+            if (this.win.s == 0) this.restart()
         }
 
         maximize_hook = _ => {
             if (this.generate)
-                setTimeout(_ => this.restart, 15)
-            else
-                H.WM.remove_hook("maximize", this.id, this.maximize_hook)
+                setTimeout(this.restart, 25)
         }
 
         generate_cards() {
@@ -442,9 +442,14 @@
                         button.setAttribute("disabled", "disable")
                         this.collect(dragon, available)
                     }
+                    button.ontouchstart = _ => {
+                        button.setAttribute("disabled", "disable")
+                        this.collect(dragon, available)
+                    }
                 } else {
                     button.setAttribute("disabled", "disabled")
                     button.onclick = null
+                    button.ontouchstart = null
                 }
             }
         }
@@ -453,16 +458,16 @@
             for (let i in this.dragons[dragon]) {
                 let card = this.columns[this.dragons[dragon][i]].last
                 let tray = this.columns[8 + available]
-                console.log(tray, false, 0, -i * 28)
 
                 card.move(tray, false, 0, -i * 28)
                 card.drag.remove()
+                card.flip()
             }
         }
 
         game_win() { console.log("[Shenzhen] Game won") }
 
-        restart() {
+        restart = _ => {
             this.cards = []
 
             if (this.columns)
@@ -471,6 +476,8 @@
             this.generate_columns()
             this.generate_cards()
             this.generate = false
+
+            this.ready()
         }
 
         ready() {
