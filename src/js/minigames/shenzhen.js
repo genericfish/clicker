@@ -192,7 +192,6 @@
                     this.last.draggable = true
 
                 v.detach()
-
                 setTimeout(this.check, 15)
             }
         }
@@ -229,9 +228,11 @@
         verify(v) {
             let num = parseInt(v.number) || MAX_INT
 
+            if (num > 9) return false
+
             if (this.count)
-                return num == (parseInt(this.last.number) || MAX_INT) + 1 &&
-                        v.color == this.last.color
+                return this.last.color == v.color &&
+                        (parseInt(this.last.number) || MAX_INT) == (num - 1)
             else
                 return num == 1
         }
@@ -285,6 +286,8 @@
                 this.generate_cards()
                 this.generate = false
             }
+
+            this.moves = 0
 
             this.ready()
         }
@@ -354,6 +357,8 @@
         }
 
         check = _ => {
+            if (this.moves) return
+
             let empty = 0
             let dragons = {
                 "red": 0,
@@ -370,17 +375,45 @@
                 }
 
                 if (col.count) {
-                    for (let j = 12; j < 15; j++) {
-                        let bin = this.columns[j]
-    
-                        // TODO: add more game logic to determine whether
-                        // moving a card is detrimental to the player
-                        if (bin.verify(col.last))
-                            col.last.move(bin)
-                    }
+                    let bins = this.columns.slice(12, 15)
+                    let min = bins.reduce(
+                        (acc, cur) =>
+                            Math.min(
+                                acc,
+                                cur.count ? (parseInt(cur.last.number) || MAX_INT) : 0
+                            )
+                    , MAX_INT)
+                    let last = col.last
+
+                    // If we move a card, we stop execution of the function.
+                    // On move, the remove function will be called, which
+                    // calls this function again.
+
+                    if (last.number > 9) dragons[last.color]++
+
+                    // Automatically move flower card to flower bin
+                    if (last.number == 'f')
+                        return last.move(this.columns[11])
+
+                    // Always move a 1 or 2 to a bin, or whenever the current card is
+                    // one above the minimum of all 3 bins (where empty bins are 0)
+                    if (last.number <= 2 || last.number == min + 1)
+                        for (let bin of bins) {
+                            if (bin.verify(last)) {
+                                let now = last
+                                setTimeout(_ => now.move(bin), 200)
+
+                                return
+                            }
+                        }
                 }
             }
-            if (empty == 8) game_win()
+
+            for (let [dragon, count] of Object.entries(dragons)) {
+                if (count == 4) console.log(dragon, "move")
+            }
+
+            if (empty == 8) this.game_win()
         }
 
         game_win() { console.log("[Shenzhen] Game won") }
