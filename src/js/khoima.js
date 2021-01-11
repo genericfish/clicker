@@ -307,11 +307,11 @@ const game = (() => {
             game.gamergoo = data[0]
             game.gamergoo_history = data[1]
 
-            display.total.innerHTML = nice_format(~~(game.gamergoo))
+            display.total.innerHTML = nice_format(Math.trunc(game.gamergoo))
         },
         click: (data) => {
             // Click graphics assuming successful click
-            graphics.floater(~~(data[2] * 100) / 100, data[0], data[1])
+            graphics.floater(Math.trunc((data[2] * 100) / 100), data[0], data[1])
             graphics.bounce()
         },
         update_graphics: (data) => {
@@ -328,7 +328,7 @@ const game = (() => {
 
                         break
                     case "title":
-                        document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
+                        document.title = nice_format(Math.trunc(game.gamergoo)) + " gamergoo | Khoima Clicker"
                         break
                     case "listings":
                         graphics.update_buildings()
