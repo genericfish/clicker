@@ -76,24 +76,24 @@ let game = (() => {
 
             let now = Date.now()
 
-            // Approximately 100 FPS
-            if (now - last_frame >= 10)
-                frames += Math.round((now - last_frame) / 10)
+            // Approximately 50 FPS
+            if (now - last_frame >= 20)
+                frames += Math.round((now - last_frame) / 20)
 
-            // Every 33rd frame (~330ms) update shop buy button
-            if (frames - last_updates[1] >= 33) {
+            // Every 15th frame (~300ms) update shop buy button
+            if (frames - last_updates[1] >= 15) {
                 postAll(["update_graphics", [["buttons", "title"]]])
                 last_updates[1] = frames
             }
 
             // Only execute these functions on the main loop, otherwise duplication will occur
             if (active == instance) {
-                // Every other frame (~20ms)
+                // Every other frame (~40ms)
                 if (frames - last_updates[0] >= 2) {
                     last_updates[0] = frames
 
-                    // Add 1/50th of goo every other frame
-                    let goo = game.rate / 50
+                    // Add 1/25th of goo every other frame
+                    let goo = game.rate / 25
 
                     // After 5 minutes of no clicking, only give 15% of rate
                     if (now - game_state.last_interaction > 300000) goo *= .15
@@ -101,15 +101,15 @@ let game = (() => {
                     add_goo(goo)
                 }
 
-                // Save game every second (~100 frames)
-                if (frames - last_updates[2] >= 100) {
+                // Save game every 1.2 seconds (60 frames)
+                if (frames - last_updates[2] >= 60) {
                     save()
                     last_updates[2] = frames
                 }
 
                 // Spawn goldenkhoi
                 if (frames >= game_state.golden_khoi_frame) {
-                    game_state.golden_khoi_frame = frames + random(3000, 60000)
+                    game_state.golden_khoi_frame = frames + random(1500, 30000)
                     postAll(["goldenkhoi"])
                 }
             }
@@ -129,7 +129,7 @@ let game = (() => {
             game_state.last_click = Date.now()
             game_state.last_interaction = Date.now()
             game_state.golden_khoi = false
-            game_state.golden_khoi_frame = random(3000, 60000)
+            game_state.golden_khoi_frame = random(1500, 30000)
 
             // Update rates then give user gamergoo based on last save
             update_rates()
@@ -144,7 +144,7 @@ let game = (() => {
             add_goo(offline_goo)
 
             // Start game loop
-            setInterval(loop(instance), 10)
+            setInterval(loop(instance), 20)
         },
         click: (data) => {
             let now = Date.now()
