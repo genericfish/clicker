@@ -8,6 +8,26 @@
 
     position: relative;
 
+    & .win {
+        position: absolute;
+        left: 50%; top: 50%;
+
+        text-align: center;
+
+        & div {
+            position: relative;
+
+            left: -50%; top: -50%;
+            padding: 1rem;
+
+            background: #ece9d8;
+            box-shadow: inset -1px -1px #fff,
+            inset 1px 1px #0a0a0a,
+            inset -2px -2px #dfdfdf,
+            inset 2px 2px grey
+        }
+    }
+
     & #stores {
         display: flex;
         flex-wrap: wrap;

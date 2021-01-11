@@ -402,8 +402,8 @@
                     if (last.number <= 2 || last.number == min + 1)
                         for (let bin of bins) {
                             if (bin.verify(last)) {
-                                let now = last
-                                setTimeout(_ => now.move(bin), 200)
+                                last.draggable = false
+                                setTimeout(_ => last.move(bin), 200)
 
                                 return
                             }
@@ -412,7 +412,7 @@
             }
 
             this.check_dragon(dragons)
-            if (empty == 8) this.game_win()
+            if (empty == 8) game_win()
         }
 
         check_dragon(dragons) {
@@ -459,15 +459,16 @@
                 let card = this.columns[this.dragons[dragon][i]].last
                 let tray = this.columns[8 + available]
 
-                card.move(tray, false, 0, -i * 28)
+                card.move(tray, false, 0, -tray.count * 28)
                 card.drag.remove()
                 card.flip()
             }
         }
 
-        game_win() { console.log("[Shenzhen] Game won") }
-
         restart = _ => {
+            if (this.popup)
+                this.popup.remove()
+
             this.cards = []
 
             if (this.columns)
@@ -477,13 +478,25 @@
             this.generate_cards()
             this.generate = false
 
-            this.ready()
-        }
-
-        ready() {
             this.check()
         }
+
+        game_win() { game_win() }
     }
 
     H.SH = new Shenzhen()
+
+    function game_win() {
+        let board = document.getElementById("shenzhen")
+        let popup = document.createElement("div")
+
+        popup.classList.add("win")
+        popup.innerHTML = "<div>win gamergoo</div>"
+
+        popup.style.zIndex = H.WM.get("shenzhen solitaire").z + 1
+
+        board.appendChild(popup)
+
+        H.SH.popup = popup
+    }
 })()
