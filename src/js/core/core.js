@@ -2,7 +2,7 @@ const H = {
     KH: new KeyHandler(),
     TM: new ThemeManager(),
     WM: new WindowManager(),
-    D: new Desktop()
+    DE: new Desktop()
 }
 
 document.addEventListener("contextmenu", e => e.preventDefault())
@@ -26,8 +26,9 @@ new App("changelog", -1, -1, "assets/images/buildings/text.png", "", 2, H.WM.len
 new App("firekhoi", -1, -1, "assets/images/buildings/firekhoi.png", "", 2, H.WM.length, true)
 new App("khoisweeper", -1, -1, "assets/images/buildings/minesweeper.png", "khoi sweeper", 2)
 new App("vending machine", -1, -1, "", "", 2)
+new App("shenzhen solitaire", -1, -1, "assets/images/buildings/minesweeper.png", "", 0)
 
-new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg", "discord()")
+new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg", "window.open('https://discord.gg/ZTnCdcM', '_blank')")
 
 // Leading semicolon is required for the below to work
 ;(() => {
@@ -35,7 +36,5 @@ new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f74622
     for (let template of templates)
         H.WM.load_template(template)
 })()
-
-function discord() { window.open("https://discord.gg/ZTnCdcM", "_blank") }
 
 H.WM.focus(H.WM.focused)

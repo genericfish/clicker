@@ -89,7 +89,7 @@ let ms = (() => {
                         adj.includes(spot) ||   // Ignore the 8 adjacent
                         spot == n ||            // Ignore the clicked spot
                         ms.mines.includes(spot) // Ignore spots that are already mines
-                ) spot = Math.floor(Math.random() * (COLS * ROWS))
+                ) spot = random(COLS * ROWS - 1)
     
                 ms.board[spot] = -1
                 ms.mines.push(spot)

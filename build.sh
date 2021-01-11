@@ -20,17 +20,18 @@ fi
 if [ -d "./${src}/js" ] && [ -d ./dist/assets/js ]; then
     touch ./dist/assets/js/game.js
 
-    cmd="${minify} ./${src}/js/core/selection.js ./${src}/js/core/desktop.js ./${src}/js/core/theme.js\
-    ./${src}/js/core/draggable.js ./${src}/js/core/keyhandler.js ./${src}/js/core/windows.js\
-    ./${src}/js/core/core.js ./${src}/js/khoima.js"
+    cmd="${minify} ./${src}/js/core/random.js ./${src}/js/core/selection.js\
+    ./${src}/js/core/desktop.js ./${src}/js/core/theme.js  ./${src}/js/core/draggable.js\
+    ./${src}/js/core/keyhandler.js ./${src}/js/core/windows.js ./${src}/js/core/core.js\
+    ./${src}/js/khoima.js ./${src}/js/minigames/"*.js
 
-    eval "${cmd} ./${src}/js/minigames/"*.js " > ./dist/assets/js/game.js"
+    eval "${cmd} > ./dist/assets/js/game.js"
     echo "Minified all non-worker JS files to ./dist/assets/js/game.js"
     unset cmd
 
     for f in "./${src}/js/workers/"*.js; do
         touch "./dist/assets/js/workers/${f##*/}"
-        eval "${minify} ${f} > ./dist/assets/js/workers/${f##*/}"
+        eval "${minify} ./${src}/js/core/random.js ${f} > ./dist/assets/js/workers/${f##*/}"
         echo "Minified ${f} to ./dist/assets/js/workers/${f##*/}"
     done
 
