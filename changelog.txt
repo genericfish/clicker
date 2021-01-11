@@ -2,10 +2,14 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
-## Version 0.4.1
+## Version 1.4.1
 11 January 2021
 - additions
-    - added new "shenzhen solitaire"
+    - added new "shenzhen solitaire" minigame
+    - (experimental) added some support for touchscreen devices
+- enhancements
+    - lowered tick rate to reduce resource consumption
+    - added even more support for browsers
 
 ## Version 1.4.0a
 8 January 2021 at 21:29
