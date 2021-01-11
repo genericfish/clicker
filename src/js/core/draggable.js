@@ -1,5 +1,5 @@
 class Draggable {
-    constructor (interactive, parent, container) {
+    constructor (interactive, parent) {
         if (!(interactive instanceof Element))
             throw new Exception("[Drag] Expected HTML Element.")
 
@@ -15,12 +15,11 @@ class Draggable {
     }
 
     setup() {
-        this.draggable.addEventListener("touchstart", this.start)
         this.draggable.addEventListener("mousedown", this.start)
+        this.draggable.addEventListener("touchstart", this.start)
 
         document.addEventListener("mouseup", this.stop)
         document.addEventListener("touchend", this.stop)
-        document.addEventListener("touchcancel", this.stop)
     }
 
     start = e => {
@@ -63,7 +62,7 @@ class Draggable {
 
         if (this.hooks.mousemove.length)
             for (let cb of this.hooks.mousemove)
-                cancel |= cb(e)
+                cancel |= typeof(cb) == "function" ? cb(e) : 0;
 
         if (cancel) return
 
@@ -71,7 +70,10 @@ class Draggable {
     }
 
     onmousedown(e) {
-        this.previous = [e.clientX, e.clientY]
+        console.log(e.type)
+        this.previous = e.type == "touchstart" ?
+            [e.touches[0].clientX, e.touches[0].clientY] :
+            [e.clientX, e.clientY]
         this.parent.setAttribute("data-dragged", "data-dragged")
 
         document.addEventListener("mousemove", this.drag)
@@ -79,8 +81,12 @@ class Draggable {
     }
 
     onmousemove(e) {
-        const x = this.parent.offsetLeft - this.previous[0] + e.clientX
-        const y = this.parent.offsetTop - this.previous[1] + e.clientY
+        let [cx, cy] = e.type == "touchstart" ?
+            [e.touches[0].clientX, e.touches[0].clientY] :
+            [e.clientX, e.clientY]
+
+        const x = this.parent.offsetLeft - this.previous[0] + cx
+        const y = this.parent.offsetTop - this.previous[1] + cy
 
         if (this.container) {
             let box = this.parent.getBoundingClientRect()
@@ -90,7 +96,7 @@ class Draggable {
             switch (bits & 3) {
                 case 0:
                     this.parent.style.left = x + "px"
-                    this.previous[0] = e.clientX
+                    this.previous[0] = cx
                     break
                 case 1:
                     this.parent.style.left = "0px"
@@ -103,7 +109,7 @@ class Draggable {
             switch (bits >> 2) {
                 case 0:
                     this.parent.style.top = y + "px"
-                    this.previous[1] = e.clientY
+                    this.previous[1] = cy
                     break
                 case 1:
                     this.parent.style.top = "0px"
@@ -115,7 +121,7 @@ class Draggable {
         } else {
             this.parent.style.left = x + "px"
             this.parent.style.top = y + "px"
-            this.previous = [e.clientX, e.clientY]
+            this.previous = [cx, cy]
         }
     }
 
@@ -149,6 +155,20 @@ class Draggable {
             +(y < 0) << 2 |
             +(x + box.width > container.width) << 1 |
             +(x < 0)
+    }
+
+    remove(hooks = true) {
+        // Remove drag handler from item
+
+        if (hooks)
+            this.hooks = { mouseup: [], mousemove: [], mousedown: [] }
+
+        this.draggable.removeEventListener("mousedown", this.start)
+        this.draggable.removeEventListener("touchstart", this.start)
+        document.removeEventListener("mouseup", this.stop)
+        document.removeEventListener("touchend", this.stop)
+        document.removeEventListener("mousemove", this.drag)
+        document.removeEventListener("touchmove", this.drag)
     }
 
     add_hook(event, cb) { if (this.hooks.hasOwnProperty(event)) this.hooks[event].push(cb) }
