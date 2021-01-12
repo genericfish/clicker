@@ -16,7 +16,7 @@ class ThemeManager {
         this.theme.setAttribute("href", `https://unpkg.com/${theme}.css`)
     }
 
-    toggle() {
+    toggle = _ => {
         let current = window.localStorage["theme"] || "xp"
 
         this.set_theme((current === "98") ? "xp" : "98")
