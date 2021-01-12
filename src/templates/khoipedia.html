@@ -1,11 +1,74 @@
-<template data-window="khoipedia" style="width: 550px; padding: 10px;">
-    <p>In the <a href="#" onclick="H.WM.maximize(H.WM.get('khoima clicker'))">khoima clicker</a> window, click the khoima in order to earn gamergoo.</p>
-    <p>When you have enough gamergoo, you can buy buildings inside the <a href="#" onclick="H.WM.maximize(H.WM.get('shop'))">shop.</a></p>
-    <p>After you buy buildings from the shop, they will appear in the <a href="#" onclick="H.WM.maximize(H.WM.get('buildings'))">buildings</a> window.</p>
-    <p>You can also buy minigames from the shop like <a href="#" onclick="H.WM.maximize(H.WM.get('khoisweeper'))">khoisweeper</a> which can then be launched via desktop icons.<br></p>
-    <p>You can view the recent patchnotes in the <a href="#" onclick="H.WM.maximize(H.WM.get('changelog'))">changelog</a>, or watch YouTube videos in <a href="#" onclick="H.WM.maximize(H.WM.get('firekhoi'))">firekhoi.</a></p>
-    <p>You can also drag around these windows, and use the window control buttons to minimize, maximize, and close the windows.</p>
-    <p>Use <b>CTRL+SHIFT+X</b> to reset the window positions back to default.</p>
-    <p>Use <b>CTRL+SHIFT+Z</b> to switch between Windows XP and 98 themes.</p>
-    <button onclick="H.WM.exit(H.WM.get('khoipedia'))">close khoipedia</button>
+<template data-window="khoipedia" style="width: 700px; height: 825px; padding: 10px;">
+    <div class="content">
+        <div class="left">
+            <ul class="tree-view">
+                <li>khoipedia</li>
+                <details open="">
+                    <summary>khoima clicker</summary>
+                    <ul>
+                        <li><a href="#" onclick="khoipedia('basics')"">basics</a></li>
+                    </ul>
+                </details>
+                <details open="">
+                    <summary>minigames</summary>
+                    <ul>
+                        <li><a href="#" onclick="khoipedia('shenzhen')">shenzhen solitaire</a></li>
+                    </ul>
+                </details>
+            </ul>
+        </div>
+        <div class="right" style="font-family:Georgia, 'Times New Roman', Times, serif;font-size: 1rem;max-height:775px;overflow-y:auto;">
+            <div data-page="basics">
+                <h3>basics</h3>
+                <p>In the <a href="#" onclick="H.WM.maximize(H.WM.get('khoima clicker'))">khoima clicker</a> window, click the khoima in order to earn gamergoo.</p>
+                <p>When you have enough gamergoo, you can buy buildings inside the <a href="#" onclick="H.WM.maximize(H.WM.get('shop'))">shop.</a></p>
+                <p>After you buy buildings from the shop, they will appear in the <a href="#" onclick="H.WM.maximize(H.WM.get('buildings'))">buildings</a> window.</p>
+                <p>You can also buy minigames from the shop like <a href="#" onclick="H.WM.maximize(H.WM.get('khoisweeper'))">khoisweeper</a> which can then be launched via desktop icons.<br></p>
+                <p>You can view the recent patchnotes in the <a href="#" onclick="H.WM.maximize(H.WM.get('changelog'))">changelog</a>, or watch YouTube videos in <a href="#" onclick="H.WM.maximize(H.WM.get('firekhoi'))">firekhoi.</a></p>
+                <p>You can also drag around these windows, and use the window control buttons to minimize, maximize, and close the windows.</p>
+                <p>Use <b>CTRL+SHIFT+X</b> to reset the window positions back to default.</p>
+                <p>Use <b>CTRL+SHIFT+Z</b> to switch between Windows XP and 98 themes.</p>
+                <p>Ensure to press <b>CTRL+SHIFT+R</b> to clear your cache when a new patch comes out.</p>
+                <button onclick="H.WM.exit(H.WM.get('khoipedia'))">close khoipedia</button>
+            </div>
+            <div data-page="shenzhen" style="display: none;">
+                <h3>shenzhen solitaire</h3>
+                <p><b>Objective</b></p>
+                <p>In <a href="#" onclick="H.WM.maximize(H.WM.get('shenzhen solitaire'))">shenzhen solitaire</a> you:</p>
+                <ul>
+                    <li>move all the number cards into the bins in the top right of the window</li>
+                    <li>move all the dragon cards (labelled with "D") to the trays on the top left</li>
+                    <li>move the flower card (labelled with "F") to the flower bin in the top middle </li>
+                </ul>
+
+                <p><b>BASICS</b></p>
+                <p>You can drag cards around to stack them, or place them into trays or bins (explained below).</p>
+                <p>Number cards can only be stacked in descending order, and cannot be stacked with a card of the same color.</p>
+                <p>Dragon and flower cards cannot be stacked with any other card.</p>
+
+                <p><b>BINS</b></p>
+                <p>There are 3 bins to upper right hold cards of the same color in from 1 to 9 in ascending order.</p>
+                <p>There is 1 flower bin at the top middle of the window only accepts the flower card ("F")</p>
+                <p>To move cards into the bins you can manually drag cards into them, or you can notice that the game will automatically move cards into the bins for you.</p>
+
+                <p><b>TRAYS</b></p>
+                <p>There are 3 trays in the upper left, these hold 1 card of any type and can be used as temporary storage.</p>
+
+                <p><b>DRAGONS</b></p>
+                <p>There are 4 dragon cards ("D") for each color (red, green, black). The objective with these cards is to reveal all 4 of the same color. To "reveal" a card is to make it the last card of a column, or be inside a tray.</p>
+                <p>When all 4 dragons of the same color are revealed, the button corresponding to the color will be enabled. Once pressed, all the dragons will be collected and stacked into an open tray. After being stacked, the tray will no longer be available.</p>
+                <p>If there is not an open tray, i.e. there are no empty trays or all 3 trays are filled with cards that are not part of the 4 dragons revealed, the button will not be enabled, and the cards cannot be stacked.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        let khoipedia = (() => {
+            let active = "basics"
+            let pages = Array.from(H.WM.get("khoipedia").body.children[0].children[1].children)
+
+            return find => pages.forEach(page =>
+                page.style.display = page.getAttribute("data-page") == find ? null : "none"
+            )
+        })()
+    </script>
 </template>
