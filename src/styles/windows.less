@@ -62,7 +62,6 @@ ul.tree-view,
 
 ul.tree-view {
     & ul { margin-left: 22px }
-    & a { color: darkgreen }
     & details > summary::before { margin-top: 5px }
     & ul > li {
         &::before {
@@ -72,6 +71,16 @@ ul.tree-view {
 
         &:last-child::after { top: .7em }
     }
+    & a {
+        color: darkgreen;
+        word-wrap: break-word
+    }
+}
+
+#shop {
+    word-wrap: break-word;
+    max-width: 670px;
+    min-width: 670px
 }
 
 .title-bar {

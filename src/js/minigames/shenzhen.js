@@ -433,7 +433,6 @@
                     ), MAX_INT
                 )
 
-
                 let button = document.getElementById("dragon-" + dragon)
 
                 if (available != MAX_INT) {
@@ -469,29 +468,36 @@
             if (this.popup)
                 this.popup.remove()
 
+            this.popup = undefined
             this.cards = []
 
             if (this.columns)
                 this.columns.forEach(col => col.element.remove())
 
             this.generate_columns()
+
+            if (!game.get("minigames").shenzhen)
+                return purchase()
+
             this.generate_cards()
             this.generate = false
 
             this.check()
         }
-
-        game_win() { game_win() }
     }
 
     H.SH = new Shenzhen()
 
-    function game_win() {
+    function game_win() { popup("win gamergoo")}
+
+    function purchase() { popup("you must purchase this game from the shop for 10000 gamergoo") }
+
+    function popup(message) {
         let board = document.getElementById("shenzhen")
         let popup = document.createElement("div")
 
         popup.classList.add("win")
-        popup.innerHTML = "<div>win gamergoo</div>"
+        popup.innerHTML = `<div>${message}</div>`
 
         popup.style.zIndex = H.WM.get("shenzhen solitaire").z + 1
 

@@ -1,7 +1,7 @@
 let active = 0
 
 let game = (() => {
-    let game, towers, shop;
+    let game, towers, shop, minigames
     let game_state = {
         last_click: undefined,
         golden_khoi: false,
@@ -40,23 +40,29 @@ let game = (() => {
     }
 
     function update_costs() {
-        let tower = towers[shop.active]
+        if (shop.minigame) {
+            let minigame = minigames[shop.active]
 
-        shop.active_cost = geometric_sum(
-            tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0],
-            tower.cost_multiplier,
-            shop.active_amount
-        )
+            shop.active_cost = parseInt(minigame.base_cost)
+        } else {
+            let tower = towers[shop.active]
 
-        // Refund 85% of the buy price.
-        shop.active_refund = Math.trunc(
-            geometric_sum(
-                tower.base_cost * tower.cost_multiplier **
-                    (game.towers[shop.active][0] - shop.active_amount),
+            shop.active_cost = geometric_sum(
+                tower.base_cost * tower.cost_multiplier ** game.towers[shop.active][0],
                 tower.cost_multiplier,
                 shop.active_amount
-            ) * .85
-        )
+            )
+    
+            // Refund 85% of the buy price.
+            shop.active_refund = Math.trunc(
+                geometric_sum(
+                    tower.base_cost * tower.cost_multiplier **
+                        (game.towers[shop.active][0] - shop.active_amount),
+                    tower.cost_multiplier,
+                    shop.active_amount
+                ) * .85
+            )
+        }
 
         postAll(["update_graphics", [["shop", "listings"], shop]])
     }
@@ -121,9 +127,13 @@ let game = (() => {
     return {
         setup: (data, instance) => {
             // Sync gamestate and towers with main thread
-            game = data[0]
-            towers = data[1]
-            shop = data[2]
+            ({0: game, 1: towers, 2: shop, 3: minigames} = data)
+
+            // Some saves were broken in 1.4.0 patch
+            if (game.gamergoo == NaN)
+                game.gamergoo = 0
+            if  (game.gamergoo_history == NaN)
+                game.gamergoo_history = 0
 
             // Initialize non static game states
             game_state.last_click = Date.now()
@@ -176,18 +186,29 @@ let game = (() => {
 
             shop = data[1]
 
-            if (action == "buy" && game.gamergoo >= shop.active_cost) {
-                add_goo(-shop.active_cost, false)
-                game.towers[shop.active][0] += shop.active_amount
+            if (shop.minigame) {
+                if (action != "buy") return
 
-                update = true
-            } else if (action == "sell" &&
-                game.towers[shop.active][0] >= shop.active_amount
-            ) {
-                add_goo(shop.active_refund, false)
-                game.towers[shop.active][0] -= shop.active_amount
+                if (!game.minigames[shop.active] && game.gamergoo >= shop.active_cost) {
+                    add_goo(-shop.active_cost, false)
+                    game.minigames[shop.active] = true
 
-                update = true
+                    update = true
+
+                    postAll(["minigame_purchase", shop.active])
+                }
+            } else {
+                if (action == "buy" && game.gamergoo >= shop.active_cost) {
+                    add_goo(-shop.active_cost, false)
+                    game.towers[shop.active][0] += shop.active_amount
+    
+                    update = true
+                } else if (action == "sell" && game.towers[shop.active][0] >= shop.active_amount) {
+                    add_goo(shop.active_refund, false)
+                    game.towers[shop.active][0] -= shop.active_amount
+    
+                    update = true
+                }
             }
 
             if (update) {

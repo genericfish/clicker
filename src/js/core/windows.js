@@ -319,7 +319,7 @@ class Window {
         let body = document.createElement("div")
         body.classList.add("window-body")
 
-        // Append children to root window elementqqq
+        // Append children to root window element
         win.appendChild(bar)
         win.appendChild(body)
 

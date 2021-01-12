@@ -1,4 +1,6 @@
 let ms = (() => {
+    let generated = false
+
     const colors = [
         null,      // empty
         "blue",    // 1
@@ -222,7 +224,7 @@ let ms = (() => {
 
         if (win) win.remove()
 
-        if (game.get("towers").minesweeper[0] == 0) {
+        if (!game.get("minigames").minesweeper) {
             document.getElementById("ms-stats").style.visibility = "hidden"
             board.innerHTML = defaultHTML
             board.style.minWidth = null
@@ -232,6 +234,8 @@ let ms = (() => {
             display = []
             make = true
         }
+
+        generated = true
 
         if (!make && display.length != COLS * ROWS) {
             display = []
@@ -301,6 +305,8 @@ let ms = (() => {
 
         board.style.minWidth = board.children[0].getBoundingClientRect().width + "px"
     }
+
+    H.WM.add_hook("maximize", "khoisweeper", _ => generated ? null : ms.generate(-1))
 
     return {
         generate: generate,

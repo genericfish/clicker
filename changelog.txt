@@ -2,18 +2,23 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
-## Version 1.4.1
+## Version 1.4.1-rc1
 11 January 2021
 - additions
     - added new "shenzhen solitaire" minigame
     - (experimental) added some support for touchscreen devices
-- enhancements
+- changes
     - lowered tick rate to reduce resource consumption
     - added even more support for browsers
+    - refunds from selling buildings now gives 85% (down from 92.5%)
+    - renamed "tutorial" window to "khoipedia"
+    - minigames are no longer considered buildings, and can be bought separately from the shop
+        - renamed "khoisweeper" tower into "khoi pond"
+        - there is also a "khoisweeper" minigame for 5000 gamergoo, this is required to unlock the game
 
 ## Version 1.4.0a
 8 January 2021 at 21:29
-- enhancements
+- changes
     - base reward for khoisweeper increased to 65 thousand or 5 minutes of gamergoo (which ever is more) from 50 thousand and 4 minutes respectively
     - reward for winning hard khoisweeper increased to 2.25x from 1.25x
 
@@ -21,7 +26,7 @@
 8 January 2021
 - additions
     - concurrency is now kept if multiple game tabs are open (provided browser support)
-- enhancements
+- changes
     - changed to higher quality "Bliss" background for XP theme
     - changed keybind for theme to CTRL+SHIFT+Z
     - changed keybind for resetting windows to CTRL+SHIFT+X
@@ -36,7 +41,7 @@
 - bug fixes
     - fixed gameplay bugs regarding khoisweeper
     - fixed bugs regarding windows with iframes (firekhoi, changelog)
-- enhancements
+- changes
     - changed how keybinds are handled
 
 ## Version 1.3.9
@@ -46,7 +51,7 @@
 
 ## Version 1.3.8a
 16 December 2020 at 08:02 UTC
-- enhancements
+- changes
     - goldenkhoi is less intrusive on gameplay
         - effect no longer applies rainow effect on background
         - button doesn't pulse or rotate as much nor as quickly
@@ -58,7 +63,7 @@
 16 December 2020 at 03:02 UTC
 - bug fixes
     - fixed a bug where first time players were not able to load
-- enhancements
+- changes
     - added text for buildings window when none are owned
 
 ## Version 1.3.7c
@@ -68,7 +73,7 @@
 
 ## Version 1.3.7b
 14 December 2020 at 21:09 UTC
-- enhancements
+- changes
     - made goldenkhoi less frequent
 - bug fixes
     - fixed regression on khoisweeper flag count
