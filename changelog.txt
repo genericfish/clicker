@@ -3,6 +3,7 @@
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
 ## Version 1.4.1-rc2
+12 January 2021 at 21:43 UTC
 - shenzhen solitaire
     - additions
         - added new icons for dragon cards
