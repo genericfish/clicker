@@ -27,13 +27,19 @@ function nice_format(num) {
         " " + english_numbers[place]
 }
 
-let flags = [false]
-
 const game = (() => {
+    // TODO: Rework minesweeper so we can get rid of this flag
+    let ms_flag = false
+
     const game_worker =
         typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
         typeof(Worker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
         null // FIXME: Handle no worker found
+
+    let postMessage =
+        typeof(SharedWorker) !== "undefined" ? msg => { game_worker.port.postMessage(msg) } :
+        typeof(Worker) !== "undefined" ? msg => { game_worker.postMessage(msg) } :
+        _ => {}
 
     const graphics = {
         bounce: (() => {
@@ -85,23 +91,32 @@ const game = (() => {
                 let listing = document.createElement("li")
                 let link = document.createElement("a")
 
-                let eventHandler = (tower) => {
-                    return () => {
-                        display.shop.header.innerHTML = towers[tower].name
-                        display.shop.rate.innerHTML = towers[tower].base_rate
-                        display.shop.click.innerHTML = towers[tower].base_click
-                        shop.active = tower
+                let eventHandler = tower => () => {
+                    shop.minigame = false
 
-                        if (towers[tower].hasOwnProperty("desc"))
-                            display.shop.desc.innerHTML = towers[tower].desc
-                        else
-                            display.shop.desc.innerHTML = ""
+                    display.shop.header.innerHTML =
+                        towers[tower].name + " stats"
+                    display.shop.rate.innerHTML =
+                        "gamergoo per second: +" + towers[tower].base_rate
+                    display.shop.click.innerHTML =
+                        "gamergoo per click: +" + towers[tower].base_click
+                    shop.active = tower
 
-                        display.shop.owned.innerHTML = game.towers[shop.active][0]
-                        display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+                    if (towers[tower].hasOwnProperty("desc"))
+                        display.shop.desc.innerHTML = towers[tower].desc
+                    else
+                        display.shop.desc.innerHTML = ""
 
-                        game_worker.port.postMessage(["update_costs", shop])
-                    }
+                    display.shop.owned.innerHTML =
+                        game.towers[shop.active][0] + " currently owned"
+                    display.shop.producing.innerHTML =
+                        "producing " +
+                        nice_format(game.towers[shop.active][1].toFixed(2)) +
+                        " gamergoo per second"
+
+                    display.shop.select.style.visibility = "visible"
+
+                    postMessage(["update_costs", shop])
                 }
 
                 link.addEventListener("click", eventHandler(tower))
@@ -112,6 +127,38 @@ const game = (() => {
                 link.innerHTML = towers[tower].name
                 listing.appendChild(link)
                 display.shop.listings.appendChild(listing)
+            }
+
+            for (let minigame in minigames) {
+                let listing = document.createElement("li")
+                let link = document.createElement("a")
+
+                let eventHandler = minigame => () => {
+                    shop.minigame = true
+
+                    display.shop.header.innerHTML = minigames[minigame].name
+                    display.shop.desc.innerHTML = minigames[minigame].desc
+                    display.shop.rate.innerHTML = ""
+                    display.shop.click.innerHTML = ""
+
+                    shop.active = minigame
+
+                    display.shop.owned.innerHTML = game.minigames[minigame] ?
+                        "You already own " + minigames[minigame].name :
+                        "Purchase now!"
+                    display.shop.producing.innerHTML = ""
+
+                    display.shop.select.style.visibility = "hidden"
+
+                    postMessage(["update_costs", shop])
+                }
+
+                link.addEventListener("click", eventHandler(minigame))
+
+                link.href = "#"
+                link.innerHTML = minigames[minigame].name
+                listing.appendChild(link)
+                display.shop.minigames.appendChild(listing)
             }
 
             display.shop.radio[0].click()
@@ -159,11 +206,11 @@ const game = (() => {
         goldenkhoi: () => {
             let khoi = document.createElement("div")
             khoi.id = "goldenkhoi"
-            khoi.style.top = `${~~(Math.random() * 70) + 15}%`
-            khoi.style.left = `${~~(Math.random() * 70) + 15}%`
+            khoi.style.top = random(15, 70) + '%'
+            khoi.style.left = random(15, 70) + '%'
 
             khoi.addEventListener("click", () => {
-                game_worker.port.postMessage(["goldenkhoi"])
+                postMessage(["goldenkhoi"])
 
                 try { document.body.removeChild(khoi) } catch (_) {}
 
@@ -207,25 +254,29 @@ const game = (() => {
             base_click: 0,
         },
         minesweeper: {
-            name: "khoisweeper",
-            desc: "unlocks the khoisweeper minigame",
+            // For legacy purposes, this tower is called "minesweeper" because
+            // it used to be that this tower unlocked the khoisweeper minigame
+            // this is no longer the case, however, we cannot easily rename the
+            // tower internally, so the external name is now "khoi pond"
+
+            name: "khoi pond",
             base_cost: 5000,
             cost_multiplier: 1.015,
-            base_rate: 15,
+            base_rate: 20,
             base_click: 0
         },
         dogfarm: {
             name: "dog farm",
             base_cost: 10000,
-            cost_multiplier: 1.014,
-            base_rate: 60,
+            cost_multiplier: 1.015,
+            base_rate: 75,
             base_click: 0,
         },
         water: {
             name: "gamer girl water",
             base_cost: 100000,
             cost_multiplier: 1.015,
-            base_rate: 200,
+            base_rate: 225,
             base_click: 0,
         },
         ghoti: {
@@ -234,6 +285,19 @@ const game = (() => {
             cost_multiplier: 1.015,
             base_rate: 500,
             base_click: 0
+        }
+    }
+
+    const minigames = {
+        minesweeper: {
+            name: "khoisweeper",
+            desc: "a description for khoisweeper",
+            base_cost: 5000
+        },
+        shenzhen: {
+            name: "shenzhen solitaire",
+            desc: "<b>THERE IS NO REWARD FOR WINNING SHENZHEN SOLITAIRE AT THIS MOMENT</b>",
+            base_cost: 10000
         }
     }
 
@@ -258,6 +322,8 @@ const game = (() => {
             owned: document.getElementById("stats-owned"),
             producing: document.getElementById("stats-producing"),
             listings: document.getElementById("listings"),
+            minigames: document.getElementById("minigames"),
+            select: document.getElementById("shop-select"),
             desc: document.getElementById("stats-desc")
         }
     }
@@ -283,6 +349,10 @@ const game = (() => {
             water: [0,0],
             ghoti: [0,0],
         },
+        minigames: {
+            minesweeper: false,
+            shenzhen: false
+        },
         gamergoo: 0.0,
         gamergoo_history: 0.0,
         rate: 0.0,
@@ -294,6 +364,7 @@ const game = (() => {
         active_amount: 1,
         active_cost: 1,
         active_refund: 1,
+        minigame: false
     }
 
     const functions = {
@@ -302,11 +373,11 @@ const game = (() => {
             game.gamergoo = data[0]
             game.gamergoo_history = data[1]
 
-            display.total.innerHTML = nice_format(~~(game.gamergoo))
+            display.total.innerHTML = nice_format(Math.trunc(game.gamergoo))
         },
         click: (data) => {
             // Click graphics assuming successful click
-            graphics.floater(~~(data[2] * 100) / 100, data[0], data[1])
+            graphics.floater(Math.trunc((data[2] * 100) / 100), data[0], data[1])
             graphics.bounce()
         },
         update_graphics: (data) => {
@@ -316,24 +387,46 @@ const game = (() => {
             for (let message of data[0]) {
                 switch (message) {
                     case "buttons":
-                        if (shop.active_cost > game.gamergoo)
-                            display.shop.buy.setAttribute("disabled", "disabled")
-                        else
-                            display.shop.buy.removeAttribute("disabled")
+
+                        if (shop.minigame) {
+                            if (game.minigames[shop.active] || shop.active_cost > game.gamergoo)
+                                display.shop.buy.setAttribute("disabled", "disabled")
+                            else
+                                display.shop.buy.removeAttribute("disabled")
+                        } else {
+                            if (shop.active_cost > game.gamergoo)
+                                display.shop.buy.setAttribute("disabled", "disabled")
+                            else
+                                display.shop.buy.removeAttribute("disabled")
+                        }
 
                         break
                     case "title":
-                        document.title = nice_format(Math.round(game.gamergoo)) + " gamergoo | Khoima Clicker"
+                        document.title = nice_format(Math.trunc(game.gamergoo)) + " gamergoo | Khoima Clicker"
                         break
                     case "listings":
                         graphics.update_buildings()
 
-                        display.shop.owned.innerHTML = game.towers[shop.active][0]
-                        display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+                        if (shop.minigame) {
+                            display.shop.owned.innerHTML = game.minigames[shop.active] ?
+                                "You already own " + minigames[shop.active].name :
+                                "Purchase now!"
+                            display.shop.producing.innerHTML = ""
+                        } else {
+                            display.shop.owned.innerHTML =
+                                game.towers[shop.active][0] + " currently owned"
+                            display.shop.producing.innerHTML =
+                                "producing " +
+                                nice_format(game.towers[shop.active][1].toFixed(2)) +
+                                " gamergoo per second"
+                        }
                         break
                     case "rate":
                         display.rate.innerHTML = nice_format(data[1]) + " gamergoo per second"
-                        display.shop.producing.innerHTML = nice_format(game.towers[shop.active][1].toFixed(2))
+
+                        if (!shop.minigame)
+                            display.shop.producing.innerHTML =
+                                nice_format(game.towers[shop.active][1].toFixed(2))
                         break
                     case "shop":
                         shop = data[1]
@@ -342,23 +435,14 @@ const game = (() => {
                         else
                             display.shop.buy.removeAttribute("disabled")
 
-                        if (shop.active_amount > game.towers[shop.active][0]) {
+                        if (shop.minigame) {
+                            display.shop.refundcontainer.style.visibility = "hidden"
+                        } else if (shop.active_amount > game.towers[shop.active][0]) {
                             display.shop.sell.setAttribute("disabled", "disabled")
                             display.shop.refundcontainer.style.visibility = "hidden"
                         } else {
                             display.shop.sell.removeAttribute("disabled")
                             display.shop.refundcontainer.removeAttribute("style")
-                        }
-
-                        if (shop.active === "minesweeper") {
-                            if (!flags[0] && game.towers.minesweeper[0] > 0) {
-                                flags[0] = true
-                                ms.generate(-1)
-                            }
-                            if (flags[0] && game.towers.minesweeper[0] == 0) {
-                                flags[0] = false
-                                ms.generate(-1)
-                            }
                         }
 
                         display.shop.cost.innerHTML = nice_format(shop.active_cost)
@@ -384,7 +468,19 @@ const game = (() => {
             }
         },
         goldenkhoi: () => { /** Spawn golden khoi */ graphics.goldenkhoi() },
-        goldenkhoi_end: () => { H.WM.get("khoima clicker").win.classList.remove("khoi") }
+        goldenkhoi_end: () => { H.WM.get("khoima clicker").win.classList.remove("khoi") },
+        minigame_purchase: minigame => {
+            setTimeout(_ => {
+                switch (minigame) {
+                    case "minesweeper":
+                        ms.generate(-1)
+                        break
+                    case "shenzhen":
+                        H.SH.restart()
+                        break
+                }
+            }, 15)
+        }
     }
 
     function setup() {
@@ -403,25 +499,30 @@ const game = (() => {
                 else
                     game[key] = game_load[key]
 
-        display.button.addEventListener("mousedown", e => {
-            game_worker.port.postMessage(["click", [e.clientX, e.clientY]])
-        })
+        display.button.addEventListener("mousedown", e =>
+            postMessage(["click", [e.clientX, e.clientY]])
+        )
 
-        document.addEventListener("click", () => {
-            game_worker.port.postMessage(["interact"])
-        })
+        document.addEventListener("click", _ => postMessage(["interact"]))
 
-        game_worker.port.postMessage([
+        postMessage([
             "setup",
-            [ game, towers, shop ]
+            [ game, towers, shop, minigames ]
         ])
 
         graphics.create_shop()
         graphics.update_buildings()
 
-        game_worker.port.onmessage = e => {
-            if (functions.hasOwnProperty(e.data[0]))
-                functions[e.data[0]](e.data[1])
+        if (typeof(SharedWorker) !== "undefined") {
+            game_worker.port.onmessage = e => {
+                if (functions.hasOwnProperty(e.data[0]))
+                    functions[e.data[0]](e.data[1])
+            }
+        } else if (typeof(Worker) !== "undefined") {
+            game_worker.onmessage = e => {
+                if (functions.hasOwnProperty(e.data[0]))
+                    functions[e.data[0]](e.data[1])
+            }
         }
     }
 
@@ -433,18 +534,16 @@ const game = (() => {
         },
         shop_count: e => {
             shop.active_amount = parseInt(e.value)
-            game_worker.port.postMessage(["update_costs", shop])
+            postMessage(["update_costs", shop])
         },
-        shop: (action) => {
-            game_worker.port.postMessage(["shop", [action, shop]])
-        },
+        shop: action => postMessage(["shop", [action, shop]]),
         stats: () => {
             console.log(
                 "gamergoo: " + game.gamergoo + '\n' +
                 "total gamergoo: " + game.gamergoo_history + '\n'
             )
         },
-        get: (item) => {
+        get: item => {
             if (game.hasOwnProperty(item))
                 return game[item]
         },

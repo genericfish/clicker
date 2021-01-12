@@ -1,4 +1,6 @@
 let ms = (() => {
+    let generated = false
+
     const colors = [
         null,      // empty
         "blue",    // 1
@@ -89,7 +91,7 @@ let ms = (() => {
                         adj.includes(spot) ||   // Ignore the 8 adjacent
                         spot == n ||            // Ignore the clicked spot
                         ms.mines.includes(spot) // Ignore spots that are already mines
-                ) spot = Math.floor(Math.random() * (COLS * ROWS))
+                ) spot = random(COLS * ROWS - 1)
     
                 ms.board[spot] = -1
                 ms.mines.push(spot)
@@ -222,7 +224,7 @@ let ms = (() => {
 
         if (win) win.remove()
 
-        if (game.get("towers").minesweeper[0] == 0) {
+        if (!game.get("minigames").minesweeper) {
             document.getElementById("ms-stats").style.visibility = "hidden"
             board.innerHTML = defaultHTML
             board.style.minWidth = null
@@ -232,6 +234,8 @@ let ms = (() => {
             display = []
             make = true
         }
+
+        generated = true
 
         if (!make && display.length != COLS * ROWS) {
             display = []
@@ -293,6 +297,7 @@ let ms = (() => {
             if (make) {
                 cell.addEventListener("contextmenu", flag(i))
                 cell.onclick = press(i)
+                cell.ontouchstart = press(i)
                 row.appendChild(cell)
                 display.push(cell)
             }
@@ -300,6 +305,8 @@ let ms = (() => {
 
         board.style.minWidth = board.children[0].getBoundingClientRect().width + "px"
     }
+
+    H.WM.add_hook("maximize", "khoisweeper", _ => generated ? null : ms.generate(-1))
 
     return {
         generate: generate,

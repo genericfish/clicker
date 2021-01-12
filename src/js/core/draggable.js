@@ -8,103 +8,172 @@ class Draggable {
 
         this.previous = [0,0]
         this.draggable = interactive
-        this.container = parent
+        this.parent = parent
         this.hooks = { mouseup: [], mousemove: [], mousedown: [] }
 
         this.setup()
     }
 
     setup() {
-        let drag_func = this.drag(this)
+        this.draggable.addEventListener("mousedown", this.start)
+        this.draggable.addEventListener("touchstart", this.start)
 
-        this.draggable.addEventListener("mousedown", e => {
-            e.preventDefault()
+        document.addEventListener("mouseup", this.stop)
+        document.addEventListener("touchend", this.stop)
+    }
 
-            // only activate on lmb
-            if (e.buttons != 1) return
+    start = e => {
+        e.preventDefault()
 
-            this.previous = [e.clientX, e.clientY]
-            this.container.setAttribute("data-dragged", "data-dragged")
+        // only activate on lmb
+        if (e.buttons != 1 && typeof e.touches == "undefined") return
 
-            if (this.hooks.mousedown.length)
-                for (let cb of this.hooks.mousedown)
-                    cb(e)
+        // don't double drag
+        if (this.parent.hasAttribute("data-dragged")) return
 
-            document.addEventListener("mousemove", drag_func)
-        })
+        let cancel = false
 
-        document.addEventListener("mouseup", e => {
-            document.removeEventListener("mousemove", drag_func)
-            this.container.removeAttribute("data-dragged")
+        if (this.hooks.mousedown.length)
+            for (let cb of this.hooks.mousedown)
+                cancel |= cb(e)
 
+        if (cancel) return
+
+        this.onmousedown(e)
+    }
+
+    stop = e => {
+        if (this.parent.hasAttribute("data-dragged")) {
             if (this.hooks.mouseup.length)
                 for (let cb of this.hooks.mouseup)
                     cb(e)
-        })
+
+            this.parent.removeAttribute("data-dragged")
+
+            document.removeEventListener("mousemove", this.drag)
+            document.removeEventListener("touchmove", this.drag)
+        }
     }
 
-    drag(inst) {
-        return e => {
-            e.preventDefault()
+    drag = e => {
+        e.preventDefault()
 
-            if (inst.hooks.length)
-                for (let cb of inst.hooks.mousemove)
-                    cb(e)
+        let cancel = false
 
-            const x = inst.container.offsetLeft - inst.previous[0] + e.clientX
-            const y = inst.container.offsetTop - inst.previous[1] + e.clientY
+        if (this.hooks.mousemove.length)
+            for (let cb of this.hooks.mousemove)
+                cancel |= typeof(cb) == "function" ? cb(e) : 0;
 
-            inst.container.style.left = x + "px"
-            inst.container.style.top = y + "px"
+        if (cancel) return
 
-            inst.previous = [e.clientX, e.clientY]
+        this.onmousemove(e)
+    }
+
+    onmousedown(e) {
+        this.previous = e.type == "touchstart" ?
+            [e.touches[0].clientX, e.touches[0].clientY] :
+            [e.clientX, e.clientY]
+        this.parent.setAttribute("data-dragged", "data-dragged")
+
+        document.addEventListener("mousemove", this.drag)
+        document.addEventListener("touchmove", this.drag)
+    }
+
+    onmousemove(e) {
+        let [cx, cy] = e.type == "touchmove" ?
+            [e.touches[0].clientX, e.touches[0].clientY] :
+            [e.clientX, e.clientY]
+
+        const x = this.parent.offsetLeft - this.previous[0] + cx
+        const y = this.parent.offsetTop - this.previous[1] + cy
+
+        if (this.container) {
+            let box = this.parent.getBoundingClientRect()
+            let container = this.container.getBoundingClientRect()
+            let bits = this.detect_relative(x, y, container, box)
+
+            switch (bits & 3) {
+                case 0:
+                    this.parent.style.left = x + "px"
+                    this.previous[0] = cx
+                    break
+                case 1:
+                    this.parent.style.left = "0px"
+                    break
+                case 2:
+                    this.parent.style.left = (container.width - box.width) + "px"
+                    break
+            }
+    
+            switch (bits >> 2) {
+                case 0:
+                    this.parent.style.top = y + "px"
+                    this.previous[1] = cy
+                    break
+                case 1:
+                    this.parent.style.top = "0px"
+                    break
+                case 2:
+                    this.parent.style.top = (container.height - box.height - 1) + "px"
+                    break
+            }
+        } else {
+            this.parent.style.left = x + "px"
+            this.parent.style.top = y + "px"
+            this.previous = [cx, cy]
         }
+    }
+
+    detect(x, y, container, box) {
+        // Detect collision using absolute (window) coordinates
+        if (this.container == undefined) return 0
+
+        container = container || this.container.getBoundingClientRect()
+        box = box || this.parent.getBoundingClientRect()
+
+        x = x || box.x
+        y = y || box.y
+
+        return +(y + box.height > container.bottom) << 3 |
+            +(y < container.top) << 2 |
+            +(x + box.width > container.right) << 1 |
+            +(x < container.left)
+    }
+
+    detect_relative(x, y, container, box) {
+        // Detect collision using relative (element) coordinates
+        if (this.container == undefined) return 0
+
+        container = container || this.container.getBoundingClientRect()
+        box = box || this.parent.getBoundingClientRect()
+
+        x = x || box.offsetLeft
+        y = y || box.offsetTop
+
+        return +(y + box.height > container.height) << 3 |
+            +(y < 0) << 2 |
+            +(x + box.width > container.width) << 1 |
+            +(x < 0)
+    }
+
+    remove(hooks = true) {
+        // Remove drag handler from item
+
+        if (hooks)
+            this.hooks = { mouseup: [], mousemove: [], mousedown: [] }
+
+        this.draggable.removeEventListener("mousedown", this.start)
+        this.draggable.removeEventListener("touchstart", this.start)
+        document.removeEventListener("mouseup", this.stop)
+        document.removeEventListener("touchend", this.stop)
+        document.removeEventListener("mousemove", this.drag)
+        document.removeEventListener("touchmove", this.drag)
     }
 
     add_hook(event, cb) { if (this.hooks.hasOwnProperty(event)) this.hooks[event].push(cb) }
-}
-
-class DropArea {
-    constructor (e) {
-        if (!(e instanceof Element))
-            throw new Exception("[DropArea] Expected HTML Element.")
-
-        this.area = e
-        this.whitelist = {
-            id: [],
-            class: [],
-            elements: []
-        }
-
-        let box = e.getBoundingClientRect()
-        this.bounds = [
-            box.left,
-            box.top,
-            box.left + box.width,
-            box.top + box.height
-        ]
-    }
-
-    add(v) {
-        if (typeof v == "string")
-            if (v.charAt(0) == '#')
-                this.whitelist.id.push(v.substr(1))
-            else
-                this.whitelist.class.push(v)
-        else if (v instanceof Element)
-            this.whitelist.elements.push(v)
-    }
-
-    in_whitelist(e) {
-        return this.whitelist.id.includes(e.id) ||
-                Array.from(e.classList).reduce(a,b => a || this.whitelist.class.includes(b)) ||
-                this.elements.includes(e)
-    }
-
-    in_bounds(x, y) {
-        return x >= this.bounds[0] &&
-                x <= this.bounds[2] &&
-                y >= this.bounds[1] &&
-                y <= this.bounds[3]
+    remove_hook(event, cb) {
+        if (this.hooks.hasOwnProperty(event))
+            if (this.hooks[event].includes(cb))
+                this.hooks[event].splice(this.hooks[event].indexOf(cb), 1)
     }
 }

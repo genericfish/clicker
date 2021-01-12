@@ -1,0 +1,159 @@
+#shenzhen {
+    display: flex;
+    flex-wrap: wrap;
+
+    min-width: 880px;
+    max-width: 880px;
+    min-height: 620px;
+
+    position: relative;
+
+    & .win {
+        position: absolute;
+        left: 50%; top: 50%;
+
+        text-align: center;
+
+        & div {
+            position: relative;
+
+            left: -50%; top: -50%;
+            padding: 1rem;
+
+            background: #ece9d8;
+            box-shadow: inset -1px -1px #fff,
+            inset 1px 1px #0a0a0a,
+            inset -2px -2px #dfdfdf,
+            inset 2px 2px grey
+        }
+    }
+
+    & #stores {
+        display: flex;
+        flex-wrap: wrap;
+        flex: 0 0 100%;
+
+        justify-content: center;
+
+        max-height: 160px;
+        min-height: 160px;
+        padding-top: 5px;
+
+        margin: 0;
+
+        & .col { min-height: 100%; }
+
+        & #buttons {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            min-width: 80px;
+
+            margin: 0 5px 0 10px;
+
+            & button {
+                border-radius: 50%;
+                padding: 10px;
+
+                margin: 5px 0;
+
+                line-height: 1em;
+
+                min-height: 2em;
+                min-width: 2em;
+            }
+        }
+
+        & #trays,
+        & #bins {
+            display: flex;
+
+            & .col {
+                flex: 0 0;
+                border: 1px solid white;
+                border-radius: 15px;
+
+                min-width: 95px;
+
+                padding: 0;
+                margin: 0 5px;
+
+                &.flower {
+                    margin-right: 20px;
+    
+                    &::after { content: "FLOWER" }
+                }
+            }
+        }
+    }
+
+    & .col {
+        display: flex;
+        flex: 1;
+
+        align-self: stretch;
+
+        align-items: center;
+        justify-content: center;
+
+        min-height: 410px;
+
+        padding: 10px;
+    }
+
+    & .card {
+        position: absolute;
+
+        background: #FFF;
+        border-radius: 10px;
+        border: 1px solid #000;
+        height: 140px;
+        width: 80px;
+
+        font-size: 1.5rem;
+
+        &.red { color: #D21404 }
+        &.green { color: #028A0F }
+        &.black { color: #292929 }
+
+        &::after {
+            position: absolute;
+            bottom: .15em; right: .15em;
+        }
+
+        &::before {
+            position: absolute;
+            top: .15em; left: .15em;
+        }
+
+        .o (@i) when (@i <= 9) {
+            &.card-@{i} {
+                &::after, &::before { content: "@{i}" }
+            }
+            .o(@i + 1)
+        } .o(1);
+
+        .j (@i) when (@i < 4) {
+            @j: @i + 10;
+
+            &.card-@{j} {
+                &::after, &::before { content: "D" }
+            }
+            .j(@i + 1)
+        } .j(0);
+
+        &.card-f {
+            &::after, &::before { content: "F" }
+        }
+    }
+
+    .controls {
+        position: absolute;
+        height: 20px;
+        bottom: 0;
+    }
+}

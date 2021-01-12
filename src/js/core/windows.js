@@ -3,18 +3,70 @@ class WindowManager {
         this._wm_ver = 1
         this.windows = { }
         this.generated = 0
+
+        this.hooks = { exit: {}, minimize: {}, maximize: {}, focus: {}, load: {} }
     }
 
     add(win) { this.windows[win.id] = win }
 
-    exit(e) { this.windows[this.decode(e)].exit() }
-    minimize(e) { this.windows[this.decode(e)].minimize() }
-    maximize(e) {
-        let id = this.decode(e)
+    exit(e) {
+        let win = this.decode(e)
 
-        this.windows[id].maximize()
-        this.focus(id)
+        if (this.windows[win].s == 2) return
+
+        this.execute_hooks("exit", win)
+        this.windows[win].exit()
         this.save()
+    }
+
+    minimize(e) {
+        let win = this.decode(e)
+
+        if (this.windows[win].s == 1) return
+
+        this.execute_hooks("minimize", win)
+        this.windows[win].minimize()
+        this.save()
+    }
+
+    maximize(e) {
+        let win = this.decode(e)
+
+        if (this.windows[win].s == 0) return
+
+        this.execute_hooks("maximize", win)
+        this.windows[win].maximize()
+        this.focus(win)
+        this.save()
+    }
+
+    add_hook(event, win, cb) {
+        if (this.hooks.hasOwnProperty(event))
+            if (!this.hooks[event].hasOwnProperty(win)) this.hooks[event][win] = [cb]
+            else this.hooks[event][win].push(cb)
+    }
+
+    remove_hook(event, win, cb) {
+        if (this.hooks.hasOwnProperty(event) && this.hooks[event].hasOwnProperty(win))
+            if (this.hooks[event][win].includes(cb))
+                this.hooks[event][win].splice(this.hooks[event][win].indexOf(cb), 1)
+    }
+
+    get_hooks(event, win) {
+        if (this.hooks.hasOwnProperty(event) && this.hooks[event].hasOwnProperty(win))
+            return this.hooks[event][win]
+
+        return []
+    }
+
+    execute_hooks(event, win, propagate = true) {
+        let hooks = this.get_hooks(event, win)
+
+        if (!hooks.length) return
+
+        for (let hook of hooks)
+            if (!(hook() || propagate))
+                break
     }
 
     decode(e) {
@@ -29,9 +81,13 @@ class WindowManager {
 
     focus(w) {
         if (w instanceof Window) w = w.id
+
         this.windows[w].focus()
-        if (this.windows[w].z == this.length)
-            return
+
+        if (this.windows[w].z == this.length) return
+
+        this.execute_hooks("focus", w)
+
         this.windows[w].z = this.length
 
         for (let [id, win] of Object.entries(this.windows)) {
@@ -101,19 +157,21 @@ class WindowManager {
             ({name: attr, value: val} = a)
 
             switch (attr) {
-                case "data-window": continue
+                case "data-window": break
                 case "style":
                 case "class":
                     let cur = win.body.getAttribute(attr)
 
-                    win.body.setAttribute(attr, cur != null ? cur : "" + val)
-                    continue
+                    win.body.setAttribute(attr, cur != null ? cur + val : val)
+                    break
                 case "id":
                     win.body.setAttribute(attr, val)
-                    continue
-                default: continue
+                    break
+                default: break
             }
         }
+
+        this.execute_hooks("load", win.id)
 
         // Remove the template
         e.remove()
@@ -166,6 +224,7 @@ class Window {
         H.WM.load(this)
 
         this.win.addEventListener("mousedown", _ => { H.WM.focus(this) })
+        this.win.addEventListener("touchstart", _ => { H.WM.focus(this) })
 
         if (iframe) {
             // Focus event on window set pointerEvents to "none", but we want "auto" if we
@@ -242,12 +301,15 @@ class Window {
 
         buttons[0].setAttribute("aria-label", "Minimize")
         buttons[0].setAttribute("onclick", "H.WM.minimize(this)")
+        buttons[0].setAttribute("ontouchstart", "H.WM.minimize(this)")
 
         buttons[1].setAttribute("aria-label", "Maximize")
         buttons[1].setAttribute("onclick", "H.WM.maximize(this)")
+        buttons[1].setAttribute("ontouchstart", "H.WM.maximize(this)")
 
         buttons[2].setAttribute("aria-label", "Close")
         buttons[2].setAttribute("onclick", "H.WM.exit(this)")
+        buttons[2].setAttribute("ontouchstart", "H.WM.exit(this)")
 
         buttons.forEach(e => controls.appendChild(e))
 
@@ -257,7 +319,7 @@ class Window {
         let body = document.createElement("div")
         body.classList.add("window-body")
 
-        // Append children to root window elementqqq
+        // Append children to root window element
         win.appendChild(bar)
         win.appendChild(body)
 
