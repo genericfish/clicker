@@ -129,16 +129,16 @@ let ms = (() => {
         if (gamergoo > (game.get("gamergoo") * .25)) gamergoo = game.get("gamergoo") * .25
 
         // Regardless, give 65k gamergoo
-        gamergoo = Math.max(65000, gamergoo)
+        gamergoo = Math.max(65000, gamergoo) || 65000
 
         // Multiplier depending on difficulty
         //     Easy: 0.1x
         //     Medium: normal
-        //     Hard: 1.25x
+        //     Hard: 2.25x
         if (difficulty == 0) gamergoo *= .1
-        else if (difficulty == 2) gamergoo *= 1.25
+        else if (difficulty == 2) gamergoo *= 2.25
 
-        game.worker.port.postMessage(["add", [gamergoo, true]])
+        game.worker(["add", [gamergoo, true]])
 
         win.id = "winner"
         xin.innerHTML = `you are win<br>+${nice_format(Math.ceil(gamergoo))} gamergoo`

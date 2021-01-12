@@ -547,7 +547,7 @@ const game = (() => {
             if (game.hasOwnProperty(item))
                 return game[item]
         },
-        worker: game_worker,
+        worker: postMessage,
     }
 })()
 

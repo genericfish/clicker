@@ -115,10 +115,26 @@ ul.tree-view {
 }
 
 #changelog {
-    width: 445px;
+    width: 500px;
     height: 650px;
 
     pointer-events: auto
+}
+
+#khoipedia {
+    padding: 10px;
+
+    & .right {
+        margin-left: 10px;
+        padding: 10px;
+
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-size: 1rem;
+        max-height: 775px;
+        overflow-y: auto;
+
+        & h2 { font-family: "VT323", monospace }
+    }
 }
 
 .ifoverlay {
@@ -132,4 +148,4 @@ ul.tree-view {
 }
 
 // Just in case outdated browser does not support templates
-template { display:none; visibility:collapse; }
+template { display: none }
