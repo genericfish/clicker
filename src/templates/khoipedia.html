@@ -1,5 +1,5 @@
-<template data-window="khoipedia" style="width: 700px; height: 825px; padding: 10px;">
-    <div class="content">
+<template data-window="khoipedia" style="width: 740px;height: 835px;">
+    <div id="khoipedia" class="content">
         <div class="left">
             <ul class="tree-view">
                 <li>khoipedia</li>
@@ -12,14 +12,15 @@
                 <details open="">
                     <summary>minigames</summary>
                     <ul>
+                        <li><a href="#" onclick="khoipedia('khoisweeper')">khoisweeper</a></li>
                         <li><a href="#" onclick="khoipedia('shenzhen')">shenzhen solitaire</a></li>
                     </ul>
                 </details>
             </ul>
         </div>
-        <div class="right" style="font-family:Georgia, 'Times New Roman', Times, serif;font-size: 1rem;max-height:775px;overflow-y:auto;">
+        <div class="right">
             <div data-page="basics">
-                <h3>basics</h3>
+                <h2>basics</h2>
                 <p>In the <a href="#" onclick="H.WM.maximize(H.WM.get('khoima clicker'))">khoima clicker</a> window, click the khoima in order to earn gamergoo.</p>
                 <p>When you have enough gamergoo, you can buy buildings inside the <a href="#" onclick="H.WM.maximize(H.WM.get('shop'))">shop.</a></p>
                 <p>After you buy buildings from the shop, they will appear in the <a href="#" onclick="H.WM.maximize(H.WM.get('buildings'))">buildings</a> window.</p>
@@ -31,8 +32,18 @@
                 <p>Ensure to press <b>CTRL+SHIFT+R</b> to clear your cache when a new patch comes out.</p>
                 <button onclick="H.WM.exit(H.WM.get('khoipedia'))">close khoipedia</button>
             </div>
+            <div data-page="khoisweeper" style="display: none;">
+                <h2>khoisweeper</h2>
+                <p><b>REWARDS</b></p>
+                The base reward for winning is 20 minutes of gamergoo capped at 25% of the gamergoo you currently own, or 65000 gamergoo, whichever is higher.
+                <ul>
+                    <li><b>EASY</b> gives a 0.1x base reward</li>
+                    <li><b>MEDIUM</b> gives the base reward</li>
+                    <li><b>HARD</b> gives 2.25x base reward</li>
+                </ul>
+            </div>
             <div data-page="shenzhen" style="display: none;">
-                <h3>shenzhen solitaire</h3>
+                <h2>shenzhen solitaire</h2>
                 <p><b>Objective</b></p>
                 <p>In <a href="#" onclick="H.WM.maximize(H.WM.get('shenzhen solitaire'))">shenzhen solitaire</a> you:</p>
                 <ul>
@@ -58,6 +69,9 @@
                 <p>There are 4 dragon cards ("D") for each color (red, green, black). The objective with these cards is to reveal all 4 of the same color. To "reveal" a card is to make it the last card of a column, or be inside a tray.</p>
                 <p>When all 4 dragons of the same color are revealed, the button corresponding to the color will be enabled. Once pressed, all the dragons will be collected and stacked into an open tray. After being stacked, the tray will no longer be available.</p>
                 <p>If there is not an open tray, i.e. there are no empty trays or all 3 trays are filled with cards that are not part of the 4 dragons revealed, the button will not be enabled, and the cards cannot be stacked.</p>
+
+                <p><b>REWARDS</b></p>
+                <p>The reward for winning is 10 minutes of gamergoo capped at 20% of the gamergoo you currently own, or 10000 gamergoo, whichever is higher.</p>
             </div>
         </div>
     </div>

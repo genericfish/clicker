@@ -1,4 +1,4 @@
-(() => {
+let Shenzhen = (_ => {
     class Card {
         constructor (color, number, container) {
             this.color = color
@@ -86,7 +86,7 @@
             if (!xn && !yn) return this.z = z
 
             this.card.style.transform = `translate(${xn}px,${yn}px)`
-            this.card.style.transition = "transform .2s ease"
+            this.card.style.transition = "transform .15s ease"
 
             setTimeout(_ => {
                 this.card.style.transform = null
@@ -95,7 +95,7 @@
 
                 this.x = x
                 this.y = y
-            }, 210)
+            }, 160)
         }
 
         generate_card() {
@@ -132,13 +132,6 @@
                     child.z = this.z
                 })
             })
-        }
-
-        flip() {
-            if (Array.from(this.card.classList).includes("back"))
-                this.card.classList.remove("back")
-            else
-                this.card.classList.add("back")
         }
 
         set x(v) { this.card.style.left = v + "px" }
@@ -192,7 +185,7 @@
                     this.last.draggable = true
 
                 v.detach()
-                setTimeout(this.check, 15)
+                setTimeout(this.check, 20)
                 this.detect()
             }
         }
@@ -268,6 +261,39 @@
         verify(v) { return v.number == 'f' }
     }
 
+    function game_win() {
+        if (H.SH.win) return
+
+        popup("win 10000 gamergoo")
+
+        // Give 10 minutes worth of gamergoo
+        let gamergoo = game.get("rate") * (10 * 60)
+
+        // Capped at 20% of currently owned gamergoo
+        if (gamergoo > (game.get("gamergoo") * .2)) gamergoo = game.get("gamergoo") * .2
+
+        // Regardless, give 10k gamergoo
+        gamergoo = Math.max(10000, gamergoo) || 10000
+
+        game.worker(["add", [gamergoo, true]])
+        H.SH.win = true
+    }
+
+    function purchase() { popup("you must purchase this game from the shop for 10000 gamergoo") }
+
+    function popup(message) {
+        let board = document.getElementById("shenzhen")
+        let popup = document.createElement("div")
+
+        popup.classList.add("sh-popup")
+        popup.classList.add("win")
+        popup.innerHTML = `<div>${message}</div>`
+
+        popup.style.zIndex = H.WM.get("shenzhen solitaire").z + 1
+
+        board.appendChild(popup)
+    }
+
     class Shenzhen {
         constructor () {
             this.board = document.getElementById("shenzhen")
@@ -301,7 +327,7 @@
 
         maximize_hook = _ => {
             if (this.generate)
-                setTimeout(this.restart, 25)
+                setTimeout(this.restart, 85)
         }
 
         generate_cards() {
@@ -403,7 +429,7 @@
                         for (let bin of bins) {
                             if (bin.verify(last)) {
                                 last.draggable = false
-                                setTimeout(_ => last.move(bin), 200)
+                                setTimeout(_ => last.move(bin), 165)
 
                                 return
                             }
@@ -460,16 +486,19 @@
 
                 card.move(tray, false, 0, -tray.count * 28)
                 card.drag.remove()
-                card.flip()
+                card.card.classList.add("flip")
             }
         }
 
         restart = _ => {
-            if (this.popup)
-                this.popup.remove()
+            let popups = Array.from(document.getElementsByClassName("sh-popup"))
 
-            this.popup = undefined
+            if (popups.length)
+                for (let popup of popups)
+                    popup.remove()
+
             this.cards = []
+            this.win = false
 
             if (this.columns)
                 this.columns.forEach(col => col.element.remove())
@@ -486,23 +515,5 @@
         }
     }
 
-    H.SH = new Shenzhen()
-
-    function game_win() { popup("win gamergoo")}
-
-    function purchase() { popup("you must purchase this game from the shop for 10000 gamergoo") }
-
-    function popup(message) {
-        let board = document.getElementById("shenzhen")
-        let popup = document.createElement("div")
-
-        popup.classList.add("win")
-        popup.innerHTML = `<div>${message}</div>`
-
-        popup.style.zIndex = H.WM.get("shenzhen solitaire").z + 1
-
-        board.appendChild(popup)
-
-        H.SH.popup = popup
-    }
+    return _ => { H.SH = new Shenzhen() }
 })()

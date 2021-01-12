@@ -5,17 +5,6 @@ const H = {
     DE: new Desktop()
 }
 
-document.addEventListener("contextmenu", e => e.preventDefault())
-
-H.KH.set_bind(["control", "shift", "x"], _ => {
-    for (let [_, w] of H.WM.entries)
-        w.state = w.initial
-
-    H.WM.maximize(H.WM.get("khoipedia"))
-    H.WM.save()
-})
-H.KH.set_bind(["control", "shift", "z"], H.TM.toggle)
-
 // Generate the windows for each "program"
 new App("khoipedia", 525, 200, "assets/images/buildings/minesweeper.png")
 new App("buildings", 1155, 5, "assets/images/buildings/autoclicker.png", "", 2)
@@ -38,3 +27,19 @@ new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f74622
 })()
 
 H.WM.focus(H.WM.focused)
+
+function init() {
+    document.addEventListener("contextmenu", e => e.preventDefault())
+
+    H.KH.set_bind(["control", "shift", "x"], _ => {
+        for (let [_, w] of H.WM.entries)
+            w.state = w.initial
+
+        H.WM.maximize(H.WM.get("khoipedia"))
+        H.WM.save()
+    })
+    H.KH.set_bind(["control", "shift", "z"], H.TM.toggle)
+
+    Shenzhen()
+    ms.generate(-1)
+}
