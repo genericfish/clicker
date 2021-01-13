@@ -111,7 +111,7 @@ const game = (() => {
                         nice_format(game.towers[shop.active][1].toFixed(2)) +
                         " gamergoo per second"
 
-                    display.shop.select.style.visibility = "visible"
+                    display.shop.select.style.visibility = null
 
                     postMessage(["update_costs", shop])
                 }
