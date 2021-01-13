@@ -2,6 +2,13 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
+## Version 1.4.1
+13 January 2021 at 04:43 UTC
+- shenzhen solitaire
+    - fixes
+        - fixed card positioning
+        - game win message now displays the actual amount won
+
 ## Version 1.4.1-rc2
 12 January 2021 at 21:43 UTC
 - shenzhen solitaire

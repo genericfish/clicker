@@ -221,7 +221,7 @@ let Shenzhen = (_ => {
     class Tray extends Column {
         constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
 
-        add(v, move, offset_x = 0, offset_y = 0) { super.add(v, move, offset_x, -160 + offset_y) }
+        add(v, move, offset_x = 0, offset_y = 0) { super.add(v, move, offset_x, -165 + offset_y) }
         verify(v) { return !this.count && !v.children.length }
     }
 
@@ -229,7 +229,7 @@ let Shenzhen = (_ => {
         constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
 
         add(v, move, offset_x = 0, offset_y = 0) {
-            super.add(v, move, offset_x, -160 - this.count * 28 + offset_y)
+            super.add(v, move, offset_x, -165 - this.count * 28 + offset_y)
             v.drag.remove()
         }
 
@@ -254,7 +254,7 @@ let Shenzhen = (_ => {
         }
 
         add(v, move) {
-            super.add(v, move, 0, -160)
+            super.add(v, move, 0, -165)
             v.drag.remove()
         }
 
@@ -264,8 +264,6 @@ let Shenzhen = (_ => {
     function game_win() {
         if (H.SH.win) return
 
-        popup("win 10000 gamergoo")
-
         // Give 10 minutes worth of gamergoo
         let gamergoo = game.get("rate") * (10 * 60)
 
@@ -274,6 +272,8 @@ let Shenzhen = (_ => {
 
         // Regardless, give 10k gamergoo
         gamergoo = Math.max(10000, gamergoo) || 10000
+
+        popup(`win ${nice_format(gamergoo)} gamergoo`)
 
         game.worker(["add", [gamergoo, true]])
         H.SH.win = true

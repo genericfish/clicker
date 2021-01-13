@@ -28,9 +28,6 @@ function nice_format(num) {
 }
 
 const game = (() => {
-    // TODO: Rework minesweeper so we can get rid of this flag
-    let ms_flag = false
-
     const game_worker =
         typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
         typeof(Worker) !== "undefined" ? new Worker("assets/js/workers/clicker.js") :
@@ -291,12 +288,12 @@ const game = (() => {
     const minigames = {
         minesweeper: {
             name: "khoisweeper",
-            desc: "a description for khoisweeper",
+            desc: "it's minesweeper.",
             base_cost: 5000
         },
         shenzhen: {
             name: "shenzhen solitaire",
-            desc: "<b>THERE IS NO REWARD FOR WINNING SHENZHEN SOLITAIRE AT THIS MOMENT</b>",
+            desc: "not normal klondike or freecell.",
             base_cost: 10000
         }
     }
@@ -353,6 +350,7 @@ const game = (() => {
             minesweeper: false,
             shenzhen: false
         },
+        data_store: {},
         gamergoo: 0.0,
         gamergoo_history: 0.0,
         rate: 0.0,
