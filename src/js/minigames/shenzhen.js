@@ -273,7 +273,7 @@ let Shenzhen = (_ => {
         // Regardless, give 10k gamergoo
         gamergoo = Math.max(10000, gamergoo) || 10000
 
-        popup(`win ${nice_format(gamergoo)} gamergoo`)
+        popup(`win ${nice_format(Math.trunc(gamergoo))} gamergoo`)
 
         game.worker(["add", [gamergoo, true]])
         H.SH.win = true
