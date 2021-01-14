@@ -264,14 +264,14 @@ let Shenzhen = (_ => {
     function game_win() {
         if (H.SH.win) return
 
-        // Give 10 minutes worth of gamergoo
-        let gamergoo = game.get("rate") * (10 * 60)
+        // Give 20 minutes worth of gamergoo
+        let gamergoo = game.get("rate") * (20 * 60)
 
-        // Capped at 20% of currently owned gamergoo
-        if (gamergoo > (game.get("gamergoo") * .2)) gamergoo = game.get("gamergoo") * .2
+        // Capped at 30% of currently owned gamergoo
+        if (gamergoo > (game.get("gamergoo") * .3)) gamergoo = game.get("gamergoo") * .3
 
-        // Regardless, give 10k gamergoo
-        gamergoo = Math.max(10000, gamergoo) || 10000
+        // Regardless, give 65k gamergoo
+        gamergoo = Math.max(65000, gamergoo) || 65000
 
         popup(`win ${nice_format(Math.trunc(gamergoo))} gamergoo`)
 
