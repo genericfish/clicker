@@ -19,21 +19,26 @@ class KeyHandler {
         return is_pressed
     }
 
-    set_bind(keys, action) {
+    set_bind(keys, action, win = '*') {
         if (keys instanceof Array)
             keys = keys.join('+')
 
         keys = keys.replace(/\s/g,'')
-        this.binds[keys] = action
 
-        console.log("KEYHANDLER: ADDED", keys)
+        this.binds[keys] = { [win]: action }
+
+        console.log(`[KeyHandler] Added bind "${keys}" for window "${win}"`)
     }
 
     check_binds() {
         for (let bind of Object.keys(this.binds))
-            if (bind.split('+').reduce(
-                (acc, cur) => acc && this.keys.hasOwnProperty(cur)
-            )) this.binds[bind]()
+            if (bind.split('+').reduce((acc, cur) => acc && this.keys.hasOwnProperty(cur))) {
+                if (this.binds[bind].hasOwnProperty(H.WM.focused.id))
+                    this.binds[bind][H.WM.focused]()
+
+                if (this.binds[bind].hasOwnProperty('*'))
+                    this.binds[bind]['*']()
+            }
     }
 
     k() { return this.keys }
