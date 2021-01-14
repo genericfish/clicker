@@ -298,30 +298,33 @@ const game = (() => {
         }
     }
 
+    let shop_win = H.WM.get("shop")
+    let khoi_win = H.WM.get("khoima clicker")
+
     const display = {
-        rate: document.getElementById("cps"),
-        total: document.getElementById("counter"),
-        button: document.getElementById("kfc"),
+        rate: khoi_win.get("cps"),
+        total: khoi_win.get("counter"),
+        button: khoi_win.get("kfc"),
         shop: {
-            header: document.getElementById("stats-header"),
-            rate: document.getElementById("stats-rate"),
-            click: document.getElementById("stats-click"),
+            header: shop_win.get("stats-header"),
+            rate: shop_win.get("stats-rate"),
+            click: shop_win.get("stats-click"),
             radio: [
-                document.getElementById("shop-one"),
-                document.getElementById("shop-ten"),
-                document.getElementById("shop-hundred"),
+                shop_win.get("shop-one"),
+                shop_win.get("shop-ten"),
+                shop_win.get("shop-hundred"),
             ],
-            cost: document.getElementById("shop-cost"),
-            refund: document.getElementById("shop-refund"),
-            refundcontainer: document.getElementById("shop-refund-container"),
-            sell: document.getElementById("shop-sell"),
-            buy: document.getElementById("shop-buy"),
-            owned: document.getElementById("stats-owned"),
-            producing: document.getElementById("stats-producing"),
-            listings: document.getElementById("listings"),
-            minigames: document.getElementById("minigames"),
-            select: document.getElementById("shop-select"),
-            desc: document.getElementById("stats-desc")
+            cost: shop_win.get("shop-cost"),
+            refund: shop_win.get("shop-refund"),
+            refundcontainer: shop_win.get("shop-refund-container"),
+            sell: shop_win.get("shop-sell"),
+            buy: shop_win.get("shop-buy"),
+            owned: shop_win.get("stats-owned"),
+            producing: shop_win.get("stats-producing"),
+            listings: shop_win.get("listings"),
+            minigames: shop_win.get("minigames"),
+            select: shop_win.get("shop-select"),
+            desc: shop_win.get("stats-desc")
         }
     }
 

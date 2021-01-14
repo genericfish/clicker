@@ -145,6 +145,7 @@ class WindowManager {
     load_template(e) {
         if (!(e instanceof Element)) return
         let win = this.get(e.getAttribute("data-window"))
+        let prefix = null
 
         if (win == null) return
 
@@ -158,6 +159,9 @@ class WindowManager {
 
             switch (attr) {
                 case "data-window": break
+                case "data-prefix":
+                    prefix = val
+                    break
                 case "style":
                 case "class":
                     let cur = win.body.getAttribute(attr)
@@ -171,10 +175,25 @@ class WindowManager {
             }
         }
 
+        // Prefix all element IDs with the given prefix
+        if (prefix != null) {
+            this.prefix(win.win, prefix)
+            win.prefix = prefix
+        }
+
         this.execute_hooks("load", win.id)
 
         // Remove the template
         e.remove()
+    }
+
+    prefix(e, prefix) {
+        for (let child of e.children) {
+            this.prefix(child, prefix)
+
+            if (child.id)
+                child.id = `${prefix}-${child.id}`
+        }
     }
 
     get entries() { return Object.entries(this.windows)}
@@ -357,6 +376,8 @@ class Window {
     }
 
     appendChild(e) { this.win.children[1].appendChild(e) }
+
+    get(s) { return document.getElementById((this.prefix ? this.prefix + '-' : '') + s) }
 
     set x(v) { this.win.style.left = v + "px" }
     set y(v) { this.win.style.top = v + "px" }

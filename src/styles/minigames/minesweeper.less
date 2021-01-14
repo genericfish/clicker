@@ -1,5 +1,4 @@
-
-#minesweeper {
+#ks-minesweeper {
     border: 1px solid black;
 
     & button {
@@ -36,18 +35,19 @@
     }
 
     & button:active,
-    & #winner div {
+    & #ks-winner div {
         box-shadow: inset -1px -1px #fff,
         inset 1px 1px #0a0a0a,
         inset -2px -2px #dfdfdf,
         inset 2px 2px grey
     }
 
-    & #winner {
+    & #ks-winner {
         position: absolute;
         left: 50%; top: 50%;
 
         text-align: center;
+
         & div {
             position: relative;
 
@@ -59,7 +59,7 @@
     }
 }
 
-#ms-stats {
+#ks-ms-stats {
     display: block;
 
     text-align: center;

@@ -1,5 +1,6 @@
 let ms = (() => {
     let generated = false
+    let mswin = H.WM.get("khoisweeper")
 
     const colors = [
         null,      // empty
@@ -27,7 +28,7 @@ let ms = (() => {
     let ROWS, COLS, MAX_MINE, SMALL
     [ROWS, COLS, MAX_MINE, SMALL] = difficulties[1]
 
-    let board = document.getElementById("minesweeper")
+    let board = mswin.get("minesweeper")
 
     let ms = {
         mines: [],
@@ -39,8 +40,8 @@ let ms = (() => {
     }
 
     let display = []
-    let flags = document.getElementById("ms-flags")
-    let time = document.getElementById("ms-time")
+    let flags = mswin.get("ms-flags")
+    let time = mswin.get("ms-time")
     let timer = undefined
 
     function get_neighbours(i) {
@@ -140,7 +141,7 @@ let ms = (() => {
 
         game.worker(["add", [gamergoo, true]])
 
-        win.id = "winner"
+        win.id = "ks-winner"
         xin.innerHTML = `you are win<br>+${nice_format(Math.ceil(gamergoo))} gamergoo`
 
         win.appendChild(xin)
@@ -220,17 +221,17 @@ let ms = (() => {
 
         let make = !display.length
         let row = undefined
-        let win = document.getElementById("winner")
+        let win = mswin.get("winner")
 
         if (win) win.remove()
 
         if (!game.get("minigames").minesweeper) {
-            document.getElementById("ms-stats").style.visibility = "hidden"
+            mswin.get("ms-stats").style.visibility = "hidden"
             board.innerHTML = defaultHTML
             board.style.minWidth = null
             return
         } else {
-            document.getElementById("ms-stats").style.visibility = null
+            mswin.get("ms-stats").style.visibility = null
             display = []
             make = true
         }
@@ -266,7 +267,7 @@ let ms = (() => {
 
             board.remove()
             board = document.createElement("div")
-            board.id = "minesweeper"
+            board.id = "ks-minesweeper"
 
             parent.appendChild(board)
         }

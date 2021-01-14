@@ -282,7 +282,7 @@ let Shenzhen = (_ => {
     function purchase() { popup("you must purchase this game from the shop for 10000 gamergoo") }
 
     function popup(message) {
-        let board = document.getElementById("shenzhen")
+        let board = H.WM.get("shenzhen solitaire").get("shenzhen")
         let popup = document.createElement("div")
 
         popup.classList.add("sh-popup")
@@ -296,9 +296,10 @@ let Shenzhen = (_ => {
 
     class Shenzhen {
         constructor () {
-            this.board = document.getElementById("shenzhen")
-            this.trays = document.getElementById("trays")
-            this.bins = document.getElementById("bins")
+            this.win = H.WM.get("shenzhen solitaire")
+            this.board = this.win.get("shenzhen")
+            this.trays = this.win.get("trays")
+            this.bins = this.win.get("bins")
 
             this.cards = []
             this.z = parseInt(this.board.parentElement.parentElement.style.zIndex)
@@ -315,7 +316,6 @@ let Shenzhen = (_ => {
                 "13": "*",
             }
 
-            this.win = H.WM.get("shenzhen solitaire")
             this.id = this.win.id
             this.generate = true
 
@@ -459,7 +459,7 @@ let Shenzhen = (_ => {
                     ), MAX_INT
                 )
 
-                let button = document.getElementById("dragon-" + dragon)
+                let button = H.WM.get("shenzhen solitaire").get("dragon-" + dragon)
 
                 if (available != MAX_INT) {
                     button.removeAttribute("disabled")
@@ -480,6 +480,18 @@ let Shenzhen = (_ => {
         }
 
         collect(dragon, available) {
+            let still_works = true
+
+            this.dragons[dragon].forEach(cur => {
+                let col = this.columns[cur]
+
+                if (!col.count) still_works = false
+                else if (col.last.color != dragon || (parseInt(col.last.number) || 0) < 10)
+                    still_works = false
+            })
+
+            if (!still_works) return
+
             for (let i in this.dragons[dragon]) {
                 let card = this.columns[this.dragons[dragon][i]].last
                 let tray = this.columns[8 + available]
