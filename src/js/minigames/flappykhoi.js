@@ -2,7 +2,7 @@ let Flappy = (() => {
     // Keep these variables out of class scope to make it slightly harder to cheat
     let score = 0,
         gravity = 1000,
-        divisor = 2.15,
+        divisor = 2.25,
         pipe_speed = 100,
         pipe_gap = 120
 
@@ -305,8 +305,8 @@ let Flappy = (() => {
             // Multiplier based on score
             gamergoo *= score / 8
 
-            H.FP.hud.draw("win")
-            H.FP.hud.draw(`${nice_format(Math.trunc(gamergoo))} gamergoo`, false,
+            H.FP.hud.draw("loss")
+            H.FP.hud.draw(`+${nice_format(Math.trunc(gamergoo))} gamergoo`, false,
                 -1,
                 H.FP.hud.canvas.height / 2 + 25
             )
