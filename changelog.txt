@@ -2,6 +2,13 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
+## Version 1.4.2a
+- changes
+    - changed rewards for flappykhoi
+- fixes
+    - fix bug where amount selection didn't work in shop
+    - limit flappykhoi FPS for consistent physics calculations
+
 ## Version 1.4.2
 15 January 2021 at 06:33 UTC
 - additions
@@ -31,9 +38,10 @@
         - updated card font to improve readability
     - fixes
         - fixed bug where win dialog wouldn't go away
-        - fixed regression where khoisweeper awarded 1.25x instead of 2.25x for hard difficulty
 - additions
     - added khoisweeper entry to khoipedia (only rewards section)
+- fixes
+    - fixed regression where khoisweeper awarded 1.25x instead of 2.25x for hard difficulty
 
 ## Version 1.4.1-rc1
 12 January 2021 at 01:53 UTC
