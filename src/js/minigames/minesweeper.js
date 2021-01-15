@@ -14,7 +14,7 @@ let ms = (() => {
         "#686868"  //8
     ]
 
-    const defaultHTML = `<div class="buy"style="margin-top:-50px;width:400px;text-align:center;padding:5px;"><p>Purchase khoisweeper for 5000 gamergoo</p><img style="margin:0 auto;" src="assets/images/buildings/minesweeper.png"width="300"height="300"alt=""></div>`
+    const defaultHTML = `<div class="buy"style="margin-top:-50px;width:400px;text-align:center;padding:5px;"><p>Purchase khoisweeper for 10000 gamergoo</p><img style="margin:0 auto;" src="assets/images/buildings/minesweeper.png"width="300"height="300"alt=""></div>`
 
     const difficulties = [
         [8,10,10,false],  // Easy

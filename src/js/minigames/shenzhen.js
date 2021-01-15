@@ -279,7 +279,7 @@ let Shenzhen = (_ => {
         H.SH.win = true
     }
 
-    function purchase() { popup("you must purchase this game from the shop for 10000 gamergoo") }
+    function purchase() { popup("you must purchase this game from the shop for 15000 gamergoo") }
 
     function popup(message) {
         let board = H.WM.get("shenzhen solitaire").get("shenzhen")
