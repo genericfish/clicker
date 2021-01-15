@@ -2,7 +2,7 @@ let Flappy = (() => {
     // Keep these variables out of class scope to make it slightly harder to cheat
     let score = 0,
         gravity = 1000,
-        divisor = 2.15,
+        divisor = 2.25,
         pipe_speed = 100,
         pipe_gap = 120
 
@@ -80,9 +80,6 @@ let Flappy = (() => {
 
                 if (this.pos[2] >= -10)
                     this.status.WING_UP = false
-
-                if (this.pos[1] > 625)
-                    this.jump()
 
                 return true
             }
@@ -295,7 +292,7 @@ let Flappy = (() => {
     }
 
     function game_over() {
-        if (score > 2) {
+        if (score >= 2) {
             // Give 10 minutes worth of gamergoo
             let gamergoo = game.get("rate") * (20 * 60)
 
@@ -308,8 +305,8 @@ let Flappy = (() => {
             // Multiplier based on score
             gamergoo *= score / 8
 
-            H.FP.hud.draw("win")
-            H.FP.hud.draw(`${nice_format(Math.trunc(gamergoo))} gamergoo`, false,
+            H.FP.hud.draw("loss")
+            H.FP.hud.draw(`+${nice_format(Math.trunc(gamergoo))} gamergoo`, false,
                 -1,
                 H.FP.hud.canvas.height / 2 + 25
             )
