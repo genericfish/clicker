@@ -1,8 +1,8 @@
 let Flappy = (() => {
     // Keep these variables out of class scope to make it slightly harder to cheat
     let score = 0,
-        gravity = 1000,
-        divisor = 2.25,
+        gravity = 825,
+        divisor = 2,
         pipe_speed = 100,
         pipe_gap = 120
 
@@ -66,25 +66,18 @@ let Flappy = (() => {
                         this.context.fillRect(2 * (bit - 8), 2 * (num - 7), 2, 2)
         }
 
-        physics = _ => {
-            this.velo += gravity / 60
+        physics = delta => {
+            this.velo += gravity * delta / 1000
+            this.pos[1] += this.velo * delta / 1000
 
-            if (this.pos[1] <= 650) {
-                this.pos[1] += this.velo / 60
+            if (this.pos[2] < 55)
+                this.pos[2]++
 
-                if (this.pos[2] < 55)
-                    this.pos[2]++
+            if (this.pos[2] >= -37)
+                this.status.BLINK = false
 
-                if (this.pos[2] >= -37)
-                    this.status.BLINK = false
-
-                if (this.pos[2] >= -10)
-                    this.status.WING_UP = false
-
-                return true
-            }
-
-            return false
+            if (this.pos[2] >= -10)
+                this.status.WING_UP = false
         }
 
         jump = _ => {
@@ -134,9 +127,9 @@ let Flappy = (() => {
             }
         }
 
-        physics = () => {
+        physics = delta => {
             for (let pipe of this.pipes)
-                pipe[0] -= pipe_speed / 60
+                pipe[0] -= pipe_speed * delta / 1000
 
             this.pipes = this.pipes.filter(pipe => pipe[0] > -50)
 
@@ -197,6 +190,8 @@ let Flappy = (() => {
 
             this.char.canvas.addEventListener("mousedown", this.mousedown)
             this.char.canvas.addEventListener("touchstart", this.mousedown)
+
+            this.last = performance.now()
         }
 
         restart = () => {
@@ -207,7 +202,10 @@ let Flappy = (() => {
             score = 0
 
             this.game_over = false
-            setTimeout(_ => this.loop(), 100)
+            setTimeout(_ => {
+                this.last = performance.now()
+                this.loop()
+            }, 100)
         }
 
         mousedown = () => {
@@ -216,18 +214,19 @@ let Flappy = (() => {
             else
                 this.char.jump()
         }
+
         exit = () => { this.running = false }
-        maximize = () => { setTimeout(_ => {
-            if (!this.running) {
-                this.running = true
-                this.loop()
-            }
-        }, 650) }
 
-        loop = () => {
-            this.char.draw()
-            this.pipes.draw()
+        maximize = () => {
+            setTimeout(_ => {
+                if (!this.running) {
+                    this.running = true
+                    this.loop()
+                }
+            }, 650)
+        }
 
+        owned = () => {
             if (!game.get("minigames").flappybird) {
                 this.hud.context.fillStyle = "#000"
                 this.hud.context.fillRect(
@@ -253,11 +252,23 @@ let Flappy = (() => {
                     this.hud.canvas.height / 2 + 25
                 )
 
-                return
+                return false
             }
 
-            this.char.physics()
-            this.pipes.physics()
+            return true
+        }
+
+        loop = () => {
+            let now = performance.now()
+            let delta = now - (this.last || now)
+
+            this.char.draw()
+            this.pipes.draw()
+
+            if (!this.owned()) return
+
+            this.char.physics(delta)
+            this.pipes.physics(delta)
 
             // Add points if player has cleared the left most pipe
             let left = this.pipes.pipes[0]
@@ -267,7 +278,7 @@ let Flappy = (() => {
             }
 
             // Check if player goes out of bounds
-            if (this.char.pos[1] > 850 || this.char.pos[1] < -200)
+            if (this.char.pos[1] > 750 || this.char.pos[1] < -100)
                 this.game_over = true
 
             // Check collision
@@ -288,11 +299,13 @@ let Flappy = (() => {
                 window.requestAnimationFrame(this.loop)
             else if (this.game_over)
                 game_over()
+
+            this.last = now
         }
     }
 
     function game_over() {
-        if (score >= 2) {
+        if (score >= 5) {
             // Give 10 minutes worth of gamergoo
             let gamergoo = game.get("rate") * (20 * 60)
 
@@ -303,7 +316,7 @@ let Flappy = (() => {
             gamergoo = Math.max(10000, gamergoo) || 10000
 
             // Multiplier based on score
-            gamergoo *= score / 8
+            gamergoo *= score / 12
 
             H.FP.hud.draw("loss")
             H.FP.hud.draw(`+${nice_format(Math.trunc(gamergoo))} gamergoo`, false,
