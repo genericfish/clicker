@@ -7,11 +7,13 @@
                     <summary>khoima clicker</summary>
                     <ul>
                         <li><a href="#" onclick="khoipedia('basics')"">basics</a></li>
+                        <li><a href="#" onclick="khoipedia('about')">about</a></li>
                     </ul>
                 </details>
                 <details open="">
                     <summary>minigames</summary>
                     <ul>
+                        <li><a href="#" onclick="khoipedia('flappykhoi')">flappykhoi</a></li>
                         <li><a href="#" onclick="khoipedia('khoisweeper')">khoisweeper</a></li>
                         <li><a href="#" onclick="khoipedia('shenzhen')">shenzhen solitaire</a></li>
                     </ul>
@@ -32,16 +34,32 @@
                 <p>Ensure to press <b>CTRL+SHIFT+R</b> to clear your cache when a new patch comes out.</p>
                 <button onclick="H.WM.exit(H.WM.get('khoipedia'))">close khoipedia</button>
             </div>
+            <div data-page="about" style="display: none;">
+                <h2>about</h2>
+                <p>Developed by <b>Brandon Nguyen</b> (<a href="https://github.com/barnden">github</a>)</p>
+                <p>Art by <b>Max Tran</b> (<a href="https://twitch.tv/khoima">twitch</a>)</p>
+                <p>The source code for this game is on <a href="https://github.com/genericfish/clicker">github</a></p>
+            </div>
+            <div data-page="flappykhoi" style="display: none;">
+                <h2>flappykhoi</h2>
+                <p><b>Objective</b></p>
+                <p>Pass as many hurdles as possible to win gamergoo. Jump using by clicking the screen.</p>
+                <p><b>REWARDS</b></p>
+                <p>The base reward for winning is 10 minutes of gamergoo capped at 10% of the gamergoo you currently own, or 10000 gamergoo, whichever is higher.</p>
+                <p>The minimum score to earn a reward is 2. The base reward is multiplied by your score divided by 8, ergo to get 100% base reward you must get 8 score.</p>
+                <p>There is no cap on the multiplier, and the 10% cap is on the base reward, before the score multiplier.</p>
+            </div>
             <div data-page="khoisweeper" style="display: none;">
                 <h2>khoisweeper</h2>
                 <p><b>REWARDS</b></p>
-                The base reward for winning is 20 minutes of gamergoo capped at 25% of the gamergoo you currently own, or 65000 gamergoo, whichever is higher.
+                <p>The base reward for winning is 20 minutes of gamergoo capped at 25% of the gamergoo you currently own, or 25000 gamergoo, whichever is higher.</p>
                 <ul>
                     <li><b>EASY</b> gives a 0.1x base reward</li>
                     <li><b>MEDIUM</b> gives the base reward</li>
                     <li><b>HARD</b> gives 2.25x base reward</li>
                 </ul>
                 <p>For maximal gain, keep in your bank 4800 times your gamergoo per second.</p>
+                <p>The cap of 25% of what you currently own is on the base reward, before the difficulty multiplier.</p>
             </div>
             <div data-page="shenzhen" style="display: none;">
                 <h2>shenzhen solitaire</h2>
@@ -72,7 +90,7 @@
                 <p>If there is not an open tray, i.e. there are no empty trays or all 3 trays are filled with cards that are not part of the 4 dragons revealed, the button will not be enabled, and the cards cannot be stacked.</p>
 
                 <p><b>REWARDS</b></p>
-                <p>The reward for winning is 20 minutes of gamergoo capped at 30% of the gamergoo you currently own, or 65000 gamergoo, whichever is higher.</p>
+                <p>The reward for winning is 25 minutes of gamergoo capped at 30% of the gamergoo you currently own, or 35000 gamergoo, whichever is higher.</p>
                 <p>For maximal gain, keep in your bank 5000 times your gamergoo per second.</p>
             </div>
         </div>

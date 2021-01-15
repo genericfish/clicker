@@ -286,16 +286,21 @@ const game = (() => {
     }
 
     const minigames = {
+        flappybird: {
+            name: "flappykhoi",
+            desc: "flap",
+            base_cost: 5000
+        },
         minesweeper: {
             name: "khoisweeper",
             desc: "it's minesweeper.",
-            base_cost: 5000
+            base_cost: 10000
         },
         shenzhen: {
             name: "shenzhen solitaire",
             desc: "not normal klondike or freecell.",
-            base_cost: 10000
-        }
+            base_cost: 15000
+        },
     }
 
     let shop_win = H.WM.get("shop")
