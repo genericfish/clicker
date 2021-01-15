@@ -3,7 +3,7 @@
         <input type="text" id="link" autocomplete="off" placeholder="https://www.youtube.com/watch?v=uUnguqPxzNU">
         <button onclick="set_video()">-></button>
     </div>
-    <!-- <iframe id="browser" src="https://www.youtube.com/embed/uUnguqPxzNU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe> -->
+    <iframe id="browser" src="https://www.youtube.com/embed/uUnguqPxzNU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>
     <script>
         function set_video() {
             let link = H.WM.get("firekhoi").get("link").value || "https://www.youtube.com/watch?v=dGQtL1l5i0Q"
