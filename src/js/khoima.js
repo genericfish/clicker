@@ -484,6 +484,9 @@ const game = (() => {
                     case "shenzhen":
                         H.SH.restart()
                         break
+                    case "flappybird":
+                        H.FP.restart()
+                        break
                 }
             }, 15)
         }

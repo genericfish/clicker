@@ -202,19 +202,22 @@ let Flappy = (() => {
             this.char.canvas.addEventListener("touchstart", this.mousedown)
         }
 
+        restart = () => {
+            this.hud.draw("score: 0", true, 10, 20)
+            this.pipes.reset()
+            this.char.reset()
+
+            score = 0
+
+            this.game_over = false
+            setTimeout(_ => this.loop(), 100)
+        }
+
         mousedown = () => {
-            if (this.game_over) {
-                this.hud.draw("score: 0", true, 10, 20)
-                this.pipes.reset()
-                this.char.reset()
-
-                score = 0
-
-                this.game_over = false
-                setTimeout(_ => this.loop(), 100)
-            } else {
+            if (this.game_over)
+                this.restart()
+            else
                 this.char.jump()
-            }
         }
         exit = () => { this.running = false }
         maximize = () => { setTimeout(_ => {
@@ -222,13 +225,41 @@ let Flappy = (() => {
                 this.running = true
                 this.loop()
             }
-        }, 1000) }
+        }, 650) }
 
         loop = () => {
             this.char.draw()
-            this.char.physics()
-
             this.pipes.draw()
+
+            if (!game.get("minigames").flappybird) {
+                this.hud.context.fillStyle = "#000"
+                this.hud.context.fillRect(
+                    0,
+                    this.hud.canvas.height / 2 - 40,
+                    this.hud.canvas.width,
+                    100
+                )
+
+                this.hud.context.strokeStyle = "#00f"
+                this.hud.context.lineWidth = 2
+                this.hud.context.strokeRect(
+                    0,
+                    this.hud.canvas.height / 2 - 40,
+                    this.hud.canvas.width,
+                    100
+                )
+
+                this.hud.context.fillStyle = "#0ff"
+                this.hud.draw("you must purchase this game from")
+                this.hud.draw("the shop for 5000 gamergoo", false,
+                    -1,
+                    this.hud.canvas.height / 2 + 25
+                )
+
+                return
+            }
+
+            this.char.physics()
             this.pipes.physics()
 
             // Add points if player has cleared the left most pipe
@@ -256,7 +287,6 @@ let Flappy = (() => {
                     this.char.pos[1] < left[1] - pipe_gap / 2
             }
 
-
             if (!this.game_over && this.running)
                 window.requestAnimationFrame(this.loop)
             else if (this.game_over)
@@ -278,10 +308,15 @@ let Flappy = (() => {
             // Multiplier based on score
             gamergoo *= score / 8
 
-            H.FP.hud.draw(`game over\n+${nice_format(Math.trunc(gamergoo))}`)
+            H.FP.hud.draw("win")
+            H.FP.hud.draw(`${nice_format(Math.trunc(gamergoo))} gamergoo`, false,
+                -1,
+                H.FP.hud.canvas.height / 2 + 25
+            )
 
             game.worker(["add", [gamergoo, true]])
-        }
+        } else
+            H.FP.hud.draw("loser.")
     }
 
     return _ => { H.FP = new Flappy() }
