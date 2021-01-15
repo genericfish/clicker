@@ -264,14 +264,14 @@ let Shenzhen = (_ => {
     function game_win() {
         if (H.SH.win) return
 
-        // Give 20 minutes worth of gamergoo
-        let gamergoo = game.get("rate") * (20 * 60)
+        // Give 25 minutes worth of gamergoo
+        let gamergoo = game.get("rate") * (25 * 60)
 
         // Capped at 30% of currently owned gamergoo
         if (gamergoo > (game.get("gamergoo") * .3)) gamergoo = game.get("gamergoo") * .3
 
-        // Regardless, give 65k gamergoo
-        gamergoo = Math.max(65000, gamergoo) || 65000
+        // Regardless, give 35k gamergoo
+        gamergoo = Math.max(35000, gamergoo) || 35000
 
         popup(`win ${nice_format(Math.trunc(gamergoo))} gamergoo`)
 
@@ -482,6 +482,7 @@ let Shenzhen = (_ => {
         collect(dragon, available) {
             let still_works = true
 
+            // FIXME: Actually make this check work
             this.dragons[dragon].forEach(cur => {
                 let col = this.columns[cur]
 

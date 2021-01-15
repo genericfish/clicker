@@ -129,8 +129,8 @@ let ms = (() => {
         // Capped at 25% of currently owned gamergoo
         if (gamergoo > (game.get("gamergoo") * .25)) gamergoo = game.get("gamergoo") * .25
 
-        // Regardless, give 65k gamergoo
-        gamergoo = Math.max(65000, gamergoo) || 65000
+        // Regardless, give 20k gamergoo
+        gamergoo = Math.max(20000, gamergoo) || 20000
 
         // Multiplier depending on difficulty
         //     Easy: 0.1x
