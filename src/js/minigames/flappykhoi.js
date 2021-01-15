@@ -81,9 +81,6 @@ let Flappy = (() => {
                 if (this.pos[2] >= -10)
                     this.status.WING_UP = false
 
-                if (this.pos[1] > 625)
-                    this.jump()
-
                 return true
             }
 
@@ -295,7 +292,7 @@ let Flappy = (() => {
     }
 
     function game_over() {
-        if (score > 2) {
+        if (score >= 2) {
             // Give 10 minutes worth of gamergoo
             let gamergoo = game.get("rate") * (20 * 60)
 
