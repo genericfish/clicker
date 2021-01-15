@@ -7,14 +7,15 @@ const H = {
 
 // Generate the windows for each "program"
 new App("khoipedia", 525, 200, "assets/images/buildings/minesweeper.png")
-new App("buildings", 1155, 5, "assets/images/buildings/autoclicker.png", "", 2)
+new App("buildings", -1, -1, "assets/images/buildings/autoclicker.png", "", 2)
     .window.win.style.minWidth = "495px"
 new App("khoima clicker", 100, 5, "assets/images/gameplay/khoima.png")
 new App("shop", 476, 5, "assets/images/buildings/water.png")
 new App("changelog", -1, -1, "assets/images/buildings/text.png", "", 2, H.WM.length, true)
 new App("firekhoi", -1, -1, "assets/images/buildings/firekhoi.png", "", 2, H.WM.length, true)
 new App("khoisweeper", -1, -1, "assets/images/buildings/minesweeper.png", "khoi sweeper", 2)
-new App("shenzhen solitaire", -1, -1, "assets/images/buildings/minesweeper.png", "", 2)
+new App("shenzhen solitaire", -1, -1, "assets/images/minigames/shenzhen/koi.png", "", 2)
+new App("flappykhoi", -1, -1, "assets/images/buildings/minesweeper.png", "", 2)
 
 new Icon("discord", null, "https://discord.com/assets/41484d92c876f76b20c7f746221e8151.svg", "window.open('https://discord.gg/ZTnCdcM', '_blank')")
 
@@ -40,5 +41,7 @@ function init() {
     H.KH.set_bind(["control", "shift", "z"], H.TM.toggle)
 
     Shenzhen()
+    Flappy()
+
     ms.generate(-1)
 }

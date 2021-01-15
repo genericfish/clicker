@@ -2,6 +2,14 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
+## Version 1.4.2
+15 January 2021 at 06:33 UTC
+- additions
+    - added new flappykhoi game
+- changes
+    - updated rewards for khoisweeper and shenzhen solitaire
+    - adjusted prices for khoisweeper and shenzhen solitaire
+
 ## Version 1.4.1
 13 January 2021 at 04:43 UTC
 - shenzhen solitaire
