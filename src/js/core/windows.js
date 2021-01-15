@@ -193,6 +193,8 @@ class WindowManager {
 
             if (child.id)
                 child.id = `${prefix}-${child.id}`
+            if (child.hasAttribute("for"))
+                child.setAttribute("for", prefix + '-' + child.getAttribute("for"))
         }
     }
 
