@@ -191,6 +191,9 @@ let Flappy = (() => {
             this.char.canvas.addEventListener("mousedown", this.mousedown)
             this.char.canvas.addEventListener("touchstart", this.mousedown)
 
+            this.debug = false
+            H.KH.set_bind(["shift","d"], _ => this.debug = !this.debug, this.win.id)
+
             this.last = performance.now()
         }
 
@@ -202,6 +205,8 @@ let Flappy = (() => {
             score = 0
 
             this.game_over = false
+            this.running = true
+
             setTimeout(_ => {
                 this.last = performance.now()
                 this.loop()
@@ -219,8 +224,9 @@ let Flappy = (() => {
 
         maximize = () => {
             setTimeout(_ => {
-                if (!this.running) {
+                if (!this.game_over && !this.running) {
                     this.running = true
+                    this.last = performance.now()
                     this.loop()
                 }
             }, 650)
@@ -265,7 +271,7 @@ let Flappy = (() => {
             this.char.draw()
             this.pipes.draw()
 
-            if (!this.owned()) return
+            if (!this.owned() || !this.running) return
 
             this.char.physics(delta)
             this.pipes.physics(delta)
@@ -278,27 +284,47 @@ let Flappy = (() => {
             }
 
             // Check if player goes out of bounds
-            if (this.char.pos[1] > 750 || this.char.pos[1] < -100)
+            if (this.char.pos[1] > 850 || this.char.pos[1] < -200)
                 this.game_over = true
 
             // Check collision
-            // * Player position is the centre of the character model
-            // * while pipe position in x axis is the left most point
-            // * and in the y axis the middle of the gap
             // Ignore player rotation in these calculations, and use
             // a static square around the center of the player model
-            if (left[0] < 78 && left[0] > 20) {
-                // Use 78 because player is centred at x=60, and
-                // player is drawn upto 18 pixels to the right.
+            if (left[0] < 96 && left[0] > 20) {
                 this.game_over |=
-                    this.char.pos[1] > left[1] + pipe_gap / 2 - 16||
+                    this.char.pos[1] > left[1] + pipe_gap / 2 - 16 ||
                     this.char.pos[1] < left[1] - pipe_gap / 2
             }
 
-            if (!this.game_over && this.running)
-                window.requestAnimationFrame(this.loop)
-            else if (this.game_over)
+            if (this.debug) {
+                this.hud.draw("score: " + score, true, 10, 20)
+                this.hud.draw(
+                    `x: ${this.char.pos[0].toFixed(2)}, y: ${this.char.pos[1].toFixed(2)}`,
+                    false,
+                    0, this.hud.canvas.height - 60)
+
+                    this.hud.draw(
+                    `pipe x: ${left[0].toFixed(2)}, pipe y: ${left[1].toFixed(2)}`,
+                    false,
+                    0, this.hud.canvas.height - 40)
+
+                    this.hud.draw(
+                        `${this.char.pos[1] > left[1] + pipe_gap / 2 - 16 ? "BELOW" :
+                        this.char.pos[1] < left[1] - pipe_gap / 2 ? "ABOVE" : "GOOD"}`,
+                        false,
+                        0, this.hud.canvas.height - 20
+                    )
+
+                this.char.context.resetTransform()
+                this.char.context.strokeStyle = "#00F"
+                this.char.context.lineWidth = 1
+
+                this.char.context.strokeRect(this.char.pos[0], this.char.pos[1], 36, 32)
+            }
+
+            if (this.game_over)
                 game_over()
+            else window.requestAnimationFrame(this.loop)
 
             this.last = now
         }
@@ -327,6 +353,8 @@ let Flappy = (() => {
             game.worker(["add", [gamergoo, true]])
         } else
             H.FP.hud.draw("loser.")
+
+        H.FP.running = false
     }
 
     return _ => { H.FP = new Flappy() }

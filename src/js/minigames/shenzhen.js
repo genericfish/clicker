@@ -459,36 +459,56 @@ let Shenzhen = (_ => {
                     ), MAX_INT
                 )
 
-                let button = H.WM.get("shenzhen solitaire").get("dragon-" + dragon)
+                for (let i of this.columns[i]) {
+                    let col = this.columns[i]
 
-                if (available != MAX_INT) {
-                    button.removeAttribute("disabled")
-                    button.onclick = _ => {
-                        button.setAttribute("disabled", "disable")
-                        this.collect(dragon, available)
+                    if (!col.last || col.last.number < 10 || col.last.color != dragon) {
+                        available = MAX_INT
+                        break
                     }
-                    button.ontouchstart = _ => {
-                        button.setAttribute("disabled", "disable")
-                        this.collect(dragon, available)
-                    }
-                } else {
-                    button.setAttribute("disabled", "disabled")
-                    button.onclick = null
-                    button.ontouchstart = null
                 }
+
+                this.update_buttons(dragon, available)
+            }
+        }
+
+        update_buttons(dragon, available) {
+            let button = H.WM.get("shenzhen solitaire").get("dragon-" + dragon)
+
+            if (available != MAX_INT) {
+                button.removeAttribute("disabled")
+
+                button.onclick = _ => {
+                    button.setAttribute("disabled", "disable")
+                    this.collect(dragon, available)
+                }
+
+                button.ontouchstart = e => {
+                    button.setAttribute("disabled", "disable")
+                    this.collect(dragon, available)
+
+                    e.stopPropagation()
+                    e.preventDefault()
+                    e.handled = true
+                }
+            } else {
+                button.setAttribute("disabled", "disabled")
+
+                button.onclick = null
+                button.ontouchstart = null
             }
         }
 
         collect(dragon, available) {
-            let still_works = true
+            let still_works = this.dragons[dragon].length == 4
 
-            // FIXME: Actually make this check work
             this.dragons[dragon].forEach(cur => {
                 let col = this.columns[cur]
 
-                if (!col.count) still_works = false
-                else if (col.last.color != dragon || (parseInt(col.last.number) || 0) < 10)
-                    still_works = false
+                still_works &=
+                    !!col.count &&
+                    col.last.color == dragon &&
+                    (parseInt(col.last.number) || 0) > 9
             })
 
             if (!still_works) return

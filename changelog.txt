@@ -2,6 +2,14 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
+## Version 1.4.2b
+- fixes
+    - fix bugs when flappykhoi maximizes
+        - first time opening the game no longer results in instant loss
+        - game no longer continues after game loss
+    - fix flappykhoi hitbox (no longer clip through pipe)
+    - made dragon buttons more reliable in shenzhen solitaire
+
 ## Version 1.4.2a
 - changes
     - changed rewards for flappykhoi
