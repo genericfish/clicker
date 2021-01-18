@@ -459,7 +459,7 @@ let Shenzhen = (_ => {
                     ), MAX_INT
                 )
 
-                for (let i of this.columns[i]) {
+                for (let i of cols) {
                     let col = this.columns[i]
 
                     if (!col.last || col.last.number < 10 || col.last.color != dragon) {
