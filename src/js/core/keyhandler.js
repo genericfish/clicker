@@ -33,8 +33,6 @@ class KeyHandler {
     check_binds() {
         for (let bind of Object.keys(this.binds))
             if (bind.split('+').reduce((acc, cur) => acc && this.keys.hasOwnProperty(cur), true)) {
-                console.log(this.keys)
-
                 if (this.binds[bind].hasOwnProperty(H.WM.focused.id))
                     this.binds[bind][H.WM.focused.id]()
 
