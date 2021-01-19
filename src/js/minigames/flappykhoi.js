@@ -1,9 +1,9 @@
 let Flappy = (() => {
     // Keep these variables out of class scope to make it slightly harder to cheat
     let score = 0,
-        gravity = 825,
-        divisor = 2,
-        pipe_speed = 100,
+        gravity = 1000,
+        divisor = 2.375,
+        pipe_speed = 160,
         pipe_gap = 120
 
     class Character {
@@ -16,6 +16,9 @@ let Flappy = (() => {
             this.canvas.height = 650
 
             this.context.fillStyle = "#0f0"
+
+            this.context.strokeStyle = "#F0F"
+            this.context.lineWidth = 1
 
             this.animations = {
                 default: [
@@ -71,7 +74,7 @@ let Flappy = (() => {
             this.pos[1] += this.velo * delta / 1000
 
             if (this.pos[2] < 55)
-                this.pos[2]++
+                this.pos[2] += 3/50 * delta
 
             if (this.pos[2] >= -37)
                 this.status.BLINK = false
@@ -107,9 +110,10 @@ let Flappy = (() => {
             this.pipes = [
                 // pos[0] represents left most point of pipe
                 // pos[1] represents center of gap in pipe
-                [350, random(100, 550)],
-                [650, random(100, 550)],
-                [950, random(100, 550)],
+                [300, random(100, 550)],
+                [535, random(100, 550)],
+                [770, random(100, 550)],
+                [1005, random(100, 550)],
             ]
 
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -133,9 +137,9 @@ let Flappy = (() => {
 
             this.pipes = this.pipes.filter(pipe => pipe[0] > -50)
 
-            if (this.pipes.length < 3)
+            if (this.pipes.length < 4)
                 this.pipes.push([
-                    this.pipes[this.pipes.length - 1][0] + 300,
+                    this.pipes[this.pipes.length - 1][0] + 235,
                     random(100, 550)
                 ])
         }
@@ -192,7 +196,12 @@ let Flappy = (() => {
             this.char.canvas.addEventListener("touchstart", this.mousedown)
 
             this.debug = false
-            H.KH.set_bind(["shift","d"], _ => this.debug = !this.debug, this.win.id)
+
+            H.KH.set_bind(["shift","d"],
+                _ => {
+                    this.debug = !this.debug
+                    this.draw_info()
+                }, this.win.id)
 
             this.last = performance.now()
         }
@@ -278,10 +287,8 @@ let Flappy = (() => {
 
             // Add points if player has cleared the left most pipe
             let left = this.pipes.pipes[0]
-            if (left[0] < 10 && left[2] == undefined) {
-                this.pipes.pipes[0].push(true)
-                this.hud.draw("score: " + ++score, true, 10, 20)
-            }
+            if (left[0] < 10 && left[2] == undefined)
+                this.pipes.pipes[0].push(++score)
 
             // Check if player goes out of bounds
             if (this.char.pos[1] > 850 || this.char.pos[1] < -200)
@@ -296,37 +303,39 @@ let Flappy = (() => {
                     this.char.pos[1] < left[1] - pipe_gap / 2
             }
 
-            if (this.debug) {
-                this.hud.draw("score: " + score, true, 10, 20)
-                this.hud.draw(
-                    `x: ${this.char.pos[0].toFixed(2)}, y: ${this.char.pos[1].toFixed(2)}`,
-                    false,
-                    0, this.hud.canvas.height - 60)
-
-                    this.hud.draw(
-                    `pipe x: ${left[0].toFixed(2)}, pipe y: ${left[1].toFixed(2)}`,
-                    false,
-                    0, this.hud.canvas.height - 40)
-
-                    this.hud.draw(
-                        `${this.char.pos[1] > left[1] + pipe_gap / 2 - 16 ? "BELOW" :
-                        this.char.pos[1] < left[1] - pipe_gap / 2 ? "ABOVE" : "GOOD"}`,
-                        false,
-                        0, this.hud.canvas.height - 20
-                    )
-
-                this.char.context.resetTransform()
-                this.char.context.strokeStyle = "#00F"
-                this.char.context.lineWidth = 1
-
-                this.char.context.strokeRect(this.char.pos[0], this.char.pos[1], 36, 32)
-            }
+            this.draw_info()
 
             if (this.game_over)
                 game_over()
             else window.requestAnimationFrame(this.loop)
 
             this.last = now
+        }
+
+        draw_info(left = this.pipes.pipes[0]) {
+            this.hud.draw("score: " + score, true, 10, 20)
+
+            if (!this.debug) return
+
+            this.hud.draw(
+                `x: ${this.char.pos[0].toFixed(2)}, y: ${this.char.pos[1].toFixed(2)}`,
+                false,
+                0, this.hud.canvas.height - 60)
+
+            this.hud.draw(
+            `pipe x: ${left[0].toFixed(2)}, pipe y: ${left[1].toFixed(2)}`,
+            false,
+            0, this.hud.canvas.height - 40)
+
+            this.hud.draw(
+                `${this.char.pos[1] > left[1] + pipe_gap / 2 - 16 ? "BELOW" :
+                this.char.pos[1] < left[1] - pipe_gap / 2 ? "ABOVE" : "GOOD"}`,
+                false,
+                        0, this.hud.canvas.height - 20
+                    )
+
+            this.char.context.resetTransform()
+            this.char.context.strokeRect(this.char.pos[0], this.char.pos[1], 36, 32)
         }
     }
 

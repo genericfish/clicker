@@ -38,6 +38,70 @@ const game = (() => {
         typeof(Worker) !== "undefined" ? msg => { game_worker.postMessage(msg) } :
         _ => {}
 
+    function shop_listing(parent, mode) {
+        let created = []
+        let obj = ""
+
+        switch (mode) {
+            case "towers":
+                obj = towers
+                break
+            case "minigames":
+                obj = minigames
+                break
+            default:
+                obj = towers
+                break
+        }
+
+        for (let item in obj) {
+            let listing = document.createElement("li")
+            let link = document.createElement("a")
+            let base = obj[item]
+
+            link.addEventListener("click", _ => {
+                shop.mode = mode
+
+                display.shop.header.innerHTML = string(`/shop/${mode}/header`, base.name)
+                display.shop.rate.innerHTML = string(`/shop/${mode}/rate`, base.base_rate)
+                display.shop.click.innerHTML = string(`/shop/${mode}/click`, base.base_click)
+
+                shop.active = item
+
+                display.shop.desc.innerHTML = base.hasOwnProperty("desc") ?
+                    string(`/shop/${mode}/desc`, base.desc) : ''
+
+                if (mode == "minigames") {
+                    display.shop.owned.innerHTML =
+                        string('/shop/minigames/owned')[+game[mode][shop.active]]
+                        .replace("%s", base.name)
+                    display.shop.producing.innerHTML = ''
+                } else {
+                    display.shop.owned.innerHTML =
+                        string('/shop/towers/owned', game[mode][shop.active][0])
+                    display.shop.producing.innerHTML =
+                        string(
+                            '/shop/towers/producing',
+                            nice_format(game[mode][shop.active][1].toFixed(2))
+                        )
+                }
+
+
+                postMessage(["update_costs", shop])
+            })
+
+            link.href = "#"
+            link.innerHTML = base.name
+
+            listing.appendChild(link)
+            parent.appendChild(listing)
+
+            created.push(listing)
+        }
+
+        return created
+    }
+
     const graphics = {
         bounce: (() => {
             return () => {
@@ -84,80 +148,11 @@ const game = (() => {
             return row
         },
         create_shop: () => {
-            for (let tower in towers) {
-                let listing = document.createElement("li")
-                let link = document.createElement("a")
+            let tower_listings = shop_listing(display.shop.listings, "towers")
+            shop_listing(display.shop.minigames, "minigames")
 
-                let eventHandler = tower => () => {
-                    shop.minigame = false
-
-                    display.shop.header.innerHTML =
-                        towers[tower].name + " stats"
-                    display.shop.rate.innerHTML =
-                        "gamergoo per second: +" + towers[tower].base_rate
-                    display.shop.click.innerHTML =
-                        "gamergoo per click: +" + towers[tower].base_click
-                    shop.active = tower
-
-                    if (towers[tower].hasOwnProperty("desc"))
-                        display.shop.desc.innerHTML = towers[tower].desc
-                    else
-                        display.shop.desc.innerHTML = ""
-
-                    display.shop.owned.innerHTML =
-                        game.towers[shop.active][0] + " currently owned"
-                    display.shop.producing.innerHTML =
-                        "producing " +
-                        nice_format(game.towers[shop.active][1].toFixed(2)) +
-                        " gamergoo per second"
-
-                    display.shop.select.style.visibility = null
-
-                    postMessage(["update_costs", shop])
-                }
-
-                link.addEventListener("click", eventHandler(tower))
-
-                if (tower == "autoclicker") link.click()
-
-                link.href = "#"
-                link.innerHTML = towers[tower].name
-                listing.appendChild(link)
-                display.shop.listings.appendChild(listing)
-            }
-
-            for (let minigame in minigames) {
-                let listing = document.createElement("li")
-                let link = document.createElement("a")
-
-                let eventHandler = minigame => () => {
-                    shop.minigame = true
-
-                    display.shop.header.innerHTML = minigames[minigame].name
-                    display.shop.desc.innerHTML = minigames[minigame].desc
-                    display.shop.rate.innerHTML = ""
-                    display.shop.click.innerHTML = ""
-
-                    shop.active = minigame
-
-                    display.shop.owned.innerHTML = game.minigames[minigame] ?
-                        "You already own " + minigames[minigame].name :
-                        "Purchase now!"
-                    display.shop.producing.innerHTML = ""
-
-                    display.shop.select.style.visibility = "hidden"
-
-                    postMessage(["update_costs", shop])
-                }
-
-                link.addEventListener("click", eventHandler(minigame))
-
-                link.href = "#"
-                link.innerHTML = minigames[minigame].name
-                listing.appendChild(link)
-                display.shop.minigames.appendChild(listing)
-            }
-
+            // Click autoclicker link to ensure something is visible on page load
+            tower_listings[0].children[0].click()
             display.shop.radio[0].click()
         },
         update_buildings: () => {
@@ -370,7 +365,7 @@ const game = (() => {
         active_amount: 1,
         active_cost: 1,
         active_refund: 1,
-        minigame: false
+        mode: "towers"
     }
 
     const functions = {
@@ -394,7 +389,7 @@ const game = (() => {
                 switch (message) {
                     case "buttons":
 
-                        if (shop.minigame) {
+                        if (shop.mode == "minigames") {
                             if (game.minigames[shop.active] || shop.active_cost > game.gamergoo)
                                 display.shop.buy.setAttribute("disabled", "disabled")
                             else
@@ -413,7 +408,7 @@ const game = (() => {
                     case "listings":
                         graphics.update_buildings()
 
-                        if (shop.minigame) {
+                        if (shop.mode == "minigames") {
                             display.shop.owned.innerHTML = game.minigames[shop.active] ?
                                 "You already own " + minigames[shop.active].name :
                                 "Purchase now!"
@@ -430,7 +425,7 @@ const game = (() => {
                     case "rate":
                         display.rate.innerHTML = nice_format(data[1]) + " gamergoo per second"
 
-                        if (!shop.minigame)
+                        if (shop.mode != "minigames")
                             display.shop.producing.innerHTML =
                                 nice_format(game.towers[shop.active][1].toFixed(2))
                         break
@@ -441,7 +436,7 @@ const game = (() => {
                         else
                             display.shop.buy.removeAttribute("disabled")
 
-                        if (shop.minigame) {
+                        if (shop.mode == "minigames") {
                             display.shop.refundcontainer.style.visibility = "hidden"
                         } else if (shop.active_amount > game.towers[shop.active][0]) {
                             display.shop.sell.setAttribute("disabled", "disabled")

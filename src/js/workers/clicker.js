@@ -40,7 +40,7 @@ let game = (() => {
     }
 
     function update_costs() {
-        if (shop.minigame) {
+        if (shop.mode == "minigames") {
             let minigame = minigames[shop.active]
 
             shop.active_cost = parseInt(minigame.base_cost)
@@ -186,7 +186,7 @@ let game = (() => {
 
             shop = data[1]
 
-            if (shop.minigame) {
+            if (shop.mode == "minigames") {
                 if (action != "buy") return
 
                 if (!game.minigames[shop.active] && game.gamergoo >= shop.active_cost) {
