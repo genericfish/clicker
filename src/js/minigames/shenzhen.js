@@ -1,4 +1,6 @@
 let Shenzhen = (_ => {
+    let fast = false
+
     class Card {
         constructor (color, number, container) {
             this.color = color
@@ -79,14 +81,14 @@ let Shenzhen = (_ => {
             return false
         }
 
-        slide(x, y, z) {
+        slide = (x, y, z) => {
             let xn = x - this.card.offsetLeft
             let yn = y - this.card.offsetTop
 
             if (!xn && !yn) return this.z = z
 
             this.card.style.transform = `translate(${xn}px,${yn}px)`
-            this.card.style.transition = "transform .15s ease"
+            this.card.style.transition = `transform ${.15 * (fast ? .5 : 1)}s ease`
 
             setTimeout(_ => {
                 this.card.style.transform = null
@@ -95,7 +97,7 @@ let Shenzhen = (_ => {
 
                 this.x = x
                 this.y = y
-            }, 160)
+            }, (fast ? .5 : 1) * 160)
         }
 
         generate_card() {
@@ -262,7 +264,7 @@ let Shenzhen = (_ => {
     }
 
     function game_win() {
-        if (H.SH.win) return
+        if (H.SH.won) return
 
         // Give 25 minutes worth of gamergoo
         let gamergoo = game.get("rate") * (25 * 60)
@@ -276,7 +278,7 @@ let Shenzhen = (_ => {
         popup(`win ${nice_format(Math.trunc(gamergoo))} gamergoo`)
 
         game.worker(["add", [gamergoo, true]])
-        H.SH.win = true
+        H.SH.won = true
     }
 
     function purchase() { popup("you must purchase this game from the shop for 15000 gamergoo") }
@@ -323,6 +325,11 @@ let Shenzhen = (_ => {
             this.win.body.parentElement.style.background = "#028A0F"
 
             if (this.win.s == 0) this.restart()
+
+            this.win.get("fast").addEventListener("change", e => fast = e.target.checked)
+            this.win.get("colorblind").addEventListener("change", e =>
+                this.colorblind = e.target.checked
+            )
         }
 
         maximize_hook = _ => {
@@ -429,8 +436,7 @@ let Shenzhen = (_ => {
                         for (let bin of bins) {
                             if (bin.verify(last)) {
                                 last.draggable = false
-                                setTimeout(_ => last.move(bin), 165)
-
+                                setTimeout(_ => last.move(bin), ((fast ? .5 : 1) * 160) + 5)
                                 return
                             }
                         }
@@ -531,7 +537,7 @@ let Shenzhen = (_ => {
                     popup.remove()
 
             this.cards = []
-            this.win = false
+            this.won = false
 
             if (this.columns)
                 this.columns.forEach(col => col.element.remove())
@@ -545,6 +551,18 @@ let Shenzhen = (_ => {
             this.generate = false
 
             this.check()
+        }
+
+        set colorblind(v) {
+            if (v) {
+                this.board.classList.add("colorblind")
+                H.WM.get("shenzhen solitaire").get("dragon-red").innerHTML = "BLU"
+                H.WM.get("shenzhen solitaire").get("dragon-green").innerHTML = "YEL"
+            } else {
+                this.board.classList.remove("colorblind")
+                H.WM.get("shenzhen solitaire").get("dragon-red").innerHTML = "RED"
+                H.WM.get("shenzhen solitaire").get("dragon-green").innerHTML = "GRN"
+            }
         }
     }
 

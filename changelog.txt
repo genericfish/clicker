@@ -2,6 +2,14 @@
 
 ## Report bugs to https://github.com/genericfish/clicker/issues
 
+## Version 1.4.3
+19 January 2021 at 21:39 UTC
+- additions
+    - "fast animations" option for shenzhen
+    - "red/green colorblind" option for shenzhen
+- changes
+    - updated physics for flappykhoi
+
 ## Version 1.4.2b
 - fixes
     - fix bugs when flappykhoi maximizes
