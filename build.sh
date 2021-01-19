@@ -20,14 +20,15 @@ fi
 if [ -d "./${src}/js" ] && [ -d ./dist/assets/js ]; then
     touch ./dist/assets/js/game.js
 
-    cmd="${minify} ./${src}/js/core/random.js ./${src}/js/core/selection.js\
-    ./${src}/js/core/desktop.js ./${src}/js/core/theme.js  ./${src}/js/core/draggable.js\
-    ./${src}/js/core/keyhandler.js ./${src}/js/core/windows.js ./${src}/js/core/core.js\
-    ./${src}/js/khoima.js ./${src}/js/minigames/"*.js
+    core=("./${src}/js/core/"*.js)
+    minigames=("./${src}/js/minigames/"*.js)
+    cmd="${minify} ${core[@]} ./${src}/js/init.js ./${src}/js/khoima.js ${minigames[@]}"
 
     eval "${cmd} > ./dist/assets/js/game.js"
     echo "Minified all non-worker JS files to ./dist/assets/js/game.js"
     unset cmd
+    unset core
+    unset minigames
 
     for f in "./${src}/js/workers/"*.js; do
         touch "./dist/assets/js/workers/${f##*/}"
