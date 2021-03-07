@@ -45,8 +45,8 @@ if [ -d ./src/styles ] && [ -d ./dist/assets ] && [ -d ./src/templates ]; then
     touch ./dist/assets/clicker.css
     touch ./dist/index.html
 
-    eval "${lessc} ./src/styles/clicker.less | ${minify} --css > ./dist/assets/clicker.css"
-    echo "Compiled ./src/styles/clicker.less and minified to ./dist/assets/clicker.css"
+    eval "${lessc} ./src/styles/core.less | ${minify} --css > ./dist/assets/clicker.css"
+    echo "Compiled ./src/styles/core.less and minified to ./dist/assets/clicker.css"
 
     eval "cat " ./src/templates/*.html " |\
         sed -e '/<!-- o\/ templates here -->/{r /dev/stdin' -e 'd;}' ./src/index.html |\
