@@ -23,6 +23,8 @@ class Selection {
     }
 
     mousedown = e => {
+        if (e.button !== 0)
+            return;
         this.create_selection(e.clientX, e.clientY)
         this.initial = [e.clientX, e.clientY]
 
