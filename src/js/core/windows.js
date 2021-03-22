@@ -7,49 +7,36 @@ class WindowManager {
         this.hooks = { exit: {}, minimize: {}, maximize: {}, focus: {}, load: {} }
     }
 
-    add(win) { this.windows[win.id] = win }
-
-    exit(e) {
+    update_window_state(e, state, hook_name) {
         let win = this.decode(e)
 
-        if (this.windows[win].s == 2) return
+        if (this.windows[win].s == state)
+            return
 
-        this.execute_hooks("exit", win)
-        this.windows[win].exit()
-        this.save()
-    }
-
-    minimize(e) {
-        let win = this.decode(e)
-
-        if (this.windows[win].s == 1) return
-
-        this.execute_hooks("minimize", win)
-        this.windows[win].minimize()
-        this.save()
-    }
-
-    maximize(e) {
-        let win = this.decode(e)
-
-        if (this.windows[win].s == 0) return
-
-        this.execute_hooks("maximize", win)
+        this.execute_hooks(hook_name, win)
         this.windows[win].maximize()
         this.focus(win)
         this.save()
     }
 
+    add(win) { this.windows[win.id] = win }
+
+    exit(e) { this.update_window_state(e, 2, "exit") }
+
+    minimize(e) { this.update_window_state(e, 1, "minimize") }
+
+    maximize(e) { this.update_window_state(e, 0, "maximize") }
+
     add_hook(event, win, cb) {
-        if (this.hooks.hasOwnProperty(event))
-            if (!this.hooks[event].hasOwnProperty(win)) this.hooks[event][win] = [cb]
-            else this.hooks[event][win].push(cb)
+        if (this.get_hooks(event, win).length)
+            this.hooks[event][win].push(cb)
+        else
+            this.hooks[event][win] = [cb]
     }
 
     remove_hook(event, win, cb) {
-        if (this.hooks.hasOwnProperty(event) && this.hooks[event].hasOwnProperty(win))
-            if (this.hooks[event][win].includes(cb))
-                this.hooks[event][win].splice(this.hooks[event][win].indexOf(cb), 1)
+        if (this.get_hooks(event, win).length)
+            this.hooks[event][win].splice(this.hooks[event][win].indexOf(cb), 1)
     }
 
     get_hooks(event, win) {
@@ -62,7 +49,8 @@ class WindowManager {
     execute_hooks(event, win, propagate = true) {
         let hooks = this.get_hooks(event, win)
 
-        if (!hooks.length) return
+        if (!hooks.length)
+            return
 
         for (let hook of hooks)
             if (!(hook() || propagate))
@@ -71,8 +59,10 @@ class WindowManager {
 
     decode(e) {
         let id = e
+
         if (e instanceof Element)
             id = e.parentElement.parentElement.parentElement.getAttribute("data-window")
+
         if (e instanceof Window)
             id = e.id
 
@@ -80,27 +70,34 @@ class WindowManager {
     }
 
     focus(w) {
-        if (w instanceof Window) w = w.id
+        if (w instanceof Window)
+            w = w.id
 
         this.windows[w].focus()
 
-        if (this.windows[w].z == this.length) return
+        if (this.windows[w].z == this.length)
+            return
 
         this.execute_hooks("focus", w)
 
         this.windows[w].z = this.length
 
         for (let [id, win] of Object.entries(this.windows)) {
-            if (id == w) continue
+            if (id == w)
+                continue
 
-            if (win.z > 1) --win.z
+            if (win.z > 1)
+                --win.z
+
             win.unfocus()
         }
     }
 
     save() {
         let s = {}
-        for (let [id,w] of this.entries) s[id] = w.state
+
+        for (let [id,w] of this.entries)
+            s[id] = w.state
 
         this.data = s
     }
@@ -112,7 +109,8 @@ class WindowManager {
         if (!data.hasOwnProperty("version") || data.version != this._wm_ver)
             this.save()
 
-        if (!data.hasOwnProperty(w)) return
+        if (!data.hasOwnProperty(w))
+            return
 
         this.windows[w].state = data[w]
     }
@@ -121,15 +119,19 @@ class WindowManager {
         if (v === null) return null
 
         if (typeof v === "number")
-            if (v == -1){
+            if (v == -1) {
                 for (let [_,w] of this.entries)
                     if (w.z == this.length)
                         return w
 
                 return null
-            } else return (this.length < v || v < 0) ? null : this.entries[v][1]
+            } else if (v >= 0 && this.length >= v)
+                return this.entries[v][1]
+            else
+                return null
 
-        if (this.windows.hasOwnProperty(v)) return v
+        if (this.windows.hasOwnProperty(v))
+            return v
 
         let b64 = window.btoa(v)
         return this.windows.hasOwnProperty(b64) ? this.windows[b64] : null
@@ -143,11 +145,14 @@ class WindowManager {
     }
 
     load_template(e) {
-        if (!(e instanceof Element)) return
+        if (!(e instanceof Element))
+            return
+
         let win = this.get(e.getAttribute("data-window"))
         let prefix = null
 
-        if (win == null) return
+        if (win == null)
+            return
 
         // Clone template content into window body
         win.appendChild(e.content.cloneNode(true))
@@ -171,7 +176,8 @@ class WindowManager {
                 case "id":
                     win.body.setAttribute(attr, val)
                     break
-                default: break
+                default:
+                    break
             }
         }
 
@@ -199,9 +205,11 @@ class WindowManager {
     }
 
     get entries() { return Object.entries(this.windows)}
+
     get length() { return this.entries.length }
+
     get focused() {
-        for (let [_,w] of this.entries)
+        for (let [_, w] of this.entries)
             if (w.z == this.length)
                 return w
 
@@ -215,7 +223,8 @@ class WindowManager {
     }
 
     get data() {
-        if (this._data_cache !== undefined && this._data_cache !== null) return this._data_cache
+        if (this._data_cache !== undefined && this._data_cache !== null)
+            return this._data_cache
         this._data_cache = JSON.parse(window.atob(window.localStorage["windows2"] || "e30="))
 
         return this._data_cache
@@ -230,12 +239,7 @@ class Window {
         this.id = window.btoa(title)
 
         this.create_window()
-
-        if (x == -1 || y == -1) ({x: this.x, y: this.y} = H.WM.generate())
-        else {
-            this.x = x
-            this.y = y
-        }
+        ;({x: this.x, y: this.y} = (x == -1 || y == -1) ? H.WM.generate() : {x: x, y: y})
 
         this.z = z
         this.s = s
@@ -244,20 +248,20 @@ class Window {
 
         H.WM.load(this)
 
-        this.win.addEventListener("mousedown", _ => { H.WM.focus(this) })
-        this.win.addEventListener("touchstart", _ => { H.WM.focus(this) })
+        this.win.addEventListener("mousedown", _ => H.WM.focus(this))
+        this.win.addEventListener("touchstart", _ => H.WM.focus(this))
 
         if (iframe) {
             // Focus event on window set pointerEvents to "none", but we want "auto" if we
             // are dragging, use timeout.
             this.drag.add_hook("mousedown", _ => {
-                setTimeout(_=>{ this.overlay.style.pointerEvents = "auto" }, 1)
+                setTimeout(_ => this.overlay.style.pointerEvents = "auto", 1)
             })
             this.drag.add_hook("mouseup", _ => {
                 this.overlay.style.pointerEvents = "none"
                 H.WM.save()
             })
-        } else this.drag.add_hook("mouseup", _ => { H.WM.save() })
+        } else this.drag.add_hook("mouseup", _ => H.WM.save())
     }
 
     exit() {
@@ -283,11 +287,15 @@ class Window {
     }
 
     focus() {
-        if (this.iframe) this.overlay.style.pointerEvents = "none"
-        this.win.classList.add("focused")
+        if (this.iframe)
+            this.overlay.style.pointerEvents = "none"
+
+            this.win.classList.add("focused")
     }
     unfocus() {
-        if (this.iframe) this.overlay.style.pointerEvents = "auto"
+        if (this.iframe)
+            this.overlay.style.pointerEvents = "auto"
+
         this.win.classList.remove("focused")
     }
 
@@ -351,14 +359,14 @@ class Window {
         document.getElementById("windows").appendChild(win)
 
         this.win = win
-
         this.add_overlay()
     }
 
     add_overlay() {
         // Invisible div that overlays entire window body
         // Workaround for focusing cross origin iframes
-        if (!this.iframe) return
+        if (!this.iframe)
+            return
 
         let overlay = document.createElement("div")
         overlay.classList.add("ifoverlay")
@@ -385,9 +393,12 @@ class Window {
     set y(v) { this.win.style.top = v + "px" }
     set z(v) { this.win.style.zIndex = v }
     set s(v) {
-        if (v == 0) this.maximize()
-        else if (v == 1) this.minimize()
-        else if (v == 2) this.exit()
+        if (v == 0)
+            this.maximize()
+        else if (v == 1)
+            this.minimize()
+        else if (v == 2)
+            this.exit()
 
         this._state = v
     }
