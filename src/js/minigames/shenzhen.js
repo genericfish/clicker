@@ -102,38 +102,56 @@ let Shenzhen = (_ => {
 
         generate_card() {
             let card = document.createElement("div")
-            this.card = card
+            let drag = new Draggable(card)
 
             card.classList.add("card")
             card.classList.add(this.color)
             card.classList.add("card-" + this.number)
 
-            this.drag = new Draggable(card)
-
             if (this.container)
-                this.drag.container = this.container
+                drag.container = this.container
 
-            this.drag.add_hook("mouseup", _ => {
-                if (!this.reattach()) {
-                    this.slide(...this.initial, this.focus)
+            drag.add_hook("mouseup", _ => {
+                if (this.reattach())
+                    return false
 
-                    if (this.children.length)
-                        this.children.forEach(child => child.slide(...child.initial, child.focus))
-                }
+                this.slide(...this.initial, this.focus)
+
+                if (this.children.length)
+                    this.children.forEach(
+                        child => child.slide(...child.initial, child.fous)
+                    )
+
+                return false
             })
 
-            // very bad abuse of syntax
-            this.drag.add_hook("mousedown", _ => !this.draggable || !(++this.z || 1) || !(!this.children.length || this.children.forEach(child => ++child.z) || 1) )
+            drag.add_hook("mousedown", _ => {
+                if (!this.draggable)
+                    return true
 
-            this.drag.add_hook("mousemove", _ => {
-                if (!this.children.length) return
+                this.z++
+
+                if (this.children.length)
+                    this.children.forEach(child => child.z++)
+
+                return false
+            })
+
+            drag.add_hook("mousemove", _ => {
+                if (!this.children.length)
+                    return false
 
                 this.children.forEach((child, i) => {
                     child.x = this.x
                     child.y = this.y + 28 * (i + 1)
                     child.z = this.z
                 })
+
+                return false
             })
+
+            this.drag = drag
+            this.card = card
         }
 
         set x(v) { this.card.style.left = v + "px" }
@@ -193,42 +211,55 @@ let Shenzhen = (_ => {
         }
 
         detect() {
-            // detect whether cards that are not last in column
-            // should be able to move
-
             if (this.count <= 1) return
 
             for (let i = this.count - 1; i > 0; i--) {
-                if (this.verify(this.cards[i], this.cards[i - 1]))
-                    this.cards[i - 1].draggable = true
-                else
+                if (!this.verify(this.cards[i], this.cards[i - 1]))
                     break
+
+                this.cards[i - 1].draggable = true
             }
         }
 
-        verify(v, n) {
-            n = n || this.last
+        verify(v, n = this.last) {
+            if (!this.count)
+                return true
 
-            return !this.count || this.count &&
-                this.rules[v.color] != n.color &&
-                !(this.rules[n.number] || []).includes(v.number) &&
-                !(this.rules[n.number] || []).includes("*") &&
-                (parseInt(v.number) || MAX_INT) == (parseInt(n.number) || MAX_INT) - 1
+            let state = true
+
+            if (this.rules[n.number]) {
+                state &= !this.rules[n.number].includes(v.number)
+                state &= !this.rules[n.number].includes("*")
+            }
+
+            state &= this.rules[v.color] != n.color
+            state &= (parseInt(v.number) || MAX_INT) == (parseInt(n.number) || MAX_INT) - 1
+
+            return state
         }
 
         get count() { return this.cards.length }
-        get last() { return this.cards[this.count - 1] }
+        get last() { return this.count ? this.cards[this.count - 1] : undefined }
     }
 
     class Tray extends Column {
-        constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
+        constructor (id, focus, drag, lift, check) {
+            super(id, {}, focus, drag, lift, check)
+        }
 
-        add(v, move, offset_x = 0, offset_y = 0) { super.add(v, move, offset_x, -165 + offset_y) }
-        verify(v) { return !this.count && !v.children.length }
+        add(v, move, offset_x = 0, offset_y = 0) {
+            super.add(v, move, offset_x, -165 + offset_y)
+        }
+
+        verify(v) {
+            return !(this.count + v.children.length)
+        }
     }
 
     class Bin extends Column {
-        constructor (id, focus, drag, lift, check) { super(id, {}, focus, drag, lift, check) }
+        constructor (id, focus, drag, lift, check) {
+            super(id, {}, focus, drag, lift, check)
+        }
 
         add(v, move, offset_x = 0, offset_y = 0) {
             super.add(v, move, offset_x, -165 - this.count * 28 + offset_y)
@@ -238,11 +269,12 @@ let Shenzhen = (_ => {
         verify(v) {
             let num = parseInt(v.number) || MAX_INT
 
-            if (num > 9 || v.children.length) return false
+            if (num > 9 || v.children.length)
+                return false
 
             if (this.count)
                 return this.last.color == v.color &&
-                        (parseInt(this.last.number) || MAX_INT) == (num - 1)
+                       (parseInt(this.last.number) || MAX_INT) == (num - 1)
             else
                 return num == 1
         }
@@ -260,7 +292,9 @@ let Shenzhen = (_ => {
             v.drag.remove()
         }
 
-        verify(v) { return v.number == 'f' }
+        verify(v) {
+            return v.number == 'f'
+        }
     }
 
     function game_win() {
@@ -413,25 +447,24 @@ let Shenzhen = (_ => {
                     let bins = this.columns.slice(12, 15)
                     let min = bins.reduce(
                         (acc, cur) =>
-                            Math.min(
-                                acc,
-                                cur.count ? (parseInt(cur.last.number) || MAX_INT) : 0
-                            )
+                            Math.min(acc, cur.last ? (parseInt(cur.last.number) || MAX_INT) : 0)
                     , MAX_INT)
                     let last = col.last
 
                     // If we move a card, we stop execution of the function.
                     // On move, the remove function will be called, which
                     // calls this function again.
-
-                    if (last.number > 9) dragons[last.color].push(i)
+                    if (last.number > 9)
+                        dragons[last.color].push(i)
 
                     // Automatically move flower card to flower bin
-                    if (last.number == 'f')
-                        return last.move(this.columns[11])
+                    if (last.number == 'f'){
+                        last.move(this.columns[11])
+                        return
+                    }
 
-                    // Always move a 1 or 2 to a bin, or whenever the current card is
-                    // one above the minimum of all 3 bins (where empty bins are 0)
+                    // Always move a 1 or 2 to a bin, or whenever the
+                    // current card is one above the minimum of all 3 bins
                     if (last.number <= 2 || last.number == min + 1)
                         for (let bin of bins) {
                             if (bin.verify(last)) {
@@ -511,13 +544,13 @@ let Shenzhen = (_ => {
             this.dragons[dragon].forEach(cur => {
                 let col = this.columns[cur]
 
-                still_works &=
-                    !!col.count &&
+                still_works &&= !col.count &&
                     col.last.color == dragon &&
                     (parseInt(col.last.number) || 0) > 9
             })
 
-            if (!still_works) return
+            if (!still_works)
+                return
 
             for (let i in this.dragons[dragon]) {
                 let card = this.columns[this.dragons[dragon][i]].last
