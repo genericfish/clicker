@@ -25,9 +25,21 @@ class KeyHandler {
 
         keys = keys.replace(/\s/g,'')
 
+        if (this.binds.hasOwnProperty(keys))
+            console.log("Overwriting keybind:", keys)
+
         this.binds[keys] = { [win]: action }
 
         console.log(`[KeyHandler] Added bind "${keys}" for window "${win}"`)
+    }
+
+    unset_bind(keys) {
+        if (!this.binds.hasOwnProperty(keys))
+            return
+
+        console.log("Unsetting keybind:", keys)
+
+        delete this.binds[keys]
     }
 
     check_binds() {
