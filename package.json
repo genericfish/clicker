@@ -4,12 +4,12 @@
     "description": "Live game: [generic.fish/clicker](https://generic.fish/clicker)",
     "main": "index.js",
     "devDependencies": {
-        "@babel/cli": "^7.13.0",
-        "@babel/core": "^7.13.8",
+        "@babel/cli": "^7.13.10",
+        "@babel/core": "^7.13.10",
         "@babel/plugin-proposal-class-properties": "^7.13.0",
-        "@babel/preset-env": "^7.13.9",
+        "@babel/preset-env": "^7.13.12",
         "lessc": "^1.0.2",
-        "minify": "^6.0.1"
+        "minify": "^7.0.1"
     },
     "scripts": {},
     "repository": {
