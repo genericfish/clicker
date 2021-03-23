@@ -14,7 +14,7 @@ class WindowManager {
             return
 
         this.execute_hooks(hook_name, win)
-        this.windows[win].maximize()
+        this.windows[win].s = state
         this.focus(win)
         this.save()
     }
