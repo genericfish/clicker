@@ -47,29 +47,18 @@ let ms = (() => {
     function get_neighbours(i) {
         // Get the 8 neighbouring squares
         let adj = [
-            i - COLS - 1,
-            i - COLS,
-            i - COLS + 1,
-            i - 1,
-            i + 1,
-            i + COLS - 1,
-            i + COLS,
-            i + COLS + 1
+            i - COLS - 1, i - COLS, i - COLS + 1,
+            i - 1,      /* i */     i + 1,
+            i + COLS - 1, i + COLS, i + COLS + 1
         // Remove if out of bounds
         ].map(x => x < 0 ? null : x >= (ROWS * COLS) ? null : x)
 
         // More conditionals to check if out of wrapping to new line
-        if (i % COLS <= 0) {
-            adj[0] = null
-            adj[3] = null
-            adj[5] = null
-        }
+        if (i % COLS <= 0)
+            adj[0] = adj[3] = adj[5] = null
 
-        if (i % COLS == COLS - 1) {
-            adj[2] = null
-            adj[4] = null
-            adj[7] = null
-        }
+        if (i % COLS == COLS - 1)
+            adj[2] = adj[4] = adj[7] = null
 
         return adj
     }
@@ -85,15 +74,15 @@ let ms = (() => {
 
         if (n >= 0 && n <= COLS * ROWS) {
             let adj = get_neighbours(n)
+
             for (let mine = 0; mine < MAX_MINE; mine++) {
-                let spot = undefined
-    
-                while (spot == undefined ||
-                        adj.includes(spot) ||   // Ignore the 8 adjacent
-                        spot == n ||            // Ignore the clicked spot
-                        ms.mines.includes(spot) // Ignore spots that are already mines
-                ) spot = random(COLS * ROWS - 1)
-    
+                let spot = random(COLS * ROWS - 1)
+
+                // Do not place a mine in the 8 adjacent squares,
+                // the clicked spot, and the spots already mines.
+                while (adj.includes(spot) || spot == n || ms.mines.includes(spot))
+                    spot = random(COLS * ROWS - 1)
+
                 ms.board[spot] = -1
                 ms.mines.push(spot)
             }
@@ -107,12 +96,8 @@ let ms = (() => {
         ms.over = true
 
         for (let mine of ms.mines) {
-            try {
-                display[mine].style.color = "#f00"
-                display[mine].innerHTML = "X"
-            } catch (e) {
-                console.log("error when attempting to access display: ", mine, display)
-            }
+            display[mine].style.color = "#f00"
+            display[mine].innerHTML = "X"
         }
     }
 
@@ -136,8 +121,10 @@ let ms = (() => {
         //     Easy: 0.1x
         //     Medium: normal
         //     Hard: 2.25x
-        if (difficulty == 0) gamergoo *= .1
-        else if (difficulty == 2) gamergoo *= 2.25
+        if (difficulty == 0)
+            gamergoo *= .1
+        else if (difficulty == 2)
+            gamergoo *= 2.25
 
         game.worker(["add", [gamergoo, true]])
 
@@ -153,12 +140,14 @@ let ms = (() => {
         return e => {
             e.preventDefault()
 
-            if (ms.over || ms.board[i] == -2) return
+            if (ms.over || ms.board[i] == -2)
+                return
 
             let html = display[i].innerHTML
 
             if (html.charCodeAt(0) != 9873) {
-                if (ms.flags <= 0) return
+                if (ms.flags <= 0)
+                    return
 
                 html = "&#x2691;"
                 display[i].style.color = "#f00"
@@ -175,14 +164,20 @@ let ms = (() => {
     }
 
     function reveal(i) {
-        if (i == null) return
-        if (!ms.mines.length) generate(i)
+        if (i == null)
+            return
+
+        if (!ms.mines.length)
+            generate(i)
 
         let val = ms.board[i]
         let element = board.children[Math.floor(i / COLS)].children[i % COLS]
 
-        if (val == -2 || element.innerHTML.charCodeAt(0) == 9873) return
-        if (ms.board[i] == -1) return game_over()
+        if (val == -2 || element.innerHTML.charCodeAt(0) == 9873)
+            return
+
+        if (ms.board[i] == -1)
+            return game_over()
 
         if (val >= 0) { 
             element.innerHTML = val == 0 ? "&nbsp;" : val
@@ -192,23 +187,22 @@ let ms = (() => {
             ms.board[i] = -2
         }
 
-        if (ms.visible == MAX_MINE) return game_win()
+        if (ms.visible == MAX_MINE)
+            return game_win()
 
-        if (val != 0) return
-
-        let adjacency = get_neighbours(i)
-
-        for (let adj of adjacency)
-            reveal(adj)
+        if (!val)
+            for (let adj of get_neighbours(i))
+                reveal(adj)
     }
 
     function press(i) {
         return () => {
             if (!ms.over) {
-                if (display[i].innerHTML != "&#x2691;") reveal(i)
+                if (display[i].innerHTML != "&#x2691;")
+                    reveal(i)
 
                 if (timer == undefined)
-                    timer = setInterval(() => {
+                    timer = setInterval(_ => {
                         ms.time++
                         time.innerHTML = ms.time
                     }, 1000)
@@ -217,13 +211,13 @@ let ms = (() => {
     }
 
     function setup() {
-        if (ms.mines == undefined) return
+        if (ms.mines == undefined)
+            return
 
-        let make = !display.length
-        let row = undefined
         let win = mswin.get("winner")
 
-        if (win) win.remove()
+        if (win)
+            win.remove()
 
         if (!game.get("minigames").minesweeper) {
             mswin.get("ms-stats").style.visibility = "hidden"
@@ -233,15 +227,9 @@ let ms = (() => {
         } else {
             mswin.get("ms-stats").style.visibility = null
             display = []
-            make = true
         }
 
         generated = true
-
-        if (!make && display.length != COLS * ROWS) {
-            display = []
-            make = true
-        }
 
         clearInterval(timer)
 
@@ -250,58 +238,52 @@ let ms = (() => {
         ms.visible = COLS * ROWS
         ms.time = 0
 
-        timer = undefined
-
         flags.innerHTML = ms.flags
         time.innerHTML = 0
 
-        if (!make)
-            // Clear all classes from existing buttons
-            for (let e of display)
-                e.className = ""
-        else {
-            // The children does not update when innerHTML is emptied
-            // therefore, remake the element to get proper resizing
-            // from the client bounding rectangle
-            let parent = board.parentElement
+        // The children does not update when innerHTML is emptied
+        // therefore, remake the element to get proper resizing
+        // from the client bounding rectangle
+        let parent = board.parentElement
 
-            board.remove()
-            board = document.createElement("div")
-            board.id = "ks-minesweeper"
+        board.remove()
+        board = document.createElement("div")
+        board.id = "ks-minesweeper"
 
-            parent.appendChild(board)
-        }
+        parent.appendChild(board)
 
+        let row = undefined
         for (let i = 0; i < COLS * ROWS; i++) {
-            if (i % COLS == 0 && make) {
+            if (i % COLS == 0) {
                 row = document.createElement("div")
                 board.appendChild(row)
             }
 
-            let cell = make ? document.createElement("button") : display[i]
+            let cell = document.createElement("button")
 
             cell.innerHTML = "&nbsp;"
             cell.style.color = null
 
-            if (SMALL) cell.classList.add("small")
+            if (SMALL)
+                cell.classList.add("small")
 
             if (ms.board[i] != -1) {
                 let adjacent = 0
 
                 for (let j of get_neighbours(i))
-                    if (j == null) continue
-                    else adjacent += ms.board[j] == -1
+                    if (j == null)
+                        continue
+                    else
+                        adjacent += ms.board[j] == -1
 
                 ms.board[i] = adjacent
             }
 
-            if (make) {
-                cell.addEventListener("contextmenu", flag(i))
-                cell.onclick = press(i)
-                cell.ontouchstart = press(i)
-                row.appendChild(cell)
-                display.push(cell)
-            }
+            cell.addEventListener("contextmenu", flag(i))
+            cell.onclick = cell.ontouchstart = press(i)
+
+            row.appendChild(cell)
+            display.push(cell)
         }
 
         board.style.minWidth = board.children[0].getBoundingClientRect().width + "px"
