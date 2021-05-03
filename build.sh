@@ -76,8 +76,8 @@ fi
 
 if [ ${1-prod} == "release" ]; then
     mv ./dist ./clicker
-    zip -r9 "clicker-${2-MISSING_VER}.zip ./clicker"
-    tar -cvzf "clicker-${2-MISSING_VER}.tar.gz ./clicker"
+    zip -r9 clicker-${2-MISSING_VER}.zip ./clicker
+    tar -cvzf clicker-${2-MISSING_VER}.tar.gz ./clicker
     mv ./clicker ./dist
     echo "Generated release zip and tar files."
 fi
