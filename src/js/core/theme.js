@@ -7,9 +7,13 @@ class ThemeManager {
     }
 
     set_theme(theme) {
-        if (theme === "xp") this.background.setAttribute("class", "xp")
-        else if (theme === "98") this.background.setAttribute("class", "w98")
-        else return
+        let name = theme
+        if (theme === "98")
+            name = "w98"
+        else if (theme !== "xp")
+            return
+
+        this.background.setAttribute("class", name)
 
         document.body.classList = theme
         window.localStorage["theme"] = theme

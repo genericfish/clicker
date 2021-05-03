@@ -1,32 +1,3 @@
-const english_numbers = [
-    "million",
-    "billion",
-    "trillion",
-    "quadrillion",
-    "quintillion",
-    "sextillion",
-    "septillion",
-    "octillion",
-    "nonillion",
-    "undecillion",
-    "duodecillion",
-    "tredecillion",
-    "quattuordecillion",
-    "quindecillion",
-    "sexdecillion"
-    // septendecillion = 10^54, however JS safe upperlimit is 10^53 - 1
-]
-
-function nice_format(num) {
-    let digits = Math.floor(Math.log10(num))
-
-    if (digits < 6) return num
-
-    let place = Math.floor((digits - 6) / 3)
-    return (num / (10 ** (3 * Math.floor(digits / 3)))).toFixed(3) +
-        " " + english_numbers[place]
-}
-
 const game = (() => {
     const game_worker =
         typeof(SharedWorker) !== "undefined" ? new SharedWorker("assets/js/workers/clicker.js") :
@@ -54,6 +25,23 @@ const game = (() => {
                 break
         }
 
+        function set_display(path, value) {
+            let part = display
+            path.split('/').forEach(p => p ? part = part[p] : null)
+
+            if (part == undefined)
+                return console.error(`[Shop Display] Invalid path "${path}".`)
+
+            part.innerHTML = value
+        }
+
+        function set_shop(path, mode, value) {
+            let shop_path = path.replace(/\%s/g, "")
+            let string_path = path.replace(/\%s/g, mode)
+
+            set_display(shop_path, value == null ? "" : string(string_path, value))
+        }
+
         for (let item in obj) {
             let listing = document.createElement("li")
             let link = document.createElement("a")
@@ -62,28 +50,25 @@ const game = (() => {
             link.addEventListener("click", _ => {
                 shop.mode = mode
 
-                display.shop.header.innerHTML = string(`/shop/${mode}/header`, base.name)
-                display.shop.rate.innerHTML = string(`/shop/${mode}/rate`, base.base_rate)
-                display.shop.click.innerHTML = string(`/shop/${mode}/click`, base.base_click)
+                set_shop("/shop/%s/header", mode, base.name)
+                set_shop("/shop/%s/click", mode, base.base_click)
+                set_shop("/shop/%s/rate", mode, base.base_rate)
 
                 shop.active = item
 
-                display.shop.desc.innerHTML = base.hasOwnProperty("desc") ?
-                    string(`/shop/${mode}/desc`, base.desc) : ''
+                set_shop("/shop/%s/desc", mode, base.hasOwnProperty("desc") ? base.desc : null)
 
                 if (mode == "minigames") {
-                    display.shop.owned.innerHTML =
+                    set_display(
+                        "/shop/owned",
                         string('/shop/minigames/owned')[+game[mode][shop.active]]
-                        .replace("%s", base.name)
-                    display.shop.producing.innerHTML = ''
+                            .replace("%s", base.name)
+                    )
+
+                    set_display("/shop/producing", "")
                 } else {
-                    display.shop.owned.innerHTML =
-                        string('/shop/towers/owned', game[mode][shop.active][0])
-                    display.shop.producing.innerHTML =
-                        string(
-                            '/shop/towers/producing',
-                            nice_format(game[mode][shop.active][1].toFixed(2))
-                        )
+                    set_shop("/shop/%s/owned", game[mode][shop.active][0])
+                    set_shop("/shop/%s/producing", nice_format(game[mode][shop.active][1].toFixed(2)))
                 }
 
 
