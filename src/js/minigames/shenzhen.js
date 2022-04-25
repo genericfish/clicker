@@ -587,14 +587,16 @@ let Shenzhen = (_ => {
         }
 
         set colorblind(v) {
+            const red = H.WM.get("shenzhen solitaire").get("dragon-red")
+            const green = H.WM.get("shenzhen solitaire").get("dragon-green")
             if (v) {
                 this.board.classList.add("colorblind")
-                H.WM.get("shenzhen solitaire").get("dragon-red").innerHTML = "BLU"
-                H.WM.get("shenzhen solitaire").get("dragon-green").innerHTML = "YEL"
+                red.innerHTML = "BLU"
+                green.innerHTML = "YEL"
             } else {
                 this.board.classList.remove("colorblind")
-                H.WM.get("shenzhen solitaire").get("dragon-red").innerHTML = "RED"
-                H.WM.get("shenzhen solitaire").get("dragon-green").innerHTML = "GRN"
+                red.innerHTML = "RED"
+                green.innerHTML = "GRN"
             }
         }
     }
