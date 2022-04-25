@@ -90,7 +90,7 @@ class Draggable {
 
         if (e.type == "touchmove") {
             cx = e.touches[0].clientX
-            cy = e.touches[1].clientY
+            cy = e.touches[0].clientY
         }
 
         const x = this.parent.offsetLeft - this.previous[0] + cx
